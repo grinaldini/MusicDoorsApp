@@ -10,7 +10,7 @@ if ($conn->connect_error) {
 }
 
 // Creating SQL command to fetch all records from Table.
-$sql = "SELECT * FROM StudentDetailsTable";
+$sql = "SELECT * FROM mainTable WHERE user_type_id = 3 OR user_type_is = 4 ";
 
 $result = $conn->query($sql);
 
