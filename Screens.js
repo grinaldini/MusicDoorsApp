@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   StyleSheet,
   View,
@@ -14,77 +14,16 @@ import {
   Image,
 } from 'react-native';
 
-import {AuthContext} from './context';
-import {HeaderTitle} from '@react-navigation/stack';
+import {AuthContext, StateContext} from './context';
+//import {HeaderTitle} from '@react-navigation/stack';
+//import { doesNotReject } from 'assert';
+//import { monitorEventLoopDelay } from 'perf_hooks';
+//import { InvalidatedProjectKind } from 'typescript';
+import SearchableDropdown from 'react-native-searchable-dropdown';
 
 const ScreenContainer = ({children}) => (
   <View style={styles.container}>{children}</View>
 );
-
-export const Home = ({navigation}) => (
-  <ScreenContainer>
-    <Text>Master List Screen</Text>
-    <Button
-      title="React Native by Example"
-      onPress={() =>
-        navigation.push('Details', {name: 'React Native by Example '})
-      }
-    />
-    <Button
-      title="React Native School"
-      onPress={() => navigation.push('Details', {name: 'React Native School'})}
-    />
-    <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
-  </ScreenContainer>
-);
-
-export const Details = ({route}) => (
-  <ScreenContainer>
-    <Text>Details Screen</Text>
-    {route.params.name && <Text>{route.params.name}</Text>}
-  </ScreenContainer>
-);
-
-export const Search = ({navigation}) => (
-  <ScreenContainer>
-    <Text>Search Screen</Text>
-    <Button title="Search 2" onPress={() => navigation.push('Search2')} />
-    <Button
-      title="React Native School"
-      onPress={() => {
-        navigation.navigate('Home', {
-          screen: 'Details',
-          params: {name: 'React Native School'},
-        });
-      }}
-    />
-  </ScreenContainer>
-);
-
-export const Search2 = () => (
-  <ScreenContainer>
-    <Text>Search2 Screen</Text>
-  </ScreenContainer>
-);
-
-export const Profile = ({navigation}) => {
-  const {signOut} = React.useContext(AuthContext);
-
-  return (
-    <ScreenContainer>
-      <Text>Profile Screen</Text>
-      <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
-      <Button title="Sign Out" onPress={() => signOut()} />
-    </ScreenContainer>
-  );
-};
-
-export const Splash = () => (
-  <ScreenContainer>
-    <Text>Loading...</Text>
-  </ScreenContainer>
-);
-
 export const Welcome = ({navigation}) => {
   const {signIn} = React.useContext(AuthContext);
 
@@ -130,125 +69,25 @@ export const Welcome = ({navigation}) => {
     </ScreenContainer>
   );
 };
-
-/*
-export default class LoginActivity{
- 
- 
-constructor(props) {
- 
-    super(props)
- 
-    this.state = {
- 
-      UserEmail: '',
-      UserPassword: ''
- 
-    }
- 
-  }
- 
-UserLoginFunction = () =>{
- 
- const { UserEmail }  = this.state ;
- const { UserPassword }  = this.state ;
- 
- 
-fetch('https://reactnativecode.000webhostapp.com/User_Login.php', {
-  method: 'POST',
-  headers: {
-    'Accept': 'application/json',
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({
- 
-    email: UserEmail,
- 
-    password: UserPassword
- 
-  })
- 
-}).then((response) => response.json())
-      .then((responseJson) => {
- 
-        // If server response message same as Data Matched
-       if(responseJson === 'Data Matched')
-        {
- 
-            //Then open Profile activity and send user email to profile activity.
-            this.props.navigation.navigate('Second', { Email: UserEmail });
- 
-        }
-        else{
- 
-          Alert.alert(responseJson);
-        }
- 
-      }).catch((error) => {
-        console.error(error);
-      });
- 
- 
-  }
- 
-  render() {
-    return (
- 
-<View style={styles.MainContainer}>
- 
-        <Text style= {styles.TextComponentStyle}>User Login Form</Text>
-  
-        <TextInput
-          
-          // Adding hint in Text Input using Place holder.
-          placeholder="Enter User Email"
- 
-          onChangeText={UserEmail => this.setState({UserEmail})}
- 
-          // Making the Under line Transparent.
-          underlineColorAndroid='transparent'
- 
-          style={styles.TextInputStyleClass}
-        />
- 
-        <TextInput
-          
-          // Adding hint in Text Input using Place holder.
-          placeholder="Enter User Password"
- 
-          onChangeText={UserPassword => this.setState({UserPassword})}
- 
-          // Making the Under line Transparent.
-          underlineColorAndroid='transparent'
- 
-          style={styles.TextInputStyleClass}
- 
-          secureTextEntry={true}
-        />
- 
-        <Button title="Click Here To Login" onPress={this.UserLoginFunction} color="#2196F3" />
-      
-  
- 
-</View>
-            
-    );
-}
-*/
-
+// test 'directorSchool1@gmail.com', 'password_directorSchool1'
 export const SignIn = () => {
   const {signIn} = React.useContext(AuthContext);
-
+  const [email, setEmail] = useState('Email');
+  const [password, setPassword] = useState('Password');
   return (
     <ScreenContainer>
       <TextInput
-        placeholder="User Name"
+        placeholder="Email"
         underlineColorAndroid="transparent"
+        onChangeText={val => setEmail(val)}
+        autoCapitalize="none"
         style={styles.TextInputStyleClass}
       />
       <TextInput
         placeholder="Password"
         underlineColorAndroid="transparent"
+        onChangeText={val => setPassword(val)}
+        autoCapitalize="none"
         style={styles.TextInputStyleClass}
       />
       <TouchableOpacity
@@ -260,268 +99,803 @@ export const SignIn = () => {
       <TouchableOpacity
         activeOpacity={0.4}
         style={styles.TouchableOpacityStyle}
-        onPress={() => signIn()}>
+        onPress={() => signIn(email, password)}>
         <Text style={styles.TextStyle}> Log In </Text>
       </TouchableOpacity>
     </ScreenContainer>
   );
 };
 
-export const CreateAccount = () => {
-  const {signUp} = React.useContext(AuthContext);
-
+/*
+Administrator Screens
+  + Profile Screen
+  
+*/
+export const AdminProfile = ({navigation}) => {
+  const {signOut} = React.useContext(AuthContext);
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
   return (
     <ScreenContainer>
-      <Text>Create Account Screen</Text>
-      <Button title="Create Account" onPress={() => signUp()} />
+      <Text>
+        Admin Profile Screen{userProfile ? userProfile.username : 'abc'}
+      </Text>
+      <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
+      <Button title="Sign Out" onPress={() => signOut()} />
     </ScreenContainer>
   );
 };
 
+/*
+Director Screens
+  + CreateAccount => NULL Values: (avatar,description(for now)) , street_address, feeder_school, instrument, instrument_2, instrument_3
+  + Profile Screen
+*/
 export const DirectorCreateAccount = () => {
   const {signUp} = React.useContext(AuthContext);
+
+  const user_type_id = 2;
+
+  const [email, setEmail] = React .useState(null);
+  const [password, setPass] = React .useState(null);
+  const [first_name, setFName] = React .useState(null);
+  const [last_name, setLName] = React .useState(null);
+  const [phone_number, setPN] = React. useState(null);
+  const [city, setCity] = React.useState(null);
+  const [state, setState] = React.useState(null);
+  const [zip_code, setZC] = React.useState(null);
+  const [current_school, setCS] = React.useState(null);
+
+  const [code, setAccessCode] = React.useState(0);
+
+  const street_address = null;
+  const feeder_school = null;
+  const instrument = null;
+  const instrument_2 = null;
+  const instrument_3 = null;
 
   return (
     <ScreenContainer>
        <TextInput
+        placeholder="Enter Email"
+        underlineColorAndroid="transparent"
+        style={styles.TextInputStyleClass}
+        onChangeText={val => setEmail(val)}
+        autoCapitalize="none"
+      />
+      <TextInput
+        placeholder="Enter Password"
+        underlineColorAndroid="transparent"
+        style={styles.TextInputStyleClass}
+        onChangeText={val => setPass(val)}
+        autoCapitalize="none"
+      />
+      <TextInput
         placeholder="Enter First Name"
         underlineColorAndroid="transparent"
         style={styles.TextInputStyleClass}
+        onChangeText={val => setFName(val)}
       />
-
       <TextInput
         placeholder="Enter Last Name"
         underlineColorAndroid="transparent"
         style={styles.TextInputStyleClass}
+        onChangeText={val => setLName(val)}
       />
-
       <TextInput
         placeholder="Enter Current School"
         underlineColorAndroid="transparent"
         style={styles.TextInputStyleClass}
+        onChangeText={val => setCS(val)}
       />
-
       <TextInput
         placeholder="Enter Phone Number"
         underlineColorAndroid="transparent"
         style={styles.TextInputStyleClass}
+        onChangeText={val => setPN(val)}
+        autoCapitalize="none"
+      />
+      <TextInput
+        placeholder="Enter City"
+        underlineColorAndroid="transparent"
+        style={styles.TextInputStyleClass}
+        onChangeText={val => setCity(val)}
+      />
+      <TextInput
+        placeholder="Enter State"
+        underlineColorAndroid="transparent"
+        style={styles.TextInputStyleClass}
+        onChangeText={val => setState(val)}
       />
 
+      <TextInput
+        placeholder="Enter Zip Code"
+        underlineColorAndroid="transparent"
+        style={styles.TextInputStyleClass}
+        onChangeText={val => setZC(val)}
+      />
+      <TextInput
+        placeholder="Access Code"
+        underlineColorAndroid="transparent"
+        style={styles.TextInputStyleClass}
+        onChangeText={val => setAccessCode(val)}
+      />
+      <TouchableOpacity
+        activeOpacity={0.4}
+        style={styles.TouchableOpacityStyle}
+        onPress={() => signUp(user_type_id,email,password,first_name,last_name,phone_number, street_address, city,state,zip_code,feeder_school,current_school,instrument,instrument_2,instrument_3,code)}>
+        <Text style={styles.TextStyle}> Create Account </Text>
+      </TouchableOpacity>
+    </ScreenContainer>
+  );
+};
+export const DirectorProfile = ({navigation}) => {
+  const {signOut} = React.useContext(AuthContext);
+
+  return (
+    <ScreenContainer>
+      <Text>Director Profile Screen</Text>
+      <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
+      <Button title="Sign Out" onPress={() => signOut()} />
+    </ScreenContainer>
+  );
+};
+
+/*
+Student Screens
+  + Create Account => NULL Values: (avatar,description(for now)) , street_address
+  + Profile Screen
+*/
+export const StudentCreateAccount = () => {
+  const {signUp} = React.useContext(AuthContext);
+
+  const user_type_id = 3;
+
+  const [email, setEmail] = React .useState(false);
+  const [password, setPass] = React .useState(false);
+  const [first_name, setFName] = React .useState(false);
+  const [last_name, setLName] = React .useState(false);
+  const [instrument, setInstrument] = React.useState(false);
+  const [instrument_2, setInstrument2] = React.useState(false);
+  const [instrument_3, setInstrument3] = React.useState(false);
+  const [current_school, setCS] = React.useState(false);
+  const [feeder_school, setFS] = React.useState(false);
+  const [city, setCity] = React.useState(false);
+  const [state, setState] = React.useState(false);
+  const [zip_code, setZC] = React.useState(false);
+
+  const [code, setAccessCode] = React.useState(0);
+
+  const street_address = false;
+  const phone_number = false;
+
+  const items = [
+    {
+      id: 1,
+      name: 'Violin',
+    },
+    {
+      id: 2,
+      name: 'Trumpet',
+    },
+    {
+      id: 3,
+      name: 'Clarinet',
+    },
+  ];
+
+  return (
+    <ScreenContainer>
       <TextInput
         placeholder="Enter Email"
         underlineColorAndroid="transparent"
         style={styles.TextInputStyleClass}
+        onChangeText={val => setEmail(val)}
+        autoCapitalize="none"
       />
-
       <TextInput
-        placeholder="EXCLUSIVE CODE"
+        placeholder="Enter Password"
         underlineColorAndroid="transparent"
         style={styles.TextInputStyleClass}
+        onChangeText={val => setPass(val)}
+        autoCapitalize="none"
       />
-      <TouchableOpacity
-        activeOpacity={0.4}
-        style={styles.TouchableOpacityStyle}
-        onPress={() => signUp()}>
-        <Text style={styles.TextStyle}> Create Account </Text>
-      </TouchableOpacity>
-    </ScreenContainer>
-  );
-};
-
-export const StudentCreateAccount = () => {
-  const {signUp} = React.useContext(AuthContext);
-
-  return (
-    <ScreenContainer>
       <TextInput
         placeholder="Enter First Name"
         underlineColorAndroid="transparent"
         style={styles.TextInputStyleClass}
+        onChangeText={val => setFName(val)}
       />
-
       <TextInput
         placeholder="Enter Last Name"
         underlineColorAndroid="transparent"
         style={styles.TextInputStyleClass}
+        onChangeText={val => setLName(val)}
       />
-
-      <TextInput
-        placeholder="Enter Instrument"
+      <SearchableDropdown
+        onTextChange={text => console.log(text)}
+        //On text change listner on the searchable input
+        onItemSelect={item => setInstrument3(JSON.stringify(item.name))}
+        //onItemSelect called after the selection from the dropdown
+        containerStyle={styles.ddContainerStyle}
+        //suggestion container style
+        textInputStyle={styles.ddInputStyle}
+        itemStyle={styles.ddItemStyle}
+        itemTextStyle={styles.ddItemTextStyle}
+        itemsContainerStyle={styles.ddItemsContainerStyle}
+        items={items}
+        //mapping of item array
+        //defaultIndex={2}
+        //default selected item index
+        placeholder="Select Instrument"
+        //place holder for the search input
+        resetValue={false}
+        //reset textInput Value with true and false state
         underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
+        //To remove the underline from the android input
       />
-
+      <SearchableDropdown
+        onTextChange={text => console.log(text)}
+        //On text change listner on the searchable input
+        onItemSelect={item => setInstrument2(JSON.stringify(item.name))}
+        //onItemSelect called after the selection from the dropdown
+        containerStyle={styles.ddContainerStyle}
+        //suggestion container style
+        textInputStyle={styles.ddInputStyle}
+        itemStyle={styles.ddItemStyle}
+        itemTextStyle={styles.ddItemTextStyle}
+        itemsContainerStyle={styles.ddItemsContainerStyle}
+        items={items}
+        //mapping of item array
+        //defaultIndex={2}
+        //default selected item index
+        placeholder="Optional Second Instrument"
+        //place holder for the search input
+        resetValue={false}
+        //reset textInput Value with true and false state
+        underlineColorAndroid="transparent"
+        //To remove the underline from the android input
+      />
+      <SearchableDropdown
+        onTextChange={text => console.log(text)}
+        //On text change listner on the searchable input
+        onItemSelect={item => setInstrument3(JSON.stringify(item.name))}
+        //onItemSelect called after the selection from the dropdown
+        containerStyle={styles.ddContainerStyle}
+        //suggestion container style
+        textInputStyle={styles.ddInputStyle}
+        itemStyle={styles.ddItemStyle}
+        itemTextStyle={styles.ddItemTextStyle}
+        itemsContainerStyle={styles.ddItemsContainerStyle}
+        items={items}
+        //mapping of item array
+        //defaultIndex={2}
+        //default selected item index
+        placeholder="Optional Third Instrument"
+        //place holder for the search input
+        resetValue={false}
+        //reset textInput Value with true and false state
+        underlineColorAndroid="transparent"
+        //To remove the underline from the android input
+      />
       <TextInput
         placeholder="Enter Current School"
         underlineColorAndroid="transparent"
         style={styles.TextInputStyleClass}
+        onChangeText={val => setCS(val)}
       />
 
       <TextInput
-        placeholder="Enter Target High School"
+        placeholder="Enter Feeder High School"
         underlineColorAndroid="transparent"
         style={styles.TextInputStyleClass}
+        onChangeText={val => setFS(val)}
       />
 
       <TextInput
         placeholder="Enter City"
         underlineColorAndroid="transparent"
         style={styles.TextInputStyleClass}
+        onChangeText={val => setCity(val)}
       />
 
       <TextInput
         placeholder="Enter State"
         underlineColorAndroid="transparent"
         style={styles.TextInputStyleClass}
+        onChangeText={val => setState(val)}
       />
 
       <TextInput
         placeholder="Enter Zip Code"
         underlineColorAndroid="transparent"
         style={styles.TextInputStyleClass}
+        onChangeText={val => setZC(val)}
       />
 
       <TextInput
-        placeholder="EXCLUSIVE CODE"
+        placeholder="Access Code"
         underlineColorAndroid="transparent"
         style={styles.TextInputStyleClass}
+        onChangeText={val => setAccessCode(val)}
       />
 
       <TouchableOpacity
         activeOpacity={0.4}
         style={styles.TouchableOpacityStyle}
-        onPress={() => signUp()}>
+        onPress={() => signUp(user_type_id,email,password,first_name,last_name,phone_number, street_address, city,state,zip_code,feeder_school,current_school,instrument,instrument_2,instrument_3,code)}>
         <Text style={styles.TextStyle}> Create Account </Text>
       </TouchableOpacity>
     </ScreenContainer>
   );
 };
+export const StudentProfile = ({navigation}) => {
+  const {signOut} = React.useContext(AuthContext);
 
+  return (
+    <ScreenContainer>
+      <Text>Student Profile Screen</Text>
+      <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
+      <Button title="Sign Out" onPress={() => signOut()} />
+    </ScreenContainer>
+  );
+};
+
+
+
+
+/*
+Private Student Screens
+  + Create Account => NULL Values: (avatar,description(for now)) , street_address, feeder_school, current_school
+  + Profile Screen
+*/
 export const PrivateStudentCreateAccount = () => {
   const {signUp} = React.useContext(AuthContext);
 
+  const user_type_id = 4;
+  
+
+  const [email, setEmail] = React .useState('');
+  const [password, setPass] = React .useState('');
+  const [first_name, setFName] = React .useState('');
+  const [last_name, setLName] = React .useState('');
+  const [instrument, setInstrument] = React.useState('');
+  const [instrument_2, setInstrument2] = React.useState('');
+  const [instrument_3, setInstrument3] = React.useState('');
+  const [city, setCity] = React.useState('');
+  const [state, setState] = React.useState('');
+  const [zip_code, setZC] = React.useState(0);
+
+  const [code, setAccessCode] = React.useState(0);
+
+  const street_address = null;
+  const phone_number = null;
+  const feeder_school = null;
+  const current_school = null;
+
+  const items = [
+    {
+      id: 1,
+      name: 'Violin',
+    },
+    {
+      id: 2,
+      name: 'Trumpet',
+    },
+    {
+      id: 3,
+      name: 'Clarinet',
+    },
+  ];
+
   return (
-    <ScreenContainer>
+  <ScreenContainer>
+    <TextInput
+        placeholder="Enter Email"
+        underlineColorAndroid="transparent"
+        style={styles.TextInputStyleClass}
+        onChangeText={val => setEmail(val)}
+        autoCapitalize="none"
+      />
+      <TextInput
+        placeholder="Enter Password"
+        underlineColorAndroid="transparent"
+        style={styles.TextInputStyleClass}
+        onChangeText={val => setPass(val)}
+        autoCapitalize="none"
+      />
       <TextInput
         placeholder="Enter First Name"
         underlineColorAndroid="transparent"
         style={styles.TextInputStyleClass}
+        onChangeText={val => setFName(val)}
       />
-
       <TextInput
         placeholder="Enter Last Name"
         underlineColorAndroid="transparent"
         style={styles.TextInputStyleClass}
+        onChangeText={val => setLName(val)}
       />
-
-      <TextInput
-        placeholder="Enter Instrument"
+      <SearchableDropdown
+        onTextChange={text => console.log(text)}
+        //On text change listner on the searchable input
+        onItemSelect={item => setInstrument(JSON.stringify(item.name))}
+        //onItemSelect called after the selection from the dropdown
+        containerStyle={styles.ddContainerStyle}
+        //suggestion container style
+        textInputStyle={styles.ddInputStyle}
+        itemStyle={styles.ddItemStyle}
+        itemTextStyle={styles.ddItemTextStyle}
+        itemsContainerStyle={styles.ddItemsContainerStyle}
+        items={items}
+        //mapping of item array
+        //defaultIndex={2}
+        //default selected item index
+        placeholder="Select Instrument"
+        //place holder for the search input
+        resetValue={false}
+        //reset textInput Value with true and false state
         underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
+        //To remove the underline from the android input
       />
-
+      <SearchableDropdown
+        onTextChange={text => console.log(text)}
+        //On text change listner on the searchable input
+        onItemSelect={item => setInstrument2(JSON.stringify(item.name))}
+        //onItemSelect called after the selection from the dropdown
+        containerStyle={styles.ddContainerStyle}
+        //suggestion container style
+        textInputStyle={styles.ddInputStyle}
+        itemStyle={styles.ddItemStyle}
+        itemTextStyle={styles.ddItemTextStyle}
+        itemsContainerStyle={styles.ddItemsContainerStyle}
+        items={items}
+        //mapping of item array
+        //defaultIndex={2}
+        //default selected item index
+        placeholder="Optional Second Instrument"
+        //place holder for the search input
+        resetValue={false}
+        //reset textInput Value with true and false state
+        underlineColorAndroid="transparent"
+        //To remove the underline from the android input
+      />
+      <SearchableDropdown
+        onTextChange={text => console.log(text)}
+        //On text change listner on the searchable input
+        onItemSelect={item => setInstrument3(JSON.stringify(item.name))}
+        //onItemSelect called after the selection from the dropdown
+        containerStyle={styles.ddContainerStyle}
+        //suggestion container style
+        textInputStyle={styles.ddInputStyle}
+        itemStyle={styles.ddItemStyle}
+        itemTextStyle={styles.ddItemTextStyle}
+        itemsContainerStyle={styles.ddItemsContainerStyle}
+        items={items}
+        //mapping of item array
+        //defaultIndex={2}
+        //default selected item index
+        placeholder="Optional Third Instrument"
+        //place holder for the search input
+        resetValue={false}
+        //reset textInput Value with true and false state
+        underlineColorAndroid="transparent"
+        //To remove the underline from the android input
+      />
       <TextInput
         placeholder="Enter City"
         underlineColorAndroid="transparent"
         style={styles.TextInputStyleClass}
+        onChangeText={val => setCity(val)}
       />
-
       <TextInput
         placeholder="Enter State"
         underlineColorAndroid="transparent"
         style={styles.TextInputStyleClass}
+        onChangeText={val => setState(val)}
       />
 
       <TextInput
         placeholder="Enter Zip Code"
         underlineColorAndroid="transparent"
         style={styles.TextInputStyleClass}
+        onChangeText={val => setZC(val)}
       />
-
       <TextInput
-        placeholder="EXCLUSIVE CODE"
+        placeholder="Access Code"
         underlineColorAndroid="transparent"
         style={styles.TextInputStyleClass}
+        onChangeText={val => setAccessCode(val)}
       />
-
       <TouchableOpacity
         activeOpacity={0.4}
         style={styles.TouchableOpacityStyle}
-        onPress={() => signUp()}>
+        onPress={() => signUp(user_type_id, email, password, first_name, last_name, phone_number, street_address, city, state, zip_code, feeder_school, current_school, instrument, instrument_2, instrument_3, code)}>
         <Text style={styles.TextStyle}> Create Account </Text>
       </TouchableOpacity>
     </ScreenContainer>
   );
 };
 
+export const PrivateStudentProfile = ({navigation}) => {
+  const {signOut} = React.useContext(AuthContext);
+
+  return (
+    <ScreenContainer>
+      <Text>Private Student Profile Screen</Text>
+      <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
+      <Button title="Sign Out" onPress={() => signOut()} />
+    </ScreenContainer>
+  );
+};
+
+
+
+/*
+Instructor Screens
+  + Create Account
+  + Profile Screen
+*/
 export const InstructorCreateAccount = () => {
   const {signUp} = React.useContext(AuthContext);
+
+  const user_type_id = 5;
+
+  const [email, setEmail] = React .useState('');
+  const [password, setPass] = React .useState('');
+  const [first_name, setFName] = React .useState('');
+  const [last_name, setLName] = React .useState('');
+  const [street_address, setSA] = React .useState('');
+  const [phone_number, setPN] = React. useState('');
+  const [feeder_school, setFS] = React.useState('');
+  const [city, setCity] = React.useState('');
+  const [state, setState] = React.useState('');
+  const [zip_code, setZC] = React.useState(0);
+  const [instrument, setInstrument] = React.useState('');
+  const [instrument_2, setInstrument2] = React.useState('');
+  const [instrument_3, setInstrument3] = React.useState('');
+
+  const [code, setAccessCode] = React.useState(0);
+
+  const current_school = null;
+
+  const items = [
+    {
+      id: 1,
+      name: 'Violin',
+    },
+    {
+      id: 2,
+      name: 'Trumpet',
+    },
+    {
+      id: 3,
+      name: 'Clarinet',
+    },
+  ];
 
   return (
     <ScreenContainer>
       <TextInput
+        placeholder="Enter Email"
+        underlineColorAndroid="transparent"
+        style={styles.TextInputStyleClass}
+        onChangeText={val => setEmail(val)}
+        autoCapitalize="none"
+      />
+      <TextInput
+        placeholder="Enter Password"
+        underlineColorAndroid="transparent"
+        style={styles.TextInputStyleClass}
+        onChangeText={val => setPass(val)}
+        autoCapitalize="none"
+      />
+      <TextInput
         placeholder="Enter First Name"
         underlineColorAndroid="transparent"
         style={styles.TextInputStyleClass}
+        onChangeText={val => setFName(val)}
       />
-
       <TextInput
         placeholder="Enter Last Name"
         underlineColorAndroid="transparent"
         style={styles.TextInputStyleClass}
+        onChangeText={val => setLName(val)}
       />
-
+      <TextInput
+        placeholder="Enter Phone Number"
+        underlineColorAndroid="transparent"
+        style={styles.TextInputStyleClass}
+        onChangeText={val => setPN(val)}
+      />
+      <TextInput
+        placeholder="Enter Home Address"
+        underlineColorAndroid="transparent"
+        style={styles.TextInputStyleClass}
+        onChangeText={val => setSA(val)}
+      />
+      <TextInput
+        placeholder="Enter City"
+        underlineColorAndroid="transparent"
+        style={styles.TextInputStyleClass}
+        onChangeText={val => setCity(val)}
+      />
+      <TextInput
+        placeholder="Enter State"
+        underlineColorAndroid="transparent"
+        style={styles.TextInputStyleClass}
+        onChangeText={val => setState(val)}
+      />
+      <TextInput
+        placeholder="Enter Zip Code"
+        underlineColorAndroid="transparent"
+        style={styles.TextInputStyleClass}
+        onChangeText={val => setZC(val)}
+      />
       <TextInput
         placeholder="Enter Target High School"
         underlineColorAndroid="transparent"
         style={styles.TextInputStyleClass}
+        onChangeText={val => setFS(val)}
+      />
+      <SearchableDropdown
+        onTextChange={text => console.log(text)}
+        //On text change listner on the searchable input
+        onItemSelect={item => setInstrument(JSON.stringify(item))}
+        //onItemSelect called after the selection from the dropdown
+        containerStyle={styles.ddContainerStyle}
+        //suggestion container style
+        textInputStyle={styles.ddInputStyle}
+        itemStyle={styles.ddItemStyle}
+        itemTextStyle={styles.ddItemTextStyle}
+        itemsContainerStyle={styles.ddItemsContainerStyle}
+        items={items}
+        //mapping of item array
+        //defaultIndex={2}
+        //default selected item index
+        placeholder="Select Instrument"
+        //place holder for the search input
+        resetValue={false}
+        //reset textInput Value with true and false state
+        underlineColorAndroid="transparent"
+        //To remove the underline from the android input
+      />
+      <SearchableDropdown
+        onTextChange={text => console.log(text)}
+        //On text change listner on the searchable input
+        onItemSelect={item => setInstrument2(JSON.stringify(item))}
+        //onItemSelect called after the selection from the dropdown
+        containerStyle={styles.ddContainerStyle}
+        //suggestion container style
+        textInputStyle={styles.ddInputStyle}
+        itemStyle={styles.ddItemStyle}
+        itemTextStyle={styles.ddItemTextStyle}
+        itemsContainerStyle={styles.ddItemsContainerStyle}
+        items={items}
+        //mapping of item array
+        //defaultIndex={2}
+        //default selected item index
+        placeholder="Optional Second Instrument"
+        //place holder for the search input
+        resetValue={false}
+        //reset textInput Value with true and false state
+        underlineColorAndroid="transparent"
+        //To remove the underline from the android input
+      />
+      <SearchableDropdown
+        onTextChange={text => console.log(text)}
+        //On text change listner on the searchable input
+        onItemSelect={item => setInstrument3(JSON.stringify(item))}
+        //onItemSelect called after the selection from the dropdown
+        containerStyle={styles.ddContainerStyle}
+        //suggestion container style
+        textInputStyle={styles.ddInputStyle}
+        itemStyle={styles.ddItemStyle}
+        itemTextStyle={styles.ddItemTextStyle}
+        itemsContainerStyle={styles.ddItemsContainerStyle}
+        items={items}
+        //mapping of item array
+        //defaultIndex={2}
+        //default selected item index
+        placeholder="Optional Third Instrument"
+        //place holder for the search input
+        resetValue={false}
+        //reset textInput Value with true and false state
+        underlineColorAndroid="transparent"
+        //To remove the underline from the android input
       />
       <TextInput
-        placeholder="Enter Instrument"
+        placeholder="Access Code"
         underlineColorAndroid="transparent"
         style={styles.TextInputStyleClass}
+        onChangeText={val => setAccessCode(val)}
       />
-
-      <TextInput
-        placeholder="Enter Address"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-      />
-
-      <TextInput
-        placeholder="Enter City"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-      />
-
-      <TextInput
-        placeholder="Enter State"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-      />
-
-      <TextInput
-        placeholder="Enter Zip Code"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-      />
-
-      <TextInput
-        placeholder="EXCLUSIVE CODE"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-      />
-
       <TouchableOpacity
         activeOpacity={0.4}
         style={styles.TouchableOpacityStyle}
-        onPress={() => signUp()}>
+        onPress={() => signUp(user_type_id,email,password,first_name,last_name,phone_number, street_address, city,state,zip_code,feeder_school,current_school,instrument,instrument_2,instrument_3,code)}>
         <Text style={styles.TextStyle}> Create Account </Text>
       </TouchableOpacity>
     </ScreenContainer>
   );
 };
 
+export const InstructorProfile = ({navigation}) => {
+  const {signOut} = React.useContext(AuthContext);
+
+  return (
+    <ScreenContainer>
+      <Text>Instructor Profile Screen</Text>
+      <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
+      <Button title="Sign Out" onPress={() => signOut()} />
+    </ScreenContainer>
+  );
+};
+
+
+
+/////////////////////////////Change to appropriate functional components for each user type
+
+//Home => Start nesting lists
+export const Home = ({navigation}) => (
+  <ScreenContainer>
+    <Text>Master List Screen</Text>
+    <Button
+      title="React Native by Example"
+      onPress={() =>
+        navigation.push('Details', {name: 'React Native by Example '})
+      }
+    />
+    <Button
+      title="React Native School"
+      onPress={() => navigation.push('Details', {name: 'React Native School'})}
+    />
+    <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
+  </ScreenContainer>
+);
+
+//Search & Search2 => Student Appointment Status, Instructor Time Slot Creator and Appointment Confirmation
+export const Search = ({navigation}) => (
+  <ScreenContainer>
+    <Text>Search Screen</Text>
+    <Button title="Search 2" onPress={() => navigation.push('Search2')} />
+    <Button
+      title="React Native School"
+      onPress={() => {
+        navigation.navigate('Home', {
+          screen: 'Details',
+          params: {name: 'React Native School'},
+        });
+      }}
+    />
+  </ScreenContainer>
+);
+
+export const Search2 = () => (
+  <ScreenContainer>
+    <Text>Search2 Screen</Text>
+  </ScreenContainer>
+);
+
+//Details => Music Doors photo gallery
+export const Details = ({route}) => (
+  <ScreenContainer>
+    <Text>Details Screen</Text>
+    {route.params.name && <Text>{route.params.name}</Text>}
+  </ScreenContainer>
+);
+
+
+
+
+//Loading display for all users
+export const Splash = () => (
+  <ScreenContainer>
+    <Text>Loading...</Text>
+  </ScreenContainer>
+);
+
+//Style Sheet => IOS and Android
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -585,5 +959,119 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: 280,
     height: 500,
+  },
+  ddInputStyle: {
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#FF5722',
+    textAlign: 'center',
+  },
+  ddItemStyle: {
+    //single dropdown item style
+    paddingTop: 10,
+    paddingBottom: 10,
+    borderRadius: 5,
+    marginBottom: 7,
+    padding: 12,
+    marginTop: 2,
+    borderColor: '#FF5722',
+    borderWidth: 1,
+    textAlign: 'center',
+  },
+  ddItemTextStyle: {
+    color: '#222',
+    textAlign: 'center',
+  },
+  ddContainerStyle: {
+    paddingTop: 10,
+    paddingBottom: 10,
+    borderRadius: 5,
+    marginBottom: 7,
+    width: '90%',
+    textAlign: 'center',
+  },
+  ddItemContainerStyle: {
+    //items container style you can pass maxHeight
+    //to restrict the items dropdown hieght
+    paddingTop: 10,
+    paddingBottom: 10,
+    borderRadius: 5,
+    marginBottom: 7,
+    width: '90%',
+    maxHeight: '60%',
+    textAlign: 'center',
+  },
+});
+
+const PickerStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  searchBarContainerStyle: {
+    marginBottom: 10,
+    flexDirection: 'row',
+    height: 40,
+    shadowOpacity: 1.0,
+    shadowRadius: 5,
+    shadowOffset: {
+      width: 1,
+      height: 1,
+    },
+    backgroundColor: 'rgba(255,255,255,1)',
+    shadowColor: '#d3d3d3',
+    borderRadius: 10,
+    elevation: 3,
+    marginLeft: 10,
+    marginRight: 10,
+  },
+
+  selectLabelTextStyle: {
+    color: '#000',
+    textAlign: 'left',
+    width: '99%',
+    padding: 10,
+    flexDirection: 'row',
+  },
+  placeHolderTextStyle: {
+    color: '#D3D3D3',
+    padding: 10,
+    textAlign: 'left',
+    width: '99%',
+    flexDirection: 'row',
+  },
+  dropDownImageStyle: {
+    marginLeft: 10,
+    width: 10,
+    height: 10,
+    alignSelf: 'center',
+  },
+  listTextViewStyle: {
+    color: '#000',
+    marginVertical: 10,
+    flex: 0.9,
+    marginLeft: 20,
+    marginHorizontal: 10,
+    textAlign: 'left',
+  },
+  pickerStyle: {
+    marginLeft: 18,
+    elevation: 3,
+    paddingRight: 25,
+    marginRight: 10,
+    marginBottom: 2,
+    shadowOpacity: 1.0,
+    shadowOffset: {
+      width: 1,
+      height: 1,
+    },
+    borderWidth: 1,
+    shadowRadius: 10,
+    backgroundColor: 'rgba(255,255,255,1)',
+    shadowColor: '#d3d3d3',
+    borderRadius: 5,
+    flexDirection: 'row',
   },
 });

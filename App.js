@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 
+//Style
 import {
   StyleSheet,
   View,
@@ -13,29 +14,42 @@ import {
   ActivityIndicator,
 } from 'react-native';
 
+//Navigators and Stack Containers
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 
-import {AuthContext} from './context';
+//contexts
+import {AuthContext, StateContext} from './context';
+
+//API's
+import AuthApi from './API/auth';
+import CheckAccessCode from './API/AccessCode/checkAccessCode';
+import UserRegistration from './API/User/userRegistration';
+import DupRegistration from './API/User/dupRegistration';
+
+//Screens
 import {
   Welcome,
   SignIn,
-  LoginActivity,
-  CreateAccount,
+  AdminProfile,
   DirectorCreateAccount,
+  DirectorProfile,
   StudentCreateAccount,
+  StudentProfile,
   PrivateStudentCreateAccount,
+  PrivateStudentProfile,
   InstructorCreateAccount,
+  InstructorProfile,
   Search,
   Home,
   Details,
   Search2,
-  Profile,
   Splash,
 } from './Screens';
 
+//Navigator => Authorization Stack
 const AuthStack = createStackNavigator();
 const AuthStackScreen = () => (
   <AuthStack.Navigator>
@@ -54,12 +68,7 @@ const AuthStackScreen = () => (
     <AuthStack.Screen
       name="SignIn"
       component={SignIn}
-      options={{title: 'SignIn'}}
-    />
-    <AuthStack.Screen
-      name="CreateAccount"
-      component={CreateAccount}
-      options={{title: 'Create Account'}}
+      options={{title: 'Sign In'}}
     />
     <AuthStack.Screen
       name="DirectorCreateAccount"
@@ -76,7 +85,7 @@ const AuthStackScreen = () => (
       component={PrivateStudentCreateAccount}
       options={{title: 'Private Student Create Account'}}
     />
-     <AuthStack.Screen
+    <AuthStack.Screen
       name="InstructorCreateAccount"
       component={InstructorCreateAccount}
       options={{title: 'Instructor Create Account'}}
@@ -84,10 +93,16 @@ const AuthStackScreen = () => (
   </AuthStack.Navigator>
 );
 
+//Tabs => Bottom tabs are Home for nesting lists and "Search"(will be replaced with code generator for Admin and appointment lists for all others)
 const Tabs = createBottomTabNavigator();
+const TabsScreen = () => (
+  <Tabs.Navigator>
+    <Tabs.Screen name="Home" component={HomeStackScreen} />
+    <Tabs.Screen name="Search" component={SearchStackScreen} />
+  </Tabs.Navigator>
+);
+//Stack => Home  => will show lists in hierarchical order depending on user type
 const HomeStack = createStackNavigator();
-const SearchStack = createStackNavigator();
-
 const HomeStackScreen = () => (
   <HomeStack.Navigator>
     <HomeStack.Screen name="Home" component={Home} />
@@ -100,7 +115,8 @@ const HomeStackScreen = () => (
     />
   </HomeStack.Navigator>
 );
-
+//Stack => "Search" Page  => will change to code generator for admin, null for director, appointment list for students and instructors
+const SearchStack = createStackNavigator();
 const SearchStackScreen = () => (
   <SearchStack.Navigator>
     <SearchStack.Screen name="Search" component={Search} />
@@ -108,39 +124,123 @@ const SearchStackScreen = () => (
   </SearchStack.Navigator>
 );
 
+///Stack => User Profile screen
 const ProfileStack = createStackNavigator();
-const ProfileStackScreen = () => (
+const AdminProfileStackScreen = () => (
   <ProfileStack.Navigator>
-    <ProfileStack.Screen name="Profile" component={Profile} />
+    <ProfileStack.Screen name="AdminProfile" component={AdminProfile} />
+  </ProfileStack.Navigator>
+);
+const DirectorProfileStackScreen = () => (
+  <ProfileStack.Navigator>
+    <ProfileStack.Screen name="DirectorProfile" component={DirectorProfile} />
+  </ProfileStack.Navigator>
+);
+const StudentProfileStackScreen = () => (
+  <ProfileStack.Navigator>
+    <ProfileStack.Screen name="Profile" component={StudentProfile} />
+  </ProfileStack.Navigator>
+);
+const PrivateStudentProfileStackScreen = () => (
+  <ProfileStack.Navigator>
+    <ProfileStack.Screen
+      name="DirectorProfile"
+      component={PrivateStudentProfile}
+    />
+  </ProfileStack.Navigator>
+);
+const InstructorProfileStackScreen = () => (
+  <ProfileStack.Navigator>
+    <ProfileStack.Screen name="DirectorProfile" component={InstructorProfile} />
   </ProfileStack.Navigator>
 );
 
-const TabsScreen = () => (
-  <Tabs.Navigator>
-    <Tabs.Screen name="Home" component={HomeStackScreen} />
-    <Tabs.Screen name="Search" component={SearchStackScreen} />
-  </Tabs.Navigator>
-);
-
+//Navigator => Drawer => each user type has a different drawer
 const Drawer = createDrawerNavigator();
-const DrawerScreen = () => (
+const DrawerScreen1 = () => (
   <Drawer.Navigator initialRouteName="Profile">
     <Drawer.Screen name="Home" component={TabsScreen} />
-    <Drawer.Screen name="Profile" component={ProfileStackScreen} />
+    <Drawer.Screen name="Profile" component={AdminProfileStackScreen} />
   </Drawer.Navigator>
 );
 
+const DrawerScreen2 = () => (
+  <Drawer.Navigator initialRouteName="Profile">
+    <Drawer.Screen name="Home" component={TabsScreen} />
+    <Drawer.Screen name="Profile" component={DirectorProfileStackScreen} />
+  </Drawer.Navigator>
+);
+
+const DrawerScreen3 = () => (
+  <Drawer.Navigator initialRouteName="Profile">
+    <Drawer.Screen name="Home" component={TabsScreen} />
+    <Drawer.Screen name="Profile" component={StudentProfileStackScreen} />
+  </Drawer.Navigator>
+);
+
+const DrawerScreen4 = () => (
+  <Drawer.Navigator initialRouteName="Profile">
+    <Drawer.Screen name="Home" component={TabsScreen} />
+    <Drawer.Screen
+      name="Profile"
+      component={PrivateStudentProfileStackScreen}
+    />
+  </Drawer.Navigator>
+);
+
+const DrawerScreen5 = () => (
+  <Drawer.Navigator initialRouteName="Profile">
+    <Drawer.Screen name="Home" component={TabsScreen} />
+    <Drawer.Screen name="Profile" component={InstructorProfileStackScreen} />
+  </Drawer.Navigator>
+);
+
+//Stack => Root
 const RootStack = createStackNavigator();
-const RootStackScreen = ({userToken}) => (
+const RootStackScreen = ({userToken, userId}) => (
   <RootStack.Navigator headerMode="none">
     {userToken ? (
-      <RootStack.Screen
-        name="App"
-        component={DrawerScreen}
-        options={{
-          animationEnabled: false,
-        }}
-      />
+      userId === 1 ? (
+        <RootStack.Screen
+          name="App"
+          component={DrawerScreen1}
+          options={{
+            animationEnabled: false,
+          }}
+        />
+      ) : userId === 2 ? (
+        <RootStack.Screen
+          name="App"
+          component={DrawerScreen2}
+          options={{
+            animationEnabled: false,
+          }}
+        />
+      ) : userId === 3 ? (
+        <RootStack.Screen
+          name="App"
+          component={DrawerScreen3}
+          options={{
+            animationEnabled: false,
+          }}
+        />
+      ) : userId === 4 ? (
+        <RootStack.Screen
+          name="App"
+          component={DrawerScreen4}
+          options={{
+            animationEnabled: false,
+          }}
+        />
+      ) : (
+        <RootStack.Screen
+          name="App"
+          component={DrawerScreen5}
+          options={{
+            animationEnabled: false,
+          }}
+        />
+      )
     ) : (
       <RootStack.Screen
         name="Auth"
@@ -153,19 +253,263 @@ const RootStackScreen = ({userToken}) => (
   </RootStack.Navigator>
 );
 
+//State Context => Render from Root Stack onwards
 export default () => {
   const [isLoading, setIsLoading] = React.useState(true);
   const [userToken, setUserToken] = React.useState(null);
-
+  const [userProfile, setUserProfile] = React.useState(null);
+  const [userId, setUserId] = React.useState(0);
+  const stateContext = React.useMemo(() => [userProfile, setUserProfile], [
+    userProfile,
+    setUserProfile,
+  ]);
   const authContext = React.useMemo(() => {
     return {
-      signIn: () => {
+      signIn: (email, pass) => {
         setIsLoading(false);
-        setUserToken('asdf');
+        AuthApi.login(email, pass)
+          .then(data => data.json())
+          .then(data => {
+            if (data.length > 0) {
+              //Alert.alert(data[0].user_type_id);
+              setUserToken('asdf');
+              setUserId(parseInt(data[0].user_type_id));
+              setUserProfile(data[0]);
+            }
+            if (data === false) {
+              Alert.alert('Incorrect Login');
+            }
+          });
       },
-      signUp: () => {
+      signUp: (
+        user_type_id,
+        email,
+        password,
+        first_name,
+        last_name,
+        phone_number,
+        street_address,
+        city,
+        state,
+        zip_code,
+        feeder_school,
+        current_school,
+        instrument,
+        instrument2,
+        instrument3,
+        code,
+      ) => {
         setIsLoading(false);
-        setUserToken('asdf');
+        CheckAccessCode.authAccess(code, user_type_id)
+          .then(data => data.json())
+          .then(data => {
+            if (data === true) {
+              DupRegistration.checkDup(email, user_type_id)
+                .then(dupData => dupData.json())
+                .then(dupData => {
+                  if (dupData === false) {
+                    //let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+                    //if (reg.test(email) === true){
+                    if (user_type_id === 2) {
+                      if (
+                        email != null &&
+                        password != null &&
+                        first_name != null &&
+                        last_name != null &&
+                        phone_number != null &&
+                        city != null &&
+                        state != null &&
+                        zip_code != null &&
+                        current_school != null
+                      ) {
+                        UserRegistration.userReg(
+                          user_type_id,
+                          email,
+                          password,
+                          first_name,
+                          last_name,
+                          phone_number,
+                          street_address,
+                          city,
+                          state,
+                          zip_code,
+                          feeder_school,
+                          current_school,
+                          instrument,
+                          instrument2,
+                          instrument3,
+                        )
+                          .then(regData => regData.json())
+                          .then(regData => {
+                            if (regData.length > 0) {
+                              Alert.alert('Welcome to Music Doors');
+                              setUserToken('asdf');
+                              setUserId(parseInt(regData[0].user_type_id));
+                              setUserProfile(regData[0]);
+                            }
+                            if (regData === false) {
+                              Alert.alert(
+                                'Unable to Register:\nTry again later',
+                              );
+                            }
+                          });
+                      }
+                    } else {
+                      Alert.alert('Please Complete All Required Fields');
+                    }
+                    if (user_type_id === 3) {
+                      if (
+                        email != false &&
+                        password != false &&
+                        first_name != false &&
+                        last_name != false &&
+                        city != false &&
+                        state != false &&
+                        zip_code != false &&
+                        current_school != false &&
+                        feeder_school != false &&
+                        instrument != false
+                      ) {
+                        UserRegistration.userReg(
+                          user_type_id,
+                          email,
+                          password,
+                          first_name,
+                          last_name,
+                          phone_number,
+                          street_address,
+                          city,
+                          state,
+                          zip_code,
+                          feeder_school,
+                          current_school,
+                          instrument,
+                          instrument2,
+                          instrument3,
+                        )
+                          .then(regData => regData.json())
+                          .then(regData => {
+                            if (regData.length > 0) {
+                              Alert.alert('Welcome to Music Doors');
+                              setUserToken('asdf');
+                              setUserId(parseInt(regData[0].user_type_id));
+                              setUserProfile(regData[0]);
+                            }
+                            if (regData === false) {
+                              Alert.alert(
+                                'Unable to Register:\nTry again later',
+                              );
+                            }
+                          });
+                      }
+                    } else {
+                      Alert.alert('Please Complete All Required Fields');
+                    }
+                    if (user_type_id === 4) {
+                      if (
+                        email != null &&
+                        password != null &&
+                        first_name != null &&
+                        last_name != null &&
+                        phone_number != null &&
+                        city != null &&
+                        state != null &&
+                        zip_code != null &&
+                        feeder_school != null &&
+                        instrument != null
+                      ) {
+                        UserRegistration.userReg(
+                          user_type_id,
+                          email,
+                          password,
+                          first_name,
+                          last_name,
+                          phone_number,
+                          street_address,
+                          city,
+                          state,
+                          zip_code,
+                          feeder_school,
+                          current_school,
+                          instrument,
+                          instrument2,
+                          instrument3,
+                        )
+                          .then(regData => regData.json())
+                          .then(regData => {
+                            if (regData.length > 0) {
+                              Alert.alert('Welcome to Music Doors');
+                              setUserToken('asdf');
+                              setUserId(parseInt(regData[0].user_type_id));
+                              setUserProfile(regData[0]);
+                            }
+                            if (regData === false) {
+                              Alert.alert(
+                                'Unable to Register:\nTry again later',
+                              );
+                            }
+                          });
+                      }
+                    } else {
+                      Alert.alert('Please Complete All Required Fields');
+                    }
+                    if (user_type_id === 5) {
+                      if (
+                        email != null &&
+                        password != null &&
+                        first_name != null &&
+                        last_name != null &&
+                        city != null &&
+                        street_address != null &&
+                        state != null &&
+                        zip_code != null &&
+                        instrument != null
+                      ) {
+                        UserRegistration.userReg(
+                          user_type_id,
+                          email,
+                          password,
+                          first_name,
+                          last_name,
+                          phone_number,
+                          street_address,
+                          city,
+                          state,
+                          zip_code,
+                          feeder_school,
+                          current_school,
+                          instrument,
+                          instrument2,
+                          instrument3,
+                        )
+                          .then(regData => regData.json())
+                          .then(regData => {
+                            if (regData.length > 0) {
+                              Alert.alert('Welcome to Music Doors');
+                              setUserToken('asdf');
+                              setUserId(parseInt(regData[0].user_type_id));
+                              setUserProfile(regData[0]);
+                            }
+                            if (regData === false) {
+                              Alert.alert(
+                                'Unable to Register:\nTry again later',
+                              );
+                            }
+                          });
+                      }
+                    } else {
+                      Alert.alert('Please Complete All Required Fields');
+                    }
+                    //}
+                  } else {
+                    Alert.alert('Account Already Exists');
+                  }
+                });
+            }
+            if (data === false) {
+              Alert.alert('Invalid Access Code');
+            }
+          });
       },
       signOut: () => {
         setIsLoading(false);
@@ -183,12 +527,14 @@ export default () => {
   if (isLoading) {
     return <Splash />;
   }
-  
+
   return (
     <AuthContext.Provider value={authContext}>
-      <NavigationContainer>
-        <RootStackScreen userToken={userToken} />
-      </NavigationContainer>
+      <StateContext.Provider value={stateContext}>
+        <NavigationContainer>
+          <RootStackScreen userToken={userToken} userId={userId} />
+        </NavigationContainer>
+      </StateContext.Provider>
     </AuthContext.Provider>
   );
 };
