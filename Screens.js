@@ -113,6 +113,7 @@ Administrator Screens
 */
 export const AdminProfile = ({navigation}) => {
   const {signOut} = React.useContext(AuthContext);
+
   const stateContext = React.useContext(StateContext);
   const [userProfile, setUserProfile] = stateContext;
   return (
@@ -142,7 +143,7 @@ export const DirectorCreateAccount = () => {
   const [last_name, setLName] = React .useState(null);
   const [phone_number, setPN] = React. useState(null);
   const [city, setCity] = React.useState(null);
-  const [state, setState] = React.useState(null);
+  const [st, setS] = React.useState(null);
   const [zip_code, setZC] = React.useState(null);
   const [current_school, setCS] = React.useState(null);
 
@@ -205,7 +206,7 @@ export const DirectorCreateAccount = () => {
         placeholder="Enter State"
         underlineColorAndroid="transparent"
         style={styles.TextInputStyleClass}
-        onChangeText={val => setState(val)}
+        onChangeText={val => setS(val)}
       />
 
       <TextInput
@@ -223,7 +224,7 @@ export const DirectorCreateAccount = () => {
       <TouchableOpacity
         activeOpacity={0.4}
         style={styles.TouchableOpacityStyle}
-        onPress={() => signUp(user_type_id,email,password,first_name,last_name,phone_number, street_address, city,state,zip_code,feeder_school,current_school,instrument,instrument_2,instrument_3,code)}>
+        onPress={() => signUp(user_type_id,email,password,first_name,last_name,phone_number, street_address, city,st,zip_code,feeder_school,current_school,instrument,instrument_2,instrument_3,code)}>
         <Text style={styles.TextStyle}> Create Account </Text>
       </TouchableOpacity>
     </ScreenContainer>
@@ -261,7 +262,7 @@ export const StudentCreateAccount = () => {
   const [current_school, setCS] = React.useState(false);
   const [feeder_school, setFS] = React.useState(false);
   const [city, setCity] = React.useState(false);
-  const [state, setState] = React.useState(false);
+  const [st, setS] = React.useState(false);
   const [zip_code, setZC] = React.useState(false);
 
   const [code, setAccessCode] = React.useState(0);
@@ -312,10 +313,46 @@ export const StudentCreateAccount = () => {
         style={styles.TextInputStyleClass}
         onChangeText={val => setLName(val)}
       />
+
+      <TextInput
+        placeholder="Enter City"
+        underlineColorAndroid="transparent"
+        style={styles.TextInputStyleClass}
+        onChangeText={val => setCity(val)}
+      />
+
+      <TextInput
+        placeholder="Enter State"
+        underlineColorAndroid="transparent"
+        style={styles.TextInputStyleClass}
+        onChangeText={val => setS(val)}
+      />
+
+      <TextInput
+        placeholder="Enter Zip Code"
+        underlineColorAndroid="transparent"
+        style={styles.TextInputStyleClass}
+        onChangeText={val => setZC(val)}
+      />
+
+      <TextInput
+        placeholder="Enter Current School"
+        underlineColorAndroid="transparent"
+        style={styles.TextInputStyleClass}
+        onChangeText={val => setCS(val)}
+      />
+
+      <TextInput
+        placeholder="Enter Feeder High School"
+        underlineColorAndroid="transparent"
+        style={styles.TextInputStyleClass}
+        onChangeText={val => setFS(val)}
+      />
+
       <SearchableDropdown
         onTextChange={text => console.log(text)}
         //On text change listner on the searchable input
-        onItemSelect={item => setInstrument3(JSON.stringify(item.name))}
+        onItemSelect={item => setInstrument(item.name)}
         //onItemSelect called after the selection from the dropdown
         containerStyle={styles.ddContainerStyle}
         //suggestion container style
@@ -337,7 +374,7 @@ export const StudentCreateAccount = () => {
       <SearchableDropdown
         onTextChange={text => console.log(text)}
         //On text change listner on the searchable input
-        onItemSelect={item => setInstrument2(JSON.stringify(item.name))}
+        onItemSelect={item => setInstrument2(item.name)}
         //onItemSelect called after the selection from the dropdown
         containerStyle={styles.ddContainerStyle}
         //suggestion container style
@@ -359,7 +396,7 @@ export const StudentCreateAccount = () => {
       <SearchableDropdown
         onTextChange={text => console.log(text)}
         //On text change listner on the searchable input
-        onItemSelect={item => setInstrument3(JSON.stringify(item.name))}
+        onItemSelect={item => setInstrument3(item.name)}
         //onItemSelect called after the selection from the dropdown
         containerStyle={styles.ddContainerStyle}
         //suggestion container style
@@ -378,40 +415,6 @@ export const StudentCreateAccount = () => {
         underlineColorAndroid="transparent"
         //To remove the underline from the android input
       />
-      <TextInput
-        placeholder="Enter Current School"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setCS(val)}
-      />
-
-      <TextInput
-        placeholder="Enter Feeder High School"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setFS(val)}
-      />
-
-      <TextInput
-        placeholder="Enter City"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setCity(val)}
-      />
-
-      <TextInput
-        placeholder="Enter State"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setState(val)}
-      />
-
-      <TextInput
-        placeholder="Enter Zip Code"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setZC(val)}
-      />
 
       <TextInput
         placeholder="Access Code"
@@ -423,7 +426,7 @@ export const StudentCreateAccount = () => {
       <TouchableOpacity
         activeOpacity={0.4}
         style={styles.TouchableOpacityStyle}
-        onPress={() => signUp(user_type_id,email,password,first_name,last_name,phone_number, street_address, city,state,zip_code,feeder_school,current_school,instrument,instrument_2,instrument_3,code)}>
+        onPress={() => signUp(user_type_id,email,password,first_name,last_name,phone_number, street_address, city,st,zip_code,feeder_school,current_school,instrument,instrument_2,instrument_3,code)}>
         <Text style={styles.TextStyle}> Create Account </Text>
       </TouchableOpacity>
     </ScreenContainer>
@@ -463,7 +466,7 @@ export const PrivateStudentCreateAccount = () => {
   const [instrument_2, setInstrument2] = React.useState('');
   const [instrument_3, setInstrument3] = React.useState('');
   const [city, setCity] = React.useState('');
-  const [state, setState] = React.useState('');
+  const [st, setS] = React.useState('');
   const [zip_code, setZC] = React.useState(0);
 
   const [code, setAccessCode] = React.useState(0);
@@ -516,10 +519,29 @@ export const PrivateStudentCreateAccount = () => {
         style={styles.TextInputStyleClass}
         onChangeText={val => setLName(val)}
       />
+      <TextInput
+        placeholder="Enter City"
+        underlineColorAndroid="transparent"
+        style={styles.TextInputStyleClass}
+        onChangeText={val => setCity(val)}
+      />
+      <TextInput
+        placeholder="Enter State"
+        underlineColorAndroid="transparent"
+        style={styles.TextInputStyleClass}
+        onChangeText={val => setS(val)}
+      />
+
+      <TextInput
+        placeholder="Enter Zip Code"
+        underlineColorAndroid="transparent"
+        style={styles.TextInputStyleClass}
+        onChangeText={val => setZC(val)}
+      />
       <SearchableDropdown
         onTextChange={text => console.log(text)}
         //On text change listner on the searchable input
-        onItemSelect={item => setInstrument(JSON.stringify(item.name))}
+        onItemSelect={item => setInstrument(item.name)}
         //onItemSelect called after the selection from the dropdown
         containerStyle={styles.ddContainerStyle}
         //suggestion container style
@@ -541,7 +563,7 @@ export const PrivateStudentCreateAccount = () => {
       <SearchableDropdown
         onTextChange={text => console.log(text)}
         //On text change listner on the searchable input
-        onItemSelect={item => setInstrument2(JSON.stringify(item.name))}
+        onItemSelect={item => setInstrument2(item.name)}
         //onItemSelect called after the selection from the dropdown
         containerStyle={styles.ddContainerStyle}
         //suggestion container style
@@ -563,7 +585,7 @@ export const PrivateStudentCreateAccount = () => {
       <SearchableDropdown
         onTextChange={text => console.log(text)}
         //On text change listner on the searchable input
-        onItemSelect={item => setInstrument3(JSON.stringify(item.name))}
+        onItemSelect={item => setInstrument3(item.name)}
         //onItemSelect called after the selection from the dropdown
         containerStyle={styles.ddContainerStyle}
         //suggestion container style
@@ -583,25 +605,6 @@ export const PrivateStudentCreateAccount = () => {
         //To remove the underline from the android input
       />
       <TextInput
-        placeholder="Enter City"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setCity(val)}
-      />
-      <TextInput
-        placeholder="Enter State"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setState(val)}
-      />
-
-      <TextInput
-        placeholder="Enter Zip Code"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setZC(val)}
-      />
-      <TextInput
         placeholder="Access Code"
         underlineColorAndroid="transparent"
         style={styles.TextInputStyleClass}
@@ -610,7 +613,7 @@ export const PrivateStudentCreateAccount = () => {
       <TouchableOpacity
         activeOpacity={0.4}
         style={styles.TouchableOpacityStyle}
-        onPress={() => signUp(user_type_id, email, password, first_name, last_name, phone_number, street_address, city, state, zip_code, feeder_school, current_school, instrument, instrument_2, instrument_3, code)}>
+        onPress={() => signUp(user_type_id, email, password, first_name, last_name, phone_number, street_address, city, st, zip_code, feeder_school, current_school, instrument, instrument_2, instrument_3, code)}>
         <Text style={styles.TextStyle}> Create Account </Text>
       </TouchableOpacity>
     </ScreenContainer>
@@ -649,7 +652,7 @@ export const InstructorCreateAccount = () => {
   const [phone_number, setPN] = React. useState('');
   const [feeder_school, setFS] = React.useState('');
   const [city, setCity] = React.useState('');
-  const [state, setState] = React.useState('');
+  const [st, setS] = React.useState('');
   const [zip_code, setZC] = React.useState(0);
   const [instrument, setInstrument] = React.useState('');
   const [instrument_2, setInstrument2] = React.useState('');
@@ -724,7 +727,7 @@ export const InstructorCreateAccount = () => {
         placeholder="Enter State"
         underlineColorAndroid="transparent"
         style={styles.TextInputStyleClass}
-        onChangeText={val => setState(val)}
+        onChangeText={val => setS(val)}
       />
       <TextInput
         placeholder="Enter Zip Code"
@@ -741,7 +744,7 @@ export const InstructorCreateAccount = () => {
       <SearchableDropdown
         onTextChange={text => console.log(text)}
         //On text change listner on the searchable input
-        onItemSelect={item => setInstrument(JSON.stringify(item))}
+        onItemSelect={item => setInstrument(item.name)}
         //onItemSelect called after the selection from the dropdown
         containerStyle={styles.ddContainerStyle}
         //suggestion container style
@@ -763,7 +766,7 @@ export const InstructorCreateAccount = () => {
       <SearchableDropdown
         onTextChange={text => console.log(text)}
         //On text change listner on the searchable input
-        onItemSelect={item => setInstrument2(JSON.stringify(item))}
+        onItemSelect={item => setInstrument2(item.name)}
         //onItemSelect called after the selection from the dropdown
         containerStyle={styles.ddContainerStyle}
         //suggestion container style
@@ -785,7 +788,7 @@ export const InstructorCreateAccount = () => {
       <SearchableDropdown
         onTextChange={text => console.log(text)}
         //On text change listner on the searchable input
-        onItemSelect={item => setInstrument3(JSON.stringify(item))}
+        onItemSelect={item => setInstrument3(item.name)}
         //onItemSelect called after the selection from the dropdown
         containerStyle={styles.ddContainerStyle}
         //suggestion container style
@@ -813,7 +816,7 @@ export const InstructorCreateAccount = () => {
       <TouchableOpacity
         activeOpacity={0.4}
         style={styles.TouchableOpacityStyle}
-        onPress={() => signUp(user_type_id,email,password,first_name,last_name,phone_number, street_address, city,state,zip_code,feeder_school,current_school,instrument,instrument_2,instrument_3,code)}>
+        onPress={() => signUp(user_type_id,email,password,first_name,last_name,phone_number, street_address, city,st,zip_code,feeder_school,current_school,instrument,instrument_2,instrument_3,code)}>
         <Text style={styles.TextStyle}> Create Account </Text>
       </TouchableOpacity>
     </ScreenContainer>

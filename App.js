@@ -290,13 +290,13 @@ export default () => {
         phone_number,
         street_address,
         city,
-        state,
+        st,
         zip_code,
         feeder_school,
         current_school,
         instrument,
-        instrument2,
-        instrument3,
+        instrument_2,
+        instrument_3,
         code,
       ) => {
         setIsLoading(false);
@@ -318,7 +318,7 @@ export default () => {
                         last_name != null &&
                         phone_number != null &&
                         city != null &&
-                        state != null &&
+                        st != null &&
                         zip_code != null &&
                         current_school != null
                       ) {
@@ -331,13 +331,13 @@ export default () => {
                           phone_number,
                           street_address,
                           city,
-                          state,
+                          st,
                           zip_code,
                           feeder_school,
                           current_school,
                           instrument,
-                          instrument2,
-                          instrument3,
+                          instrument_2,
+                          instrument_3,
                         )
                           .then(regData => regData.json())
                           .then(regData => {
@@ -353,22 +353,22 @@ export default () => {
                               );
                             }
                           });
+                      } else {
+                        Alert.alert('Please Complete All Required Fields');
                       }
-                    } else {
-                      Alert.alert('Please Complete All Required Fields');
                     }
                     if (user_type_id === 3) {
                       if (
-                        email != false &&
-                        password != false &&
-                        first_name != false &&
-                        last_name != false &&
-                        city != false &&
-                        state != false &&
-                        zip_code != false &&
-                        current_school != false &&
-                        feeder_school != false &&
-                        instrument != false
+                        email !== false &&
+                        password !== false &&
+                        first_name !== false &&
+                        last_name !== false &&
+                        city !== false &&
+                        st !== false &&
+                        zip_code !== false &&
+                        current_school !== false &&
+                        feeder_school !== false &&
+                        instrument !== false
                       ) {
                         UserRegistration.userReg(
                           user_type_id,
@@ -379,13 +379,13 @@ export default () => {
                           phone_number,
                           street_address,
                           city,
-                          state,
+                          st,
                           zip_code,
                           feeder_school,
                           current_school,
                           instrument,
-                          instrument2,
-                          instrument3,
+                          instrument_2,
+                          instrument_3,
                         )
                           .then(regData => regData.json())
                           .then(regData => {
@@ -401,9 +401,9 @@ export default () => {
                               );
                             }
                           });
+                      } else {
+                        Alert.alert('Please Complete All Required Fields');
                       }
-                    } else {
-                      Alert.alert('Please Complete All Required Fields');
                     }
                     if (user_type_id === 4) {
                       if (
@@ -413,9 +413,8 @@ export default () => {
                         last_name != null &&
                         phone_number != null &&
                         city != null &&
-                        state != null &&
+                        st != null &&
                         zip_code != null &&
-                        feeder_school != null &&
                         instrument != null
                       ) {
                         UserRegistration.userReg(
@@ -427,13 +426,13 @@ export default () => {
                           phone_number,
                           street_address,
                           city,
-                          state,
+                          st,
                           zip_code,
                           feeder_school,
                           current_school,
                           instrument,
-                          instrument2,
-                          instrument3,
+                          instrument_2,
+                          instrument_3,
                         )
                           .then(regData => regData.json())
                           .then(regData => {
@@ -449,9 +448,9 @@ export default () => {
                               );
                             }
                           });
+                      } else {
+                        Alert.alert('Please Complete All Required Fields');
                       }
-                    } else {
-                      Alert.alert('Please Complete All Required Fields');
                     }
                     if (user_type_id === 5) {
                       if (
@@ -461,7 +460,7 @@ export default () => {
                         last_name != null &&
                         city != null &&
                         street_address != null &&
-                        state != null &&
+                        st != null &&
                         zip_code != null &&
                         instrument != null
                       ) {
@@ -474,13 +473,13 @@ export default () => {
                           phone_number,
                           street_address,
                           city,
-                          state,
+                          st,
                           zip_code,
                           feeder_school,
                           current_school,
                           instrument,
-                          instrument2,
-                          instrument3,
+                          instrument_2,
+                          instrument_3,
                         )
                           .then(regData => regData.json())
                           .then(regData => {
@@ -496,9 +495,9 @@ export default () => {
                               );
                             }
                           });
+                      } else {
+                        Alert.alert('Please Complete All Required Fields');
                       }
-                    } else {
-                      Alert.alert('Please Complete All Required Fields');
                     }
                     //}
                   } else {

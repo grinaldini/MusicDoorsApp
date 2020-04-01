@@ -1,5 +1,5 @@
 <?php
-include 'DBConfig.php';
+include '../../DBConfig.php';
 
 // Create connection
 $conn = new mysqli($HostName, $HostUser, $HostPass, $DatabaseName);
@@ -10,7 +10,7 @@ if ($conn->connect_error) {
 }
 
 // Creating SQL command to fetch all records from Table.
-$sql = "SELECT * FROM mainTable WHERE user_type_id = 3 OR user_type_is = 4 ";
+$sql = "SELECT * FROM mainTable WHERE user_type_id = 2";
 
 $result = $conn->query($sql);
 
