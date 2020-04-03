@@ -106,9 +106,15 @@ export const SignIn = () => {
   );
 };
 
+
+//For all screens use userProfile.(attribute from mainTable on host gator) to get user attributes (from state context defined in App.js)
+
 /*
 Administrator Screens
   + Profile Screen
+  + Homes Screen
+  + Code Generator Screen
+
   
 */
 export const AdminProfile = ({navigation}) => {
@@ -119,13 +125,67 @@ export const AdminProfile = ({navigation}) => {
   return (
     <ScreenContainer>
       <Text>
-        Admin Profile Screen{userProfile ? userProfile.username : 'abc'}
+        Admin Profile Screen {userProfile ? userProfile.email : 'abc'}
       </Text>
+      <Button title="Edit Admin Profile" onPress={() => navigation.push('Edit Profile',{name: 'Edit Admin Profile '})}/>
       <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
       <Button title="Sign Out" onPress={() => signOut()} />
     </ScreenContainer>
   );
 };
+
+
+export const AdminHome = ({navigation}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+
+  return (
+    <ScreenContainer>
+      <Text>Master List Screen</Text>
+      <Text>{userProfile ? userProfile.email : 'abc'}</Text>
+      <Button
+        title="User Lists"
+        onPress={() =>
+          navigation.push('Details', {name: 'React Native by Example '})
+        }
+      />
+      <Button
+        title="Private Student List"
+        onPress={() =>
+          navigation.push('Details', {name: 'React Native School'})
+        }
+      />
+      <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
+    </ScreenContainer>
+  );
+};
+
+export const AdminCodeGenerator = ({navigation}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+
+  return (
+    <ScreenContainer>
+      <Text>Code Generator</Text>
+      <Text>{userProfile ? userProfile.email : 'abc'}</Text>
+      <Button
+        title="Create Codes"
+        onPress={() =>
+          navigation.push('Details', {name: 'React Native by Example '})
+        }
+      />
+      <Button
+        title="Edit Codes"
+        onPress={() =>
+          navigation.push('Details', {name: 'React Native School'})
+        }
+      />
+      <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
+    </ScreenContainer>
+  );
+};
+
+
 
 /*
 Director Screens
@@ -236,8 +296,34 @@ export const DirectorProfile = ({navigation}) => {
   return (
     <ScreenContainer>
       <Text>Director Profile Screen</Text>
+      <Button title="Edit Director Profile" onPress={() => navigation.push('Edit Profile', {name: 'Edit Director Profile '})}/>
       <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
       <Button title="Sign Out" onPress={() => signOut()} />
+    </ScreenContainer>
+  );
+};
+
+export const DirectorHome = ({navigation}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+
+  return (
+    <ScreenContainer>
+      <Text>Home</Text>
+      <Text>{userProfile ? userProfile.email : 'abc'}</Text>
+      <Button
+        title="User Lists"
+        onPress={() =>
+          navigation.push('Details', {name: 'React Native by Example '})
+        }
+      />
+      <Button
+        title="Appointment List"
+        onPress={() =>
+          navigation.push('Details', {name: 'React Native School'})
+        }
+      />
+      <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
     </ScreenContainer>
   );
 };
@@ -432,19 +518,44 @@ export const StudentCreateAccount = () => {
     </ScreenContainer>
   );
 };
+
 export const StudentProfile = ({navigation}) => {
   const {signOut} = React.useContext(AuthContext);
 
   return (
     <ScreenContainer>
       <Text>Student Profile Screen</Text>
+      <Button title="Edit Student Profile" onPress={() => navigation.push('Edit Profile', {name: 'Edit Student Profile '})}/>
       <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
       <Button title="Sign Out" onPress={() => signOut()} />
     </ScreenContainer>
   );
 };
 
+export const StudentHome = ({navigation}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
 
+  return (
+    <ScreenContainer>
+      <Text>Student Home</Text>
+      <Text>{userProfile ? userProfile.email : 'abc'}</Text>
+      <Button
+        title="Instructor List"
+        onPress={() =>
+          navigation.push('Details', {name: 'React Native by Example '})
+        }
+      />
+      <Button
+        title="Appointment List"
+        onPress={() =>
+          navigation.push('Details', {name: 'React Native School'})
+        }
+      />
+      <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
+    </ScreenContainer>
+  );
+};
 
 
 /*
@@ -456,7 +567,6 @@ export const PrivateStudentCreateAccount = () => {
   const {signUp} = React.useContext(AuthContext);
 
   const user_type_id = 4;
-  
 
   const [email, setEmail] = React .useState('');
   const [password, setPass] = React .useState('');
@@ -492,8 +602,8 @@ export const PrivateStudentCreateAccount = () => {
   ];
 
   return (
-  <ScreenContainer>
-    <TextInput
+    <ScreenContainer>
+      <TextInput
         placeholder="Enter Email"
         underlineColorAndroid="transparent"
         style={styles.TextInputStyleClass}
@@ -626,8 +736,35 @@ export const PrivateStudentProfile = ({navigation}) => {
   return (
     <ScreenContainer>
       <Text>Private Student Profile Screen</Text>
+      <Button title="Edit Private Student Profile" onPress={() => navigation.push('Edit Profile', {name: 'Edit Private Student Profile'})}/>
       <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
       <Button title="Sign Out" onPress={() => signOut()} />
+    </ScreenContainer>
+  );
+};
+
+
+export const PrivateStudentHome = ({navigation}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+
+  return (
+    <ScreenContainer>
+      <Text>Private Student Home</Text>
+      <Text>{userProfile ? userProfile.email : 'abc'}</Text>
+      <Button
+        title="Instructor List"
+        onPress={() =>
+          navigation.push('Details', {name: 'React Native by Example '})
+        }
+      />
+      <Button
+        title="Appointment List"
+        onPress={() =>
+          navigation.push('Details', {name: 'React Native School'})
+        }
+      />
+      <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
     </ScreenContainer>
   );
 };
@@ -829,36 +966,155 @@ export const InstructorProfile = ({navigation}) => {
   return (
     <ScreenContainer>
       <Text>Instructor Profile Screen</Text>
+      <Button title="Edit Instructor Profile" onPress={() => navigation.push('Edit Profile', {name: 'Edit Instructor Profile'})}/>
       <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
       <Button title="Sign Out" onPress={() => signOut()} />
     </ScreenContainer>
   );
 };
 
+export const InstructorHome = ({navigation}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+
+  return (
+    <ScreenContainer>
+      <Text>InstructorHome</Text>
+      <Text>{userProfile ? userProfile.email : 'abc'}</Text>
+      <Button
+        title="Director List"
+        onPress={() =>
+          navigation.push('Details', {name: 'React Native by Example '})
+        }
+      />
+      <Button
+        title="Private Student List"
+        onPress={() =>
+          navigation.push('Details', {name: 'React Native School'})
+        }
+      />
+      <Button
+        title="Appointment List"
+        onPress={() =>
+          navigation.push('Details', {name: 'React Native School'})
+        }
+      />
+      <Button
+        title="Calendar"
+        onPress={() =>
+          navigation.push('Details', {name: 'React Native School'})
+        }
+      />
+      <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
+    </ScreenContainer>
+  );
+};
+
+
+
+//In Progress Edit Profile Screens
+
+export const EditAdminProfile = ({route}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+
+  return (
+    <ScreenContainer>
+      <Text>Details For Administrator</Text>
+      {route.params.name && <Text>{route.params.name}</Text>}
+    </ScreenContainer>
+  );
+};
+
+export const EditDirectorProfile = ({route}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+
+  return(
+    <ScreenContainer>
+      <Text>Details For Director</Text>
+      {route.params.name && <Text>{route.params.name}</Text>}
+    </ScreenContainer>
+  );
+};
+
+export const EditStudentProfile = ({route}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+
+  return(
+    <ScreenContainer>
+      <Text>Details For Student</Text>
+      {route.params.name && <Text>{route.params.name}</Text>}
+    </ScreenContainer>
+  );
+};
+export const EditPrivateStudentProfile = ({route}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+
+  return(
+    <ScreenContainer>
+      <Text>Details For Private Student</Text>
+      {route.params.name && <Text>{route.params.name}</Text>}
+    </ScreenContainer>
+  );
+};
+export const EditInstructorProfile = ({route}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+
+  return(
+    <ScreenContainer>
+      <Text>Details For Instructor</Text>
+      {route.params.name && <Text>{route.params.name}</Text>}
+    </ScreenContainer>
+  );
+};
+
+//Loading display for all users
+export const Splash = () => (
+  <ScreenContainer>
+    <Text>Loading...</Text>
+  </ScreenContainer>
+);
+
 
 
 /////////////////////////////Change to appropriate functional components for each user type
 
 //Home => Start nesting lists
-export const Home = ({navigation}) => (
-  <ScreenContainer>
-    <Text>Master List Screen</Text>
-    <Button
-      title="React Native by Example"
-      onPress={() =>
-        navigation.push('Details', {name: 'React Native by Example '})
-      }
-    />
-    <Button
-      title="React Native School"
-      onPress={() => navigation.push('Details', {name: 'React Native School'})}
-    />
-    <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
-  </ScreenContainer>
-);
+export const Home = ({navigation}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
 
+  return (
+    <ScreenContainer>
+      <Text>Master List Screen</Text>
+      <Text>{userProfile ? userProfile.email : 'abc'}</Text>
+      <Button
+        title="React Native by Example"
+        onPress={() =>
+          navigation.push('Details', {name: 'React Native by Example '})
+        }
+      />
+      <Button
+      title="React Native School"
+        onPress={() =>
+          navigation.push('Details', {name: 'React Native School'})
+        }
+      />
+      <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
+    </ScreenContainer>
+  );
+};
 //Search & Search2 => Student Appointment Status, Instructor Time Slot Creator and Appointment Confirmation
-export const Search = ({navigation}) => (
+export const Search = ({navigation}) => {
+  
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+  
+  return (
   <ScreenContainer>
     <Text>Search Screen</Text>
     <Button title="Search 2" onPress={() => navigation.push('Search2')} />
@@ -872,31 +1128,38 @@ export const Search = ({navigation}) => (
       }}
     />
   </ScreenContainer>
-);
+  );
+};
 
-export const Search2 = () => (
+//Create copies of Details and Search2 for creating new screens
+export const Search2 = () => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+
+  return (
   <ScreenContainer>
     <Text>Search2 Screen</Text>
   </ScreenContainer>
-);
 
-//Details => Music Doors photo gallery
-export const Details = ({route}) => (
-  <ScreenContainer>
-    <Text>Details Screen</Text>
-    {route.params.name && <Text>{route.params.name}</Text>}
-  </ScreenContainer>
-);
+  );
+};
+
+//Details => Music Doors User Details
+export const Details = ({route}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+
+  return(
+    <ScreenContainer>
+      <Text>Details Screen</Text>
+      {route.params.name && <Text>{route.params.name}</Text>}
+    </ScreenContainer>
+  );
+};
 
 
 
 
-//Loading display for all users
-export const Splash = () => (
-  <ScreenContainer>
-    <Text>Loading...</Text>
-  </ScreenContainer>
-);
 
 //Style Sheet => IOS and Android
 const styles = StyleSheet.create({

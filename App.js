@@ -33,15 +33,11 @@ import DupRegistration from './API/User/dupRegistration';
 import {
   Welcome,
   SignIn,
-  AdminProfile,
-  DirectorCreateAccount,
-  DirectorProfile,
-  StudentCreateAccount,
-  StudentProfile,
-  PrivateStudentCreateAccount,
-  PrivateStudentProfile,
-  InstructorCreateAccount,
-  InstructorProfile,
+  AdminProfile, AdminHome, AdminCodeGenerator, EditAdminProfile,
+  DirectorCreateAccount, DirectorProfile, DirectorHome, EditDirectorProfile,
+  StudentCreateAccount, StudentProfile, StudentHome, EditStudentProfile,
+  PrivateStudentCreateAccount, PrivateStudentProfile, PrivateStudentHome, EditPrivateStudentProfile,
+  InstructorCreateAccount,InstructorProfile, InstructorHome, EditInstructorProfile,
   Search,
   Home,
   Details,
@@ -93,16 +89,276 @@ const AuthStackScreen = () => (
   </AuthStack.Navigator>
 );
 
-//Tabs => Bottom tabs are Home for nesting lists and "Search"(will be replaced with code generator for Admin and appointment lists for all others)
+
+// Define Bottom Tabs navigator, and the Navigator for the Bottom Tab options
+
 const Tabs = createBottomTabNavigator();
+const SearchStack = createStackNavigator();
+const HomeStack = createStackNavigator();
+
+const Drawer = createDrawerNavigator();
+
+const ProfileStack = createStackNavigator();
+
+//Administrator
+// + Bottom Tabs 
+// + Drawer
+
+const AdminTabsScreen = () => (
+  <Tabs.Navigator>
+    <Tabs.Screen name="Home" component={AdminHomeStackScreen} />
+    <Tabs.Screen name="Code Generator" component={AdminCGStackScreen} />
+  </Tabs.Navigator>
+);
+
+const AdminHomeStackScreen = () => (
+  <HomeStack.Navigator>
+    <HomeStack.Screen name="Home" component={AdminHome} />
+    <HomeStack.Screen
+      name="Details"
+      component={Details}
+      options={({route}) => ({
+        title: route.params.name,
+      })}
+    />
+  </HomeStack.Navigator>
+);
+
+const AdminCGStackScreen = () => (
+  <SearchStack.Navigator>
+    <SearchStack.Screen name="Code Generator" component={AdminCodeGenerator} />
+    <SearchStack.Screen name="Search2" component={Search2} />
+  </SearchStack.Navigator>
+);
+
+const AdminProfileStackScreen = () => (
+  <ProfileStack.Navigator>
+    <ProfileStack.Screen name="Admin Profile" component={AdminProfile} />
+    <HomeStack.Screen
+      name="Edit Profile"
+      component={EditAdminProfile}
+      options={({route}) => ({
+        title: route.params.name,
+      })}
+    />
+  </ProfileStack.Navigator>
+);
+
+
+const DrawerScreen1 = () => (
+  <Drawer.Navigator initialRouteName="Home">
+    <Drawer.Screen name="Home" component={AdminTabsScreen} />
+    <Drawer.Screen name="Profile" component={AdminProfileStackScreen} />
+  </Drawer.Navigator>
+);
+
+
+
+
+//Director
+// + Bottom Tabs 
+// + Drawer
+
+const DirectorTabsScreen = () => (
+  <Tabs.Navigator>
+    <Tabs.Screen name="Home" component={DirectorHomeStackScreen} />
+    <Tabs.Screen name="Gallery" component={GalleryStackScreen} />
+  </Tabs.Navigator>
+);
+
+const DirectorHomeStackScreen = () => (
+  <HomeStack.Navigator>
+    <HomeStack.Screen name="Home" component={DirectorHome} />
+    <HomeStack.Screen
+      name="Details"
+      component={Details}
+      options={({route}) => ({
+        title: route.params.name,
+      })}
+    />
+  </HomeStack.Navigator>
+);
+
+const DirectorProfileStackScreen = () => (
+  <ProfileStack.Navigator>
+    <ProfileStack.Screen name="Director Profile" component={DirectorProfile} />
+    <HomeStack.Screen
+      name="Edit Profile"
+      component={EditDirectorProfile}
+      options={({route}) => ({
+        title: route.params.name,
+      })}
+    />
+  </ProfileStack.Navigator>
+);
+
+const DrawerScreen2 = () => (
+  <Drawer.Navigator initialRouteName="Home">
+    <Drawer.Screen name="Home" component={DirectorTabsScreen} />
+    <Drawer.Screen name="Profile" component={DirectorProfileStackScreen} />
+  </Drawer.Navigator>
+);
+
+//Student
+// + Bottom Tabs
+// + Drawer
+
+const StudentTabsScreen = () => (
+  <Tabs.Navigator>
+    <Tabs.Screen name="Home" component={StudentHomeStackScreen} />
+    <Tabs.Screen name="Gallery" component={GalleryStackScreen} />
+  </Tabs.Navigator>
+);
+
+const StudentHomeStackScreen = () => (
+  <HomeStack.Navigator>
+    <HomeStack.Screen name="Home" component={StudentHome} />
+    <HomeStack.Screen
+      name="Details"
+      component={Details}
+      options={({route}) => ({
+        title: route.params.name,
+      })}
+    />
+  </HomeStack.Navigator>
+);
+
+const StudentProfileStackScreen = () => (
+  <ProfileStack.Navigator>
+    <ProfileStack.Screen name="Student Profile" component={StudentProfile} />
+    <HomeStack.Screen
+      name="Edit Profile"
+      component={EditStudentProfile}
+      options={({route}) => ({
+        title: route.params.name,
+      })}
+    />
+  </ProfileStack.Navigator>
+);
+
+const DrawerScreen3 = () => (
+  <Drawer.Navigator initialRouteName="Profile">
+    <Drawer.Screen name="Home" component={StudentTabsScreen} />
+    <Drawer.Screen name="Profile" component={StudentProfileStackScreen} />
+  </Drawer.Navigator>
+);
+
+
+//Private Student
+// + Bottom Tabs
+// + Drawer
+
+
+const PrivateStudentTabsScreen = () => (
+  <Tabs.Navigator>
+    <Tabs.Screen name="Home" component={PrivateStudentHomeStackScreen} />
+    <Tabs.Screen name="Gallery" component={GalleryStackScreen} />
+  </Tabs.Navigator>
+);
+
+const PrivateStudentHomeStackScreen = () => (
+  <HomeStack.Navigator>
+    <HomeStack.Screen name="Home" component={PrivateStudentHome} />
+    <HomeStack.Screen
+      name="Details"
+      component={Details}
+      options={({route}) => ({
+        title: route.params.name,
+      })}
+    />
+  </HomeStack.Navigator>
+);
+
+const PrivateStudentProfileStackScreen = () => (
+  <ProfileStack.Navigator>
+    <ProfileStack.Screen name="Private Student Profile" component={PrivateStudentProfile} />
+    <HomeStack.Screen
+      name="Edit Profile"
+      component={EditPrivateStudentProfile}
+      options={({route}) => ({
+        title: route.params.name,
+      })}
+    />
+  </ProfileStack.Navigator>
+);
+
+
+const DrawerScreen4 = () => (
+  <Drawer.Navigator initialRouteName="Profile">
+    <Drawer.Screen name="Home" component={PrivateStudentTabsScreen} />
+    <Drawer.Screen
+      name="Profile"
+      component={PrivateStudentProfileStackScreen}
+    />
+  </Drawer.Navigator>
+);
+
+//Instructor
+// + Bottom Tabs
+// + Drawer
+
+const InstructorTabsScreen = () => (
+  <Tabs.Navigator>
+    <Tabs.Screen name="Home" component={InstructorHomeStackScreen} />
+    <Tabs.Screen name="Gallery" component={GalleryStackScreen} />
+  </Tabs.Navigator>
+);
+
+const InstructorHomeStackScreen = () => (
+  <HomeStack.Navigator>
+    <HomeStack.Screen name="Home" component={InstructorHome} />
+    <HomeStack.Screen
+      name="Details"
+      component={Details}
+      options={({route}) => ({
+        title: route.params.name,
+      })}
+    />
+  </HomeStack.Navigator>
+);
+
+const InstructorProfileStackScreen = () => (
+  <ProfileStack.Navigator>
+    <ProfileStack.Screen name="Instructor Profile" component={InstructorProfile}/>
+    <HomeStack.Screen
+      name="Edit Profile"
+      component={EditInstructorProfile}
+      options={({route}) => ({
+        title: route.params.name,
+      })}
+    />
+  </ProfileStack.Navigator>
+);
+
+const DrawerScreen5 = () => (
+  <Drawer.Navigator initialRouteName="Profile">
+    <Drawer.Screen name="Home" component={InstructorTabsScreen} />
+    <Drawer.Screen name="Profile" component={InstructorProfileStackScreen} />
+  </Drawer.Navigator>
+);
+
+
+//Gallery Stack for Director, Student, Private Student, Instructor
+
+const GalleryStackScreen = () => (
+  <SearchStack.Navigator>
+    <SearchStack.Screen name="Gallery" component={Gallery} />
+    <SearchStack.Screen name="Search2" component={Search2} />
+  </SearchStack.Navigator>
+);
+
+
+
+//General User template
+
+//Tabs => Bottom tabs are Home for nesting lists and "Search"(will be replaced with code generator for Admin and appointment lists for all others)
 const TabsScreen = () => (
   <Tabs.Navigator>
     <Tabs.Screen name="Home" component={HomeStackScreen} />
     <Tabs.Screen name="Search" component={SearchStackScreen} />
   </Tabs.Navigator>
 );
-//Stack => Home  => will show lists in hierarchical order depending on user type
-const HomeStack = createStackNavigator();
+      //Stack => Home  => will show lists in hierarchical order depending on user type
 const HomeStackScreen = () => (
   <HomeStack.Navigator>
     <HomeStack.Screen name="Home" component={Home} />
@@ -115,8 +371,7 @@ const HomeStackScreen = () => (
     />
   </HomeStack.Navigator>
 );
-//Stack => "Search" Page  => will change to code generator for admin, null for director, appointment list for students and instructors
-const SearchStack = createStackNavigator();
+      //Stack => "Search" Page  => will change to code generator for admin, null for director, appointment list for students and instructors
 const SearchStackScreen = () => (
   <SearchStack.Navigator>
     <SearchStack.Screen name="Search" component={Search} />
@@ -124,76 +379,11 @@ const SearchStackScreen = () => (
   </SearchStack.Navigator>
 );
 
-///Stack => User Profile screen
-const ProfileStack = createStackNavigator();
-const AdminProfileStackScreen = () => (
-  <ProfileStack.Navigator>
-    <ProfileStack.Screen name="AdminProfile" component={AdminProfile} />
-  </ProfileStack.Navigator>
-);
-const DirectorProfileStackScreen = () => (
-  <ProfileStack.Navigator>
-    <ProfileStack.Screen name="DirectorProfile" component={DirectorProfile} />
-  </ProfileStack.Navigator>
-);
-const StudentProfileStackScreen = () => (
-  <ProfileStack.Navigator>
-    <ProfileStack.Screen name="Profile" component={StudentProfile} />
-  </ProfileStack.Navigator>
-);
-const PrivateStudentProfileStackScreen = () => (
-  <ProfileStack.Navigator>
-    <ProfileStack.Screen
-      name="DirectorProfile"
-      component={PrivateStudentProfile}
-    />
-  </ProfileStack.Navigator>
-);
-const InstructorProfileStackScreen = () => (
-  <ProfileStack.Navigator>
-    <ProfileStack.Screen name="DirectorProfile" component={InstructorProfile} />
-  </ProfileStack.Navigator>
-);
 
-//Navigator => Drawer => each user type has a different drawer
-const Drawer = createDrawerNavigator();
-const DrawerScreen1 = () => (
-  <Drawer.Navigator initialRouteName="Profile">
-    <Drawer.Screen name="Home" component={TabsScreen} />
-    <Drawer.Screen name="Profile" component={AdminProfileStackScreen} />
-  </Drawer.Navigator>
-);
 
-const DrawerScreen2 = () => (
-  <Drawer.Navigator initialRouteName="Profile">
-    <Drawer.Screen name="Home" component={TabsScreen} />
-    <Drawer.Screen name="Profile" component={DirectorProfileStackScreen} />
-  </Drawer.Navigator>
-);
 
-const DrawerScreen3 = () => (
-  <Drawer.Navigator initialRouteName="Profile">
-    <Drawer.Screen name="Home" component={TabsScreen} />
-    <Drawer.Screen name="Profile" component={StudentProfileStackScreen} />
-  </Drawer.Navigator>
-);
 
-const DrawerScreen4 = () => (
-  <Drawer.Navigator initialRouteName="Profile">
-    <Drawer.Screen name="Home" component={TabsScreen} />
-    <Drawer.Screen
-      name="Profile"
-      component={PrivateStudentProfileStackScreen}
-    />
-  </Drawer.Navigator>
-);
 
-const DrawerScreen5 = () => (
-  <Drawer.Navigator initialRouteName="Profile">
-    <Drawer.Screen name="Home" component={TabsScreen} />
-    <Drawer.Screen name="Profile" component={InstructorProfileStackScreen} />
-  </Drawer.Navigator>
-);
 
 //Stack => Root
 const RootStack = createStackNavigator();
@@ -531,7 +721,11 @@ export default () => {
     <AuthContext.Provider value={authContext}>
       <StateContext.Provider value={stateContext}>
         <NavigationContainer>
-          <RootStackScreen userToken={userToken} userId={userId} />
+          <RootStackScreen
+            userToken={userToken}
+            userId={userId}
+            userProfile={userProfile}
+          />
         </NavigationContainer>
       </StateContext.Provider>
     </AuthContext.Provider>
