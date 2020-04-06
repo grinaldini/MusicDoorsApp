@@ -22,77 +22,7 @@ import {AuthContext, StateContext} from './context';
 //import { InvalidatedProjectKind } from 'typescript';
 import SearchableDropdown from 'react-native-searchable-dropdown';
 import Lightbox from 'react-native-lightbox';
-
-const items = [
-  {
-    id: 1,
-    name: "Bassoon"
-  },
-  {
-    id: 2,
-    name: "Cello"
-  },
-  {
-    id: 3,
-    name: "Clarinet"
-  },
-  {
-    id: 4,
-    name: "Double Bass"
-  },
-  {
-    id: 5,
-    name: "Euphonium"
-  },
-  {
-    id: 6,
-    name: "Flute"
-  },
-  {
-    id: 7,
-    name: "French Horn"
-  },
-  {
-    id: 8,
-    name: "Harp"
-  },
-  {
-    id: 9,
-    name: "Oboe"
-  },
-  {
-    id: 10,
-    name: "Percussion"
-  },
-  {
-    id: 11,
-    name: "Piano"
-  },
-  {
-    id: 12,
-    name: "Saxophone"
-  },
-  {
-    id: 13,
-    name: "Trombone"
-  },
-  {
-    id: 14,
-    name: "Trumpet"
-  },
-  {
-    id: 15,
-    name: "Tuba"
-  },
-  {
-    id: 16,
-    name: "Viola"
-  },
-  {
-    id: 17,
-    name: "Violin"
-  },
-];
+import { ScrollView } from 'react-native-gesture-handler';
 
 const ScreenContainer = ({children}) => (
   <View style={styles.container}>{children}</View>
@@ -429,6 +359,21 @@ export const StudentCreateAccount = () => {
   const street_address = false;
   const phone_number = false;
 
+  const items = [
+    {
+      id: 1,
+      name: 'Violin',
+    },
+    {
+      id: 2,
+      name: 'Trumpet',
+    },
+    {
+      id: 3,
+      name: 'Clarinet',
+    },
+  ];
+
   return (
     <ScreenContainer>
       <TextInput
@@ -644,6 +589,21 @@ export const PrivateStudentCreateAccount = () => {
   const feeder_school = null;
   const current_school = null;
 
+  const items = [
+    {
+      id: 1,
+      name: 'Violin',
+    },
+    {
+      id: 2,
+      name: 'Trumpet',
+    },
+    {
+      id: 3,
+      name: 'Clarinet',
+    },
+  ];
+
   return (
     <ScreenContainer>
       <TextInput
@@ -842,6 +802,21 @@ export const InstructorCreateAccount = () => {
 
   const current_school = null;
 
+  const items = [
+    {
+      id: 1,
+      name: 'Violin',
+    },
+    {
+      id: 2,
+      name: 'Trumpet',
+    },
+    {
+      id: 3,
+      name: 'Clarinet',
+    },
+  ];
+
   return (
     <ScreenContainer>
       <TextInput
@@ -1038,6 +1013,8 @@ export const InstructorHome = ({navigation}) => {
   );
 };
 
+
+
 //In Progress Edit Profile Screens
 
 export const EditAdminProfile = ({route}) => {
@@ -1183,18 +1160,6 @@ export const Details = ({route}) => {
   );
 };
 
-//Details => Music Doors User Details
-export const Details = ({route}) => {
-  const stateContext = React.useContext(StateContext);
-  const [userProfile, setUserProfile] = stateContext;
-
-  return(
-    <ScreenContainer>
-      <Text>Details Screen</Text>
-      {route.params.name && <Text>{route.params.name}</Text>}
-    </ScreenContainer>
-  );
-};
 
 export const GalleryImage = (props) => {
 
@@ -1247,22 +1212,49 @@ export const Gallery = (props) => {
     {
       uri: 'https://upload.wikimedia.org/wikipedia/commons/2/2f/Culinary_fruits_front_view.jpg'
     },
+    {
+      uri: 'https://5.imimg.com/data5/HF/CW/MY-51857835/organic-apple-fruit-250x250.jpg'
+    },
+    {
+      uri: 'https://upload.wikimedia.org/wikipedia/commons/9/9e/Single_Orange_%28Fruit%29.jpg'
+    },
+    {
+      uri: 'https://cdn.mos.cms.futurecdn.net/42E9as7NaTaAi4A6JcuFwG-320-80.jpg'
+    },
+    {
+      uri: 'https://upload.wikimedia.org/wikipedia/commons/2/2f/Culinary_fruits_front_view.jpg'
+    },
+    {
+      uri: 'https://5.imimg.com/data5/HF/CW/MY-51857835/organic-apple-fruit-250x250.jpg'
+    },
+    {
+      uri: 'https://upload.wikimedia.org/wikipedia/commons/9/9e/Single_Orange_%28Fruit%29.jpg'
+    },
+    {
+      uri: 'https://cdn.mos.cms.futurecdn.net/42E9as7NaTaAi4A6JcuFwG-320-80.jpg'
+    },
+    {
+      uri: 'https://upload.wikimedia.org/wikipedia/commons/2/2f/Culinary_fruits_front_view.jpg'
+    },
   ];
 
   const width = Dimensions.get('window').width;
 
   return (
-    <View style={{
-      display: 'flex',
-      flexWrap: 'wrap',
-      flexDirection: 'row'
-    }}
-    key="54323">
-      {images.map((image, i) =>
-        <GalleryImage index={i} key={i} uri={image}/>)}
-    </View>
+    <ScrollView>
+      <View style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        flexDirection: 'row'
+      }}
+      key="54323">
+        {images.map((image, i) =>
+          <GalleryImage index={i} key={i} uri={image}/>)}
+      </View>
+    </ScrollView>
   );
 }
+
 
 //Style Sheet => IOS and Android
 const styles = StyleSheet.create({
