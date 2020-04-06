@@ -24,6 +24,77 @@ import SearchableDropdown from 'react-native-searchable-dropdown';
 import Lightbox from 'react-native-lightbox';
 import { ScrollView } from 'react-native-gesture-handler';
 
+const items = [
+  {
+    id: 1,
+    name: "Bassoon"
+  },
+  {
+    id: 2,
+    name: "Cello"
+  },
+  {
+    id: 3,
+    name: "Clarinet"
+  },
+  {
+    id: 4,
+    name: "Double Bass"
+  },
+  {
+    id: 5,
+    name: "Euphonium"
+  },
+  {
+    id: 6,
+    name: "Flute"
+  },
+  {
+    id: 7,
+    name: "French Horn"
+  },
+  {
+    id: 8,
+    name: "Harp"
+  },
+  {
+    id: 9,
+    name: "Oboe"
+  },
+  {
+    id: 10,
+    name: "Percussion"
+  },
+  {
+    id: 11,
+    name: "Piano"
+  },
+  {
+    id: 12,
+    name: "Saxophone"
+  },
+  {
+    id: 13,
+    name: "Trombone"
+  },
+  {
+    id: 14,
+    name: "Trumpet"
+  },
+  {
+    id: 15,
+    name: "Tuba"
+  },
+  {
+    id: 16,
+    name: "Viola"
+  },
+  {
+    id: 17,
+    name: "Violin"
+  },
+];
+
 const ScreenContainer = ({children}) => (
   <View style={styles.container}>{children}</View>
 );
@@ -359,21 +430,6 @@ export const StudentCreateAccount = () => {
   const street_address = false;
   const phone_number = false;
 
-  const items = [
-    {
-      id: 1,
-      name: 'Violin',
-    },
-    {
-      id: 2,
-      name: 'Trumpet',
-    },
-    {
-      id: 3,
-      name: 'Clarinet',
-    },
-  ];
-
   return (
     <ScreenContainer>
       <TextInput
@@ -589,21 +645,6 @@ export const PrivateStudentCreateAccount = () => {
   const feeder_school = null;
   const current_school = null;
 
-  const items = [
-    {
-      id: 1,
-      name: 'Violin',
-    },
-    {
-      id: 2,
-      name: 'Trumpet',
-    },
-    {
-      id: 3,
-      name: 'Clarinet',
-    },
-  ];
-
   return (
     <ScreenContainer>
       <TextInput
@@ -801,21 +842,6 @@ export const InstructorCreateAccount = () => {
   const [code, setAccessCode] = React.useState(0);
 
   const current_school = null;
-
-  const items = [
-    {
-      id: 1,
-      name: 'Violin',
-    },
-    {
-      id: 2,
-      name: 'Trumpet',
-    },
-    {
-      id: 3,
-      name: 'Clarinet',
-    },
-  ];
 
   return (
     <ScreenContainer>
