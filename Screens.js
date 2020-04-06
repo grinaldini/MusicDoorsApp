@@ -12,6 +12,7 @@ import {
   ActivityIndicator,
   ImageBackground,
   Image,
+  Dimensions,
 } from 'react-native';
 
 import {AuthContext, StateContext} from './context';
@@ -20,6 +21,79 @@ import {AuthContext, StateContext} from './context';
 //import { monitorEventLoopDelay } from 'perf_hooks';
 //import { InvalidatedProjectKind } from 'typescript';
 import SearchableDropdown from 'react-native-searchable-dropdown';
+import { ScrollView } from 'react-native-gesture-handler';
+import Lightbox from 'react-native-lightbox';
+
+const items = [
+  {
+    id: 1,
+    name: "Bassoon"
+  },
+  {
+    id: 2,
+    name: "Cello"
+  },
+  {
+    id: 3,
+    name: "Clarinet"
+  },
+  {
+    id: 4,
+    name: "Double Bass"
+  },
+  {
+    id: 5,
+    name: "Euphonium"
+  },
+  {
+    id: 6,
+    name: "Flute"
+  },
+  {
+    id: 7,
+    name: "French Horn"
+  },
+  {
+    id: 8,
+    name: "Harp"
+  },
+  {
+    id: 9,
+    name: "Oboe"
+  },
+  {
+    id: 10,
+    name: "Percussion"
+  },
+  {
+    id: 11,
+    name: "Piano"
+  },
+  {
+    id: 12,
+    name: "Saxophone"
+  },
+  {
+    id: 13,
+    name: "Trombone"
+  },
+  {
+    id: 14,
+    name: "Trumpet"
+  },
+  {
+    id: 15,
+    name: "Tuba"
+  },
+  {
+    id: 16,
+    name: "Viola"
+  },
+  {
+    id: 17,
+    name: "Violin"
+  },
+];
 
 const ScreenContainer = ({children}) => (
   <View style={styles.container}>{children}</View>
@@ -269,21 +343,6 @@ export const StudentCreateAccount = () => {
   const street_address = false;
   const phone_number = false;
 
-  const items = [
-    {
-      id: 1,
-      name: 'Violin',
-    },
-    {
-      id: 2,
-      name: 'Trumpet',
-    },
-    {
-      id: 3,
-      name: 'Clarinet',
-    },
-  ];
-
   return (
     <ScreenContainer>
       <TextInput
@@ -473,21 +532,6 @@ export const PrivateStudentCreateAccount = () => {
   const feeder_school = null;
   const current_school = null;
 
-  const items = [
-    {
-      id: 1,
-      name: 'Violin',
-    },
-    {
-      id: 2,
-      name: 'Trumpet',
-    },
-    {
-      id: 3,
-      name: 'Clarinet',
-    },
-  ];
-
   return (
   <ScreenContainer>
     <TextInput
@@ -659,21 +703,6 @@ export const InstructorCreateAccount = () => {
 
   const current_school = null;
 
-  const items = [
-    {
-      id: 1,
-      name: 'Violin',
-    },
-    {
-      id: 2,
-      name: 'Trumpet',
-    },
-    {
-      id: 3,
-      name: 'Clarinet',
-    },
-  ];
-
   return (
     <ScreenContainer>
       <TextInput
@@ -841,9 +870,9 @@ export const Home = ({navigation}) => (
   <ScreenContainer>
     <Text>Master List Screen</Text>
     <Button
-      title="React Native by Example"
+      title="Gallery"
       onPress={() =>
-        navigation.push('Details', {name: 'React Native by Example '})
+        navigation.push('Details', {name: 'Gallery'})
       }
     />
     <Button
@@ -877,14 +906,90 @@ export const Search2 = () => (
   </ScreenContainer>
 );
 
-//Details => Music Doors photo gallery
-export const Details = ({route}) => (
-  <ScreenContainer>
-    <Text>Details Screen</Text>
-    {route.params.name && <Text>{route.params.name}</Text>}
-  </ScreenContainer>
-);
+export const GalleryImage = (props) => {
 
+  const gridStyle = {
+    width: "100%", 
+    height: "100%",
+    margin: "auto",
+    resizeMode: "cover",
+    borderWidth: 3,
+    borderColor: "#fff"
+  };
+
+  const activeStyle = {
+    width: "100%", 
+    height: "100%",
+    margin: "auto",
+    resizeMode: "contain",
+    borderWidth: 0
+  };
+
+  const screenWidth = Dimensions.get('window').width;
+  return (
+    <View
+      style={{
+        width: screenWidth/2,
+        height: screenWidth/2,
+        padding: 2
+      }}>
+        <Lightbox activeProps={ activeStyle } backgroundColor="rgba(0, 0, 0, 0.8)">
+          <Image 
+            style={ gridStyle }
+            source={props.uri}
+            key={props.index}/>
+        </Lightbox>
+    </View>
+  );
+};
+
+export const Gallery = (props) => {
+  const images = props.images;
+  return (
+    <View style={{
+      display: 'flex',
+      flexWrap: 'wrap',
+      flexDirection: 'row'
+    }}
+    key="54323">
+      {images.map((image, i) =>
+        <GalleryImage index={i} key={i} uri={image}/>)}
+    </View>
+  );
+}
+
+//Details => Music Doors photo gallery
+export const Details = ({route}) => {
+  const images = [
+    {
+      uri: 'https://5.imimg.com/data5/HF/CW/MY-51857835/organic-apple-fruit-250x250.jpg'
+    },
+    {
+      uri: 'https://upload.wikimedia.org/wikipedia/commons/9/9e/Single_Orange_%28Fruit%29.jpg'
+    },
+    {
+      uri: 'https://cdn.mos.cms.futurecdn.net/42E9as7NaTaAi4A6JcuFwG-320-80.jpg'
+    },
+    {
+      uri: 'https://upload.wikimedia.org/wikipedia/commons/2/2f/Culinary_fruits_front_view.jpg'
+    },
+  ];
+  const width = Dimensions.get('window').width;
+  return (
+    <ScrollView>
+      <ScreenContainer>
+        <Text>Details Screen</Text>
+        {route.params.name && <Text>{route.params.name}</Text>}
+        {/* <Image style={{ 
+        width: 200, 
+        height: 200,
+        }}
+        key="12345"
+        source={images[0]}/> */}
+        <Gallery key="123532" images={images}/>
+      </ScreenContainer>
+    </ScrollView>
+  );};
 
 
 
