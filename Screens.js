@@ -21,79 +21,7 @@ import {AuthContext, StateContext} from './context';
 //import { monitorEventLoopDelay } from 'perf_hooks';
 //import { InvalidatedProjectKind } from 'typescript';
 import SearchableDropdown from 'react-native-searchable-dropdown';
-import { ScrollView } from 'react-native-gesture-handler';
 import Lightbox from 'react-native-lightbox';
-
-const items = [
-  {
-    id: 1,
-    name: "Bassoon"
-  },
-  {
-    id: 2,
-    name: "Cello"
-  },
-  {
-    id: 3,
-    name: "Clarinet"
-  },
-  {
-    id: 4,
-    name: "Double Bass"
-  },
-  {
-    id: 5,
-    name: "Euphonium"
-  },
-  {
-    id: 6,
-    name: "Flute"
-  },
-  {
-    id: 7,
-    name: "French Horn"
-  },
-  {
-    id: 8,
-    name: "Harp"
-  },
-  {
-    id: 9,
-    name: "Oboe"
-  },
-  {
-    id: 10,
-    name: "Percussion"
-  },
-  {
-    id: 11,
-    name: "Piano"
-  },
-  {
-    id: 12,
-    name: "Saxophone"
-  },
-  {
-    id: 13,
-    name: "Trombone"
-  },
-  {
-    id: 14,
-    name: "Trumpet"
-  },
-  {
-    id: 15,
-    name: "Tuba"
-  },
-  {
-    id: 16,
-    name: "Viola"
-  },
-  {
-    id: 17,
-    name: "Violin"
-  },
-];
 
 const ScreenContainer = ({children}) => (
   <View style={styles.container}>{children}</View>
@@ -180,25 +108,86 @@ export const SignIn = () => {
   );
 };
 
+
+//For all screens use userProfile.(attribute from mainTable on host gator) to get user attributes (from state context defined in App.js)
+
 /*
 Administrator Screens
   + Profile Screen
+  + Homes Screen
+  + Code Generator Screen
+
   
 */
 export const AdminProfile = ({navigation}) => {
   const {signOut} = React.useContext(AuthContext);
+
   const stateContext = React.useContext(StateContext);
   const [userProfile, setUserProfile] = stateContext;
   return (
     <ScreenContainer>
       <Text>
-        Admin Profile Screen{userProfile ? userProfile.username : 'abc'}
+        Admin Profile Screen {userProfile ? userProfile.email : 'abc'}
       </Text>
+      <Button title="Edit Admin Profile" onPress={() => navigation.push('Edit Profile',{name: 'Edit Admin Profile '})}/>
       <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
       <Button title="Sign Out" onPress={() => signOut()} />
     </ScreenContainer>
   );
 };
+
+
+export const AdminHome = ({navigation}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+
+  return (
+    <ScreenContainer>
+      <Text>Master List Screen</Text>
+      <Text>{userProfile ? userProfile.email : 'abc'}</Text>
+      <Button
+        title="User Lists"
+        onPress={() =>
+          navigation.push('Details', {name: 'React Native by Example '})
+        }
+      />
+      <Button
+        title="Private Student List"
+        onPress={() =>
+          navigation.push('Details', {name: 'React Native School'})
+        }
+      />
+      <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
+    </ScreenContainer>
+  );
+};
+
+export const AdminCodeGenerator = ({navigation}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+
+  return (
+    <ScreenContainer>
+      <Text>Code Generator</Text>
+      <Text>{userProfile ? userProfile.email : 'abc'}</Text>
+      <Button
+        title="Create Codes"
+        onPress={() =>
+          navigation.push('Details', {name: 'React Native by Example '})
+        }
+      />
+      <Button
+        title="Edit Codes"
+        onPress={() =>
+          navigation.push('Details', {name: 'React Native School'})
+        }
+      />
+      <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
+    </ScreenContainer>
+  );
+};
+
+
 
 /*
 Director Screens
@@ -216,7 +205,7 @@ export const DirectorCreateAccount = () => {
   const [last_name, setLName] = React .useState(null);
   const [phone_number, setPN] = React. useState(null);
   const [city, setCity] = React.useState(null);
-  const [state, setState] = React.useState(null);
+  const [st, setS] = React.useState(null);
   const [zip_code, setZC] = React.useState(null);
   const [current_school, setCS] = React.useState(null);
 
@@ -279,7 +268,7 @@ export const DirectorCreateAccount = () => {
         placeholder="Enter State"
         underlineColorAndroid="transparent"
         style={styles.TextInputStyleClass}
-        onChangeText={val => setState(val)}
+        onChangeText={val => setS(val)}
       />
 
       <TextInput
@@ -297,7 +286,7 @@ export const DirectorCreateAccount = () => {
       <TouchableOpacity
         activeOpacity={0.4}
         style={styles.TouchableOpacityStyle}
-        onPress={() => signUp(user_type_id,email,password,first_name,last_name,phone_number, street_address, city,state,zip_code,feeder_school,current_school,instrument,instrument_2,instrument_3,code)}>
+        onPress={() => signUp(user_type_id,email,password,first_name,last_name,phone_number, street_address, city,st,zip_code,feeder_school,current_school,instrument,instrument_2,instrument_3,code)}>
         <Text style={styles.TextStyle}> Create Account </Text>
       </TouchableOpacity>
     </ScreenContainer>
@@ -309,8 +298,34 @@ export const DirectorProfile = ({navigation}) => {
   return (
     <ScreenContainer>
       <Text>Director Profile Screen</Text>
+      <Button title="Edit Director Profile" onPress={() => navigation.push('Edit Profile', {name: 'Edit Director Profile '})}/>
       <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
       <Button title="Sign Out" onPress={() => signOut()} />
+    </ScreenContainer>
+  );
+};
+
+export const DirectorHome = ({navigation}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+
+  return (
+    <ScreenContainer>
+      <Text>Home</Text>
+      <Text>{userProfile ? userProfile.email : 'abc'}</Text>
+      <Button
+        title="User Lists"
+        onPress={() =>
+          navigation.push('Details', {name: 'React Native by Example '})
+        }
+      />
+      <Button
+        title="Appointment List"
+        onPress={() =>
+          navigation.push('Details', {name: 'React Native School'})
+        }
+      />
+      <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
     </ScreenContainer>
   );
 };
@@ -335,13 +350,28 @@ export const StudentCreateAccount = () => {
   const [current_school, setCS] = React.useState(false);
   const [feeder_school, setFS] = React.useState(false);
   const [city, setCity] = React.useState(false);
-  const [state, setState] = React.useState(false);
+  const [st, setS] = React.useState(false);
   const [zip_code, setZC] = React.useState(false);
 
   const [code, setAccessCode] = React.useState(0);
 
   const street_address = false;
   const phone_number = false;
+
+  const items = [
+    {
+      id: 1,
+      name: 'Violin',
+    },
+    {
+      id: 2,
+      name: 'Trumpet',
+    },
+    {
+      id: 3,
+      name: 'Clarinet',
+    },
+  ];
 
   return (
     <ScreenContainer>
@@ -371,72 +401,28 @@ export const StudentCreateAccount = () => {
         style={styles.TextInputStyleClass}
         onChangeText={val => setLName(val)}
       />
-      <SearchableDropdown
-        onTextChange={text => console.log(text)}
-        //On text change listner on the searchable input
-        onItemSelect={item => setInstrument3(JSON.stringify(item.name))}
-        //onItemSelect called after the selection from the dropdown
-        containerStyle={styles.ddContainerStyle}
-        //suggestion container style
-        textInputStyle={styles.ddInputStyle}
-        itemStyle={styles.ddItemStyle}
-        itemTextStyle={styles.ddItemTextStyle}
-        itemsContainerStyle={styles.ddItemsContainerStyle}
-        items={items}
-        //mapping of item array
-        //defaultIndex={2}
-        //default selected item index
-        placeholder="Select Instrument"
-        //place holder for the search input
-        resetValue={false}
-        //reset textInput Value with true and false state
+
+      <TextInput
+        placeholder="Enter City"
         underlineColorAndroid="transparent"
-        //To remove the underline from the android input
+        style={styles.TextInputStyleClass}
+        onChangeText={val => setCity(val)}
       />
-      <SearchableDropdown
-        onTextChange={text => console.log(text)}
-        //On text change listner on the searchable input
-        onItemSelect={item => setInstrument2(JSON.stringify(item.name))}
-        //onItemSelect called after the selection from the dropdown
-        containerStyle={styles.ddContainerStyle}
-        //suggestion container style
-        textInputStyle={styles.ddInputStyle}
-        itemStyle={styles.ddItemStyle}
-        itemTextStyle={styles.ddItemTextStyle}
-        itemsContainerStyle={styles.ddItemsContainerStyle}
-        items={items}
-        //mapping of item array
-        //defaultIndex={2}
-        //default selected item index
-        placeholder="Optional Second Instrument"
-        //place holder for the search input
-        resetValue={false}
-        //reset textInput Value with true and false state
+
+      <TextInput
+        placeholder="Enter State"
         underlineColorAndroid="transparent"
-        //To remove the underline from the android input
+        style={styles.TextInputStyleClass}
+        onChangeText={val => setS(val)}
       />
-      <SearchableDropdown
-        onTextChange={text => console.log(text)}
-        //On text change listner on the searchable input
-        onItemSelect={item => setInstrument3(JSON.stringify(item.name))}
-        //onItemSelect called after the selection from the dropdown
-        containerStyle={styles.ddContainerStyle}
-        //suggestion container style
-        textInputStyle={styles.ddInputStyle}
-        itemStyle={styles.ddItemStyle}
-        itemTextStyle={styles.ddItemTextStyle}
-        itemsContainerStyle={styles.ddItemsContainerStyle}
-        items={items}
-        //mapping of item array
-        //defaultIndex={2}
-        //default selected item index
-        placeholder="Optional Third Instrument"
-        //place holder for the search input
-        resetValue={false}
-        //reset textInput Value with true and false state
+
+      <TextInput
+        placeholder="Enter Zip Code"
         underlineColorAndroid="transparent"
-        //To remove the underline from the android input
+        style={styles.TextInputStyleClass}
+        onChangeText={val => setZC(val)}
       />
+
       <TextInput
         placeholder="Enter Current School"
         underlineColorAndroid="transparent"
@@ -451,25 +437,71 @@ export const StudentCreateAccount = () => {
         onChangeText={val => setFS(val)}
       />
 
-      <TextInput
-        placeholder="Enter City"
+      <SearchableDropdown
+        onTextChange={text => console.log(text)}
+        //On text change listner on the searchable input
+        onItemSelect={item => setInstrument(item.name)}
+        //onItemSelect called after the selection from the dropdown
+        containerStyle={styles.ddContainerStyle}
+        //suggestion container style
+        textInputStyle={styles.ddInputStyle}
+        itemStyle={styles.ddItemStyle}
+        itemTextStyle={styles.ddItemTextStyle}
+        itemsContainerStyle={styles.ddItemsContainerStyle}
+        items={items}
+        //mapping of item array
+        //defaultIndex={2}
+        //default selected item index
+        placeholder="Select Instrument"
+        //place holder for the search input
+        resetValue={false}
+        //reset textInput Value with true and false state
         underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setCity(val)}
+        //To remove the underline from the android input
       />
-
-      <TextInput
-        placeholder="Enter State"
+      <SearchableDropdown
+        onTextChange={text => console.log(text)}
+        //On text change listner on the searchable input
+        onItemSelect={item => setInstrument2(item.name)}
+        //onItemSelect called after the selection from the dropdown
+        containerStyle={styles.ddContainerStyle}
+        //suggestion container style
+        textInputStyle={styles.ddInputStyle}
+        itemStyle={styles.ddItemStyle}
+        itemTextStyle={styles.ddItemTextStyle}
+        itemsContainerStyle={styles.ddItemsContainerStyle}
+        items={items}
+        //mapping of item array
+        //defaultIndex={2}
+        //default selected item index
+        placeholder="Optional Second Instrument"
+        //place holder for the search input
+        resetValue={false}
+        //reset textInput Value with true and false state
         underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setState(val)}
+        //To remove the underline from the android input
       />
-
-      <TextInput
-        placeholder="Enter Zip Code"
+      <SearchableDropdown
+        onTextChange={text => console.log(text)}
+        //On text change listner on the searchable input
+        onItemSelect={item => setInstrument3(item.name)}
+        //onItemSelect called after the selection from the dropdown
+        containerStyle={styles.ddContainerStyle}
+        //suggestion container style
+        textInputStyle={styles.ddInputStyle}
+        itemStyle={styles.ddItemStyle}
+        itemTextStyle={styles.ddItemTextStyle}
+        itemsContainerStyle={styles.ddItemsContainerStyle}
+        items={items}
+        //mapping of item array
+        //defaultIndex={2}
+        //default selected item index
+        placeholder="Optional Third Instrument"
+        //place holder for the search input
+        resetValue={false}
+        //reset textInput Value with true and false state
         underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setZC(val)}
+        //To remove the underline from the android input
       />
 
       <TextInput
@@ -482,25 +514,50 @@ export const StudentCreateAccount = () => {
       <TouchableOpacity
         activeOpacity={0.4}
         style={styles.TouchableOpacityStyle}
-        onPress={() => signUp(user_type_id,email,password,first_name,last_name,phone_number, street_address, city,state,zip_code,feeder_school,current_school,instrument,instrument_2,instrument_3,code)}>
+        onPress={() => signUp(user_type_id,email,password,first_name,last_name,phone_number, street_address, city,st,zip_code,feeder_school,current_school,instrument,instrument_2,instrument_3,code)}>
         <Text style={styles.TextStyle}> Create Account </Text>
       </TouchableOpacity>
     </ScreenContainer>
   );
 };
+
 export const StudentProfile = ({navigation}) => {
   const {signOut} = React.useContext(AuthContext);
 
   return (
     <ScreenContainer>
       <Text>Student Profile Screen</Text>
+      <Button title="Edit Student Profile" onPress={() => navigation.push('Edit Profile', {name: 'Edit Student Profile '})}/>
       <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
       <Button title="Sign Out" onPress={() => signOut()} />
     </ScreenContainer>
   );
 };
 
+export const StudentHome = ({navigation}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
 
+  return (
+    <ScreenContainer>
+      <Text>Student Home</Text>
+      <Text>{userProfile ? userProfile.email : 'abc'}</Text>
+      <Button
+        title="Instructor List"
+        onPress={() =>
+          navigation.push('Details', {name: 'React Native by Example '})
+        }
+      />
+      <Button
+        title="Appointment List"
+        onPress={() =>
+          navigation.push('Details', {name: 'React Native School'})
+        }
+      />
+      <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
+    </ScreenContainer>
+  );
+};
 
 
 /*
@@ -512,7 +569,6 @@ export const PrivateStudentCreateAccount = () => {
   const {signUp} = React.useContext(AuthContext);
 
   const user_type_id = 4;
-  
 
   const [email, setEmail] = React .useState('');
   const [password, setPass] = React .useState('');
@@ -522,7 +578,7 @@ export const PrivateStudentCreateAccount = () => {
   const [instrument_2, setInstrument2] = React.useState('');
   const [instrument_3, setInstrument3] = React.useState('');
   const [city, setCity] = React.useState('');
-  const [state, setState] = React.useState('');
+  const [st, setS] = React.useState('');
   const [zip_code, setZC] = React.useState(0);
 
   const [code, setAccessCode] = React.useState(0);
@@ -532,9 +588,24 @@ export const PrivateStudentCreateAccount = () => {
   const feeder_school = null;
   const current_school = null;
 
+  const items = [
+    {
+      id: 1,
+      name: 'Violin',
+    },
+    {
+      id: 2,
+      name: 'Trumpet',
+    },
+    {
+      id: 3,
+      name: 'Clarinet',
+    },
+  ];
+
   return (
-  <ScreenContainer>
-    <TextInput
+    <ScreenContainer>
+      <TextInput
         placeholder="Enter Email"
         underlineColorAndroid="transparent"
         style={styles.TextInputStyleClass}
@@ -560,10 +631,29 @@ export const PrivateStudentCreateAccount = () => {
         style={styles.TextInputStyleClass}
         onChangeText={val => setLName(val)}
       />
+      <TextInput
+        placeholder="Enter City"
+        underlineColorAndroid="transparent"
+        style={styles.TextInputStyleClass}
+        onChangeText={val => setCity(val)}
+      />
+      <TextInput
+        placeholder="Enter State"
+        underlineColorAndroid="transparent"
+        style={styles.TextInputStyleClass}
+        onChangeText={val => setS(val)}
+      />
+
+      <TextInput
+        placeholder="Enter Zip Code"
+        underlineColorAndroid="transparent"
+        style={styles.TextInputStyleClass}
+        onChangeText={val => setZC(val)}
+      />
       <SearchableDropdown
         onTextChange={text => console.log(text)}
         //On text change listner on the searchable input
-        onItemSelect={item => setInstrument(JSON.stringify(item.name))}
+        onItemSelect={item => setInstrument(item.name)}
         //onItemSelect called after the selection from the dropdown
         containerStyle={styles.ddContainerStyle}
         //suggestion container style
@@ -585,7 +675,7 @@ export const PrivateStudentCreateAccount = () => {
       <SearchableDropdown
         onTextChange={text => console.log(text)}
         //On text change listner on the searchable input
-        onItemSelect={item => setInstrument2(JSON.stringify(item.name))}
+        onItemSelect={item => setInstrument2(item.name)}
         //onItemSelect called after the selection from the dropdown
         containerStyle={styles.ddContainerStyle}
         //suggestion container style
@@ -607,7 +697,7 @@ export const PrivateStudentCreateAccount = () => {
       <SearchableDropdown
         onTextChange={text => console.log(text)}
         //On text change listner on the searchable input
-        onItemSelect={item => setInstrument3(JSON.stringify(item.name))}
+        onItemSelect={item => setInstrument3(item.name)}
         //onItemSelect called after the selection from the dropdown
         containerStyle={styles.ddContainerStyle}
         //suggestion container style
@@ -627,25 +717,6 @@ export const PrivateStudentCreateAccount = () => {
         //To remove the underline from the android input
       />
       <TextInput
-        placeholder="Enter City"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setCity(val)}
-      />
-      <TextInput
-        placeholder="Enter State"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setState(val)}
-      />
-
-      <TextInput
-        placeholder="Enter Zip Code"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setZC(val)}
-      />
-      <TextInput
         placeholder="Access Code"
         underlineColorAndroid="transparent"
         style={styles.TextInputStyleClass}
@@ -654,7 +725,7 @@ export const PrivateStudentCreateAccount = () => {
       <TouchableOpacity
         activeOpacity={0.4}
         style={styles.TouchableOpacityStyle}
-        onPress={() => signUp(user_type_id, email, password, first_name, last_name, phone_number, street_address, city, state, zip_code, feeder_school, current_school, instrument, instrument_2, instrument_3, code)}>
+        onPress={() => signUp(user_type_id, email, password, first_name, last_name, phone_number, street_address, city, st, zip_code, feeder_school, current_school, instrument, instrument_2, instrument_3, code)}>
         <Text style={styles.TextStyle}> Create Account </Text>
       </TouchableOpacity>
     </ScreenContainer>
@@ -667,8 +738,35 @@ export const PrivateStudentProfile = ({navigation}) => {
   return (
     <ScreenContainer>
       <Text>Private Student Profile Screen</Text>
+      <Button title="Edit Private Student Profile" onPress={() => navigation.push('Edit Profile', {name: 'Edit Private Student Profile'})}/>
       <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
       <Button title="Sign Out" onPress={() => signOut()} />
+    </ScreenContainer>
+  );
+};
+
+
+export const PrivateStudentHome = ({navigation}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+
+  return (
+    <ScreenContainer>
+      <Text>Private Student Home</Text>
+      <Text>{userProfile ? userProfile.email : 'abc'}</Text>
+      <Button
+        title="Instructor List"
+        onPress={() =>
+          navigation.push('Details', {name: 'React Native by Example '})
+        }
+      />
+      <Button
+        title="Appointment List"
+        onPress={() =>
+          navigation.push('Details', {name: 'React Native School'})
+        }
+      />
+      <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
     </ScreenContainer>
   );
 };
@@ -693,7 +791,7 @@ export const InstructorCreateAccount = () => {
   const [phone_number, setPN] = React. useState('');
   const [feeder_school, setFS] = React.useState('');
   const [city, setCity] = React.useState('');
-  const [state, setState] = React.useState('');
+  const [st, setS] = React.useState('');
   const [zip_code, setZC] = React.useState(0);
   const [instrument, setInstrument] = React.useState('');
   const [instrument_2, setInstrument2] = React.useState('');
@@ -702,6 +800,21 @@ export const InstructorCreateAccount = () => {
   const [code, setAccessCode] = React.useState(0);
 
   const current_school = null;
+
+  const items = [
+    {
+      id: 1,
+      name: 'Violin',
+    },
+    {
+      id: 2,
+      name: 'Trumpet',
+    },
+    {
+      id: 3,
+      name: 'Clarinet',
+    },
+  ];
 
   return (
     <ScreenContainer>
@@ -753,7 +866,7 @@ export const InstructorCreateAccount = () => {
         placeholder="Enter State"
         underlineColorAndroid="transparent"
         style={styles.TextInputStyleClass}
-        onChangeText={val => setState(val)}
+        onChangeText={val => setS(val)}
       />
       <TextInput
         placeholder="Enter Zip Code"
@@ -770,7 +883,7 @@ export const InstructorCreateAccount = () => {
       <SearchableDropdown
         onTextChange={text => console.log(text)}
         //On text change listner on the searchable input
-        onItemSelect={item => setInstrument(JSON.stringify(item))}
+        onItemSelect={item => setInstrument(item.name)}
         //onItemSelect called after the selection from the dropdown
         containerStyle={styles.ddContainerStyle}
         //suggestion container style
@@ -792,7 +905,7 @@ export const InstructorCreateAccount = () => {
       <SearchableDropdown
         onTextChange={text => console.log(text)}
         //On text change listner on the searchable input
-        onItemSelect={item => setInstrument2(JSON.stringify(item))}
+        onItemSelect={item => setInstrument2(item.name)}
         //onItemSelect called after the selection from the dropdown
         containerStyle={styles.ddContainerStyle}
         //suggestion container style
@@ -814,7 +927,7 @@ export const InstructorCreateAccount = () => {
       <SearchableDropdown
         onTextChange={text => console.log(text)}
         //On text change listner on the searchable input
-        onItemSelect={item => setInstrument3(JSON.stringify(item))}
+        onItemSelect={item => setInstrument3(item.name)}
         //onItemSelect called after the selection from the dropdown
         containerStyle={styles.ddContainerStyle}
         //suggestion container style
@@ -842,7 +955,7 @@ export const InstructorCreateAccount = () => {
       <TouchableOpacity
         activeOpacity={0.4}
         style={styles.TouchableOpacityStyle}
-        onPress={() => signUp(user_type_id,email,password,first_name,last_name,phone_number, street_address, city,state,zip_code,feeder_school,current_school,instrument,instrument_2,instrument_3,code)}>
+        onPress={() => signUp(user_type_id,email,password,first_name,last_name,phone_number, street_address, city,st,zip_code,feeder_school,current_school,instrument,instrument_2,instrument_3,code)}>
         <Text style={styles.TextStyle}> Create Account </Text>
       </TouchableOpacity>
     </ScreenContainer>
@@ -855,36 +968,155 @@ export const InstructorProfile = ({navigation}) => {
   return (
     <ScreenContainer>
       <Text>Instructor Profile Screen</Text>
+      <Button title="Edit Instructor Profile" onPress={() => navigation.push('Edit Profile', {name: 'Edit Instructor Profile'})}/>
       <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
       <Button title="Sign Out" onPress={() => signOut()} />
     </ScreenContainer>
   );
 };
 
+export const InstructorHome = ({navigation}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+
+  return (
+    <ScreenContainer>
+      <Text>InstructorHome</Text>
+      <Text>{userProfile ? userProfile.email : 'abc'}</Text>
+      <Button
+        title="Director List"
+        onPress={() =>
+          navigation.push('Details', {name: 'React Native by Example '})
+        }
+      />
+      <Button
+        title="Private Student List"
+        onPress={() =>
+          navigation.push('Details', {name: 'React Native School'})
+        }
+      />
+      <Button
+        title="Appointment List"
+        onPress={() =>
+          navigation.push('Details', {name: 'React Native School'})
+        }
+      />
+      <Button
+        title="Calendar"
+        onPress={() =>
+          navigation.push('Details', {name: 'React Native School'})
+        }
+      />
+      <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
+    </ScreenContainer>
+  );
+};
+
+
+
+//In Progress Edit Profile Screens
+
+export const EditAdminProfile = ({route}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+
+  return (
+    <ScreenContainer>
+      <Text>Details For Administrator</Text>
+      {route.params.name && <Text>{route.params.name}</Text>}
+    </ScreenContainer>
+  );
+};
+
+export const EditDirectorProfile = ({route}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+
+  return(
+    <ScreenContainer>
+      <Text>Details For Director</Text>
+      {route.params.name && <Text>{route.params.name}</Text>}
+    </ScreenContainer>
+  );
+};
+
+export const EditStudentProfile = ({route}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+
+  return(
+    <ScreenContainer>
+      <Text>Details For Student</Text>
+      {route.params.name && <Text>{route.params.name}</Text>}
+    </ScreenContainer>
+  );
+};
+export const EditPrivateStudentProfile = ({route}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+
+  return(
+    <ScreenContainer>
+      <Text>Details For Private Student</Text>
+      {route.params.name && <Text>{route.params.name}</Text>}
+    </ScreenContainer>
+  );
+};
+export const EditInstructorProfile = ({route}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+
+  return(
+    <ScreenContainer>
+      <Text>Details For Instructor</Text>
+      {route.params.name && <Text>{route.params.name}</Text>}
+    </ScreenContainer>
+  );
+};
+
+//Loading display for all users
+export const Splash = () => (
+  <ScreenContainer>
+    <Text>Loading...</Text>
+  </ScreenContainer>
+);
+
 
 
 /////////////////////////////Change to appropriate functional components for each user type
 
 //Home => Start nesting lists
-export const Home = ({navigation}) => (
-  <ScreenContainer>
-    <Text>Master List Screen</Text>
-    <Button
-      title="Gallery"
-      onPress={() =>
-        navigation.push('Details', {name: 'Gallery'})
-      }
-    />
-    <Button
-      title="React Native School"
-      onPress={() => navigation.push('Details', {name: 'React Native School'})}
-    />
-    <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
-  </ScreenContainer>
-);
+export const Home = ({navigation}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
 
+  return (
+    <ScreenContainer>
+      <Text>Master List Screen</Text>
+      <Text>{userProfile ? userProfile.email : 'abc'}</Text>
+      <Button
+        title="React Native by Example"
+        onPress={() =>
+          navigation.push('Details', {name: 'React Native by Example '})
+        }
+      />
+      <Button
+      title="React Native School"
+        onPress={() =>
+          navigation.push('Details', {name: 'React Native School'})
+        }
+      />
+      <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
+    </ScreenContainer>
+  );
+};
 //Search & Search2 => Student Appointment Status, Instructor Time Slot Creator and Appointment Confirmation
-export const Search = ({navigation}) => (
+export const Search = ({navigation}) => {
+  
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+  
+  return (
   <ScreenContainer>
     <Text>Search Screen</Text>
     <Button title="Search 2" onPress={() => navigation.push('Search2')} />
@@ -898,13 +1130,35 @@ export const Search = ({navigation}) => (
       }}
     />
   </ScreenContainer>
-);
+  );
+};
 
-export const Search2 = () => (
+//Create copies of Details and Search2 for creating new screens
+export const Search2 = () => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+
+  return (
   <ScreenContainer>
     <Text>Search2 Screen</Text>
   </ScreenContainer>
-);
+
+  );
+};
+
+//Details => Music Doors User Details
+export const Details = ({route}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+
+  return(
+    <ScreenContainer>
+      <Text>Details Screen</Text>
+      {route.params.name && <Text>{route.params.name}</Text>}
+    </ScreenContainer>
+  );
+};
+
 
 export const GalleryImage = (props) => {
 
@@ -944,22 +1198,6 @@ export const GalleryImage = (props) => {
 };
 
 export const Gallery = (props) => {
-  const images = props.images;
-  return (
-    <View style={{
-      display: 'flex',
-      flexWrap: 'wrap',
-      flexDirection: 'row'
-    }}
-    key="54323">
-      {images.map((image, i) =>
-        <GalleryImage index={i} key={i} uri={image}/>)}
-    </View>
-  );
-}
-
-//Details => Music Doors photo gallery
-export const Details = ({route}) => {
   const images = [
     {
       uri: 'https://5.imimg.com/data5/HF/CW/MY-51857835/organic-apple-fruit-250x250.jpg'
@@ -974,31 +1212,22 @@ export const Details = ({route}) => {
       uri: 'https://upload.wikimedia.org/wikipedia/commons/2/2f/Culinary_fruits_front_view.jpg'
     },
   ];
+
   const width = Dimensions.get('window').width;
+
   return (
-    <ScrollView>
-      <ScreenContainer>
-        <Text>Details Screen</Text>
-        {route.params.name && <Text>{route.params.name}</Text>}
-        {/* <Image style={{ 
-        width: 200, 
-        height: 200,
-        }}
-        key="12345"
-        source={images[0]}/> */}
-        <Gallery key="123532" images={images}/>
-      </ScreenContainer>
-    </ScrollView>
-  );};
+    <View style={{
+      display: 'flex',
+      flexWrap: 'wrap',
+      flexDirection: 'row'
+    }}
+    key="54323">
+      {images.map((image, i) =>
+        <GalleryImage index={i} key={i} uri={image}/>)}
+    </View>
+  );
+}
 
-
-
-//Loading display for all users
-export const Splash = () => (
-  <ScreenContainer>
-    <Text>Loading...</Text>
-  </ScreenContainer>
-);
 
 //Style Sheet => IOS and Android
 const styles = StyleSheet.create({
