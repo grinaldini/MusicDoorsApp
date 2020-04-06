@@ -1038,8 +1038,6 @@ export const InstructorHome = ({navigation}) => {
   );
 };
 
-
-
 //In Progress Edit Profile Screens
 
 export const EditAdminProfile = ({route}) => {
@@ -1185,6 +1183,18 @@ export const Details = ({route}) => {
   );
 };
 
+//Details => Music Doors User Details
+export const Details = ({route}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+
+  return(
+    <ScreenContainer>
+      <Text>Details Screen</Text>
+      {route.params.name && <Text>{route.params.name}</Text>}
+    </ScreenContainer>
+  );
+};
 
 export const GalleryImage = (props) => {
 
@@ -1253,7 +1263,6 @@ export const Gallery = (props) => {
     </View>
   );
 }
-
 
 //Style Sheet => IOS and Android
 const styles = StyleSheet.create({
