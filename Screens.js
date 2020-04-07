@@ -23,6 +23,7 @@ import {AuthContext, StateContext, GalleryContext, SchoolContext} from './contex
 import SearchableDropdown from 'react-native-searchable-dropdown';
 import Lightbox from 'react-native-lightbox';
 import {ScrollView} from 'react-native-gesture-handler';
+import AutoHeightImage from 'react-native-auto-height-image';
 
 
 const items = [
@@ -1178,10 +1179,12 @@ export const EditInstructorProfile = ({route}) => {
 export const Gallery = ({navigation}) => {
   const galleryContext = React.useContext(GalleryContext);
   const [galleryImages, setImages] = galleryContext;
+  const [descriptionStyle, setDescription] = useState({display: "none"});
   //console.log(galleryImages[0].name);
 
+  
   const width = Dimensions.get('window').width;
-
+  
   const gridStyle = {
     width: "100%", 
     height: "100%",
@@ -1192,14 +1195,44 @@ export const Gallery = ({navigation}) => {
   };
 
   const activeStyle = {
-    width: "100%", 
-    height: "100%",
     margin: "auto",
     resizeMode: "contain",
     borderWidth: 0
   };
+  
+  const hideDescription = {
+    display: "none"
+  };
+
+  const showDescription = {
+    fontSize: 18,
+    display: "flex",
+    color: "white",
+    padding: 10
+  };
 
   const screenWidth = Dimensions.get('window').width;
+  
+  // Please do not remove this, this is necessary
+  const GalleryImage = props => {
+    if (props.resizeMode) {
+      return (
+        <View>
+          <AutoHeightImage style={ activeStyle } width={ screenWidth } source={{ uri: props.image.name }} />
+          <Text style={ descriptionStyle }>{ props.image.description }</Text>
+        </View>
+      )
+    }
+    else {
+      return (
+        <View>
+          <Image style={ gridStyle } source={{ uri: props.image.name }} />
+        </View>
+      );
+    }
+  };
+
+
   return (
     <ScrollView>
       <View
@@ -1215,11 +1248,14 @@ export const Gallery = ({navigation}) => {
               width: screenWidth/2,
               height: screenWidth/2,
               padding: 2
-            }}>
+            }}
+            key={"v" + i}>
             <Lightbox
+              didOpen={ () => setDescription(showDescription) }
+              willClose={ () => setDescription(hideDescription) }
               activeProps={activeStyle}
               backgroundColor="rgba(0, 0, 0, 0.8)">
-              <Image style={gridStyle} source={{uri: image.name}} key={i} />
+                <GalleryImage image={ image } />
             </Lightbox>
           </View>
         )}
