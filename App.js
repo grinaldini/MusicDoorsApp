@@ -21,13 +21,14 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 
 //contexts
-import {AuthContext, StateContext} from './context';
+import {AuthContext, StateContext, GalleryContext} from './context';
 
 //API's
 import AuthApi from './API/auth';
 import CheckAccessCode from './API/AccessCode/checkAccessCode';
 import UserRegistration from './API/User/userRegistration';
 import DupRegistration from './API/User/dupRegistration';
+import GetGallery from './API/Gallery/getGallery';
 
 //Screens
 import {
@@ -38,6 +39,7 @@ import {
   StudentCreateAccount, StudentProfile, StudentHome, EditStudentProfile,
   PrivateStudentCreateAccount, PrivateStudentProfile, PrivateStudentHome, EditPrivateStudentProfile,
   InstructorCreateAccount,InstructorProfile, InstructorHome, EditInstructorProfile,
+  Gallery,
   Search,
   Home,
   Details,
@@ -453,6 +455,14 @@ export default () => {
     userProfile,
     setUserProfile,
   ]);
+
+  const [galleryImages, setImages] =React.useState(null);
+  const galleryContext = React.useMemo(() => [galleryImages, setImages], [
+    galleryImages,
+    setImages,
+  ]);
+
+
   const authContext = React.useMemo(() => {
     return {
       signIn: (email, pass) => {
@@ -465,6 +475,14 @@ export default () => {
               setUserToken('asdf');
               setUserId(parseInt(data[0].user_type_id));
               setUserProfile(data[0]);
+              GetGallery.loadGallery()
+                .then(data2 => data2.json())
+                .then(data2 => {
+                  if (data2.length > 0) {
+                      setImages(data2);
+                  }
+                });
+
             }
             if (data === false) {
               Alert.alert('Incorrect Login');
@@ -720,13 +738,16 @@ export default () => {
   return (
     <AuthContext.Provider value={authContext}>
       <StateContext.Provider value={stateContext}>
-        <NavigationContainer>
-          <RootStackScreen
-            userToken={userToken}
-            userId={userId}
-            userProfile={userProfile}
-          />
-        </NavigationContainer>
+        <GalleryContext.Provider value={galleryContext}>
+          <NavigationContainer>
+            <RootStackScreen
+              userToken={userToken}
+              userId={userId}
+              userProfile={userProfile}
+              galleryImages={galleryImages}
+            />
+          </NavigationContainer>
+        </GalleryContext.Provider>
       </StateContext.Provider>
     </AuthContext.Provider>
   );

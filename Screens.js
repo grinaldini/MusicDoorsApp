@@ -12,14 +12,90 @@ import {
   ActivityIndicator,
   ImageBackground,
   Image,
+  Dimensions,
 } from 'react-native';
 
-import {AuthContext, StateContext} from './context';
+import {AuthContext, StateContext, GalleryContext} from './context';
+import GetGallery from './API/Gallery/getGallery';
 //import {HeaderTitle} from '@react-navigation/stack';
 //import { doesNotReject } from 'assert';
 //import { monitorEventLoopDelay } from 'perf_hooks';
 //import { InvalidatedProjectKind } from 'typescript';
 import SearchableDropdown from 'react-native-searchable-dropdown';
+import Lightbox from 'react-native-lightbox';
+import {ScrollView} from 'react-native-gesture-handler';
+
+
+const items = [
+  {
+    id: 1,
+    name: "Bassoon"
+  },
+  {
+    id: 2,
+    name: "Cello"
+  },
+  {
+    id: 3,
+    name: "Clarinet"
+  },
+  {
+    id: 4,
+    name: "Double Bass"
+  },
+  {
+    id: 5,
+    name: "Euphonium"
+  },
+  {
+    id: 6,
+    name: "Flute"
+  },
+  {
+    id: 7,
+    name: "French Horn"
+  },
+  {
+    id: 8,
+    name: "Harp"
+  },
+  {
+    id: 9,
+    name: "Oboe"
+  },
+  {
+    id: 10,
+    name: "Percussion"
+  },
+  {
+    id: 11,
+    name: "Piano"
+  },
+  {
+    id: 12,
+    name: "Saxophone"
+  },
+  {
+    id: 13,
+    name: "Trombone"
+  },
+  {
+    id: 14,
+    name: "Trumpet"
+  },
+  {
+    id: 15,
+    name: "Tuba"
+  },
+  {
+    id: 16,
+    name: "Viola"
+  },
+  {
+    id: 17,
+    name: "Violin"
+  },
+];
 
 const ScreenContainer = ({children}) => (
   <View style={styles.container}>{children}</View>
@@ -184,8 +260,6 @@ export const AdminCodeGenerator = ({navigation}) => {
     </ScreenContainer>
   );
 };
-
-
 
 /*
 Director Screens
@@ -356,6 +430,7 @@ export const StudentCreateAccount = () => {
   const street_address = false;
   const phone_number = false;
 
+  /*
   const items = [
     {
       id: 1,
@@ -370,6 +445,7 @@ export const StudentCreateAccount = () => {
       name: 'Clarinet',
     },
   ];
+  */
 
   return (
     <ScreenContainer>
@@ -586,6 +662,7 @@ export const PrivateStudentCreateAccount = () => {
   const feeder_school = null;
   const current_school = null;
 
+  /*
   const items = [
     {
       id: 1,
@@ -600,7 +677,7 @@ export const PrivateStudentCreateAccount = () => {
       name: 'Clarinet',
     },
   ];
-
+  */
   return (
     <ScreenContainer>
       <TextInput
@@ -799,6 +876,7 @@ export const InstructorCreateAccount = () => {
 
   const current_school = null;
 
+  /*
   const items = [
     {
       id: 1,
@@ -813,6 +891,7 @@ export const InstructorCreateAccount = () => {
       name: 'Clarinet',
     },
   ];
+  */
 
   return (
     <ScreenContainer>
@@ -1010,8 +1089,6 @@ export const InstructorHome = ({navigation}) => {
   );
 };
 
-
-
 //In Progress Edit Profile Screens
 
 export const EditAdminProfile = ({route}) => {
@@ -1069,6 +1146,59 @@ export const EditInstructorProfile = ({route}) => {
       <Text>Details For Instructor</Text>
       {route.params.name && <Text>{route.params.name}</Text>}
     </ScreenContainer>
+  );
+};
+
+export const Gallery = ({navigation}) => {
+  const galleryContext = React.useContext(GalleryContext);
+  const [galleryImages, setImages] = galleryContext;
+  //console.log(galleryImages[0].name);
+
+  const width = Dimensions.get('window').width;
+
+  const gridStyle = {
+    width: "100%", 
+    height: "100%",
+    margin: "auto",
+    resizeMode: "cover",
+    borderWidth: 3,
+    borderColor: "#fff"
+  };
+
+  const activeStyle = {
+    width: "100%", 
+    height: "100%",
+    margin: "auto",
+    resizeMode: "contain",
+    borderWidth: 0
+  };
+
+  const screenWidth = Dimensions.get('window').width;
+  return (
+    <ScrollView>
+      <View
+        style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        flexDirection: 'row'
+      }}
+      key="54323">
+        {galleryImages.map((image, i) =>
+          <View
+            style={{
+              width: screenWidth/2,
+              height: screenWidth/2,
+              padding: 2
+            }}>
+            <Lightbox
+              activeProps={activeStyle}
+              backgroundColor="rgba(0, 0, 0, 0.8)">
+              <Image style={gridStyle} source={{uri: image.name}} key={i} />
+            </Lightbox>
+          </View>
+        )}
+      </View>
+    </ScrollView>
   );
 };
 
