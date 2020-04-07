@@ -21,7 +21,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 
 //contexts
-import {AuthContext, StateContext, GalleryContext} from './context';
+import {AuthContext, StateContext, GalleryContext, SchoolContext} from './context';
 
 //API's
 import AuthApi from './API/auth';
@@ -29,6 +29,7 @@ import CheckAccessCode from './API/AccessCode/checkAccessCode';
 import UserRegistration from './API/User/userRegistration';
 import DupRegistration from './API/User/dupRegistration';
 import GetGallery from './API/Gallery/getGallery';
+import GetSchools from './API/SchoolsList/getSchools';
 
 //Screens
 import {
@@ -456,12 +457,17 @@ export default () => {
     setUserProfile,
   ]);
 
-  const [galleryImages, setImages] =React.useState(null);
+  const [galleryImages, setImages] = React.useState(null);
   const galleryContext = React.useMemo(() => [galleryImages, setImages], [
     galleryImages,
     setImages,
   ]);
-
+  
+  const[schools, setSchools] = React.useState(null);
+  const schoolInfoContext = React.useMemo(() => [schools, setSchools], [
+    schools,
+    setSchools,
+  ]);
 
   const authContext = React.useMemo(() => {
     return {
@@ -479,10 +485,16 @@ export default () => {
                 .then(data2 => data2.json())
                 .then(data2 => {
                   if (data2.length > 0) {
-                      setImages(data2);
+                    setImages(data2);
                   }
                 });
-
+              GetSchools.loadSchools()
+                .then(data2 => data2.json())
+                .then(data2 => {
+                  if (data2.length > 0) {
+                    setSchools(data2);
+                  }
+                });
             }
             if (data === false) {
               Alert.alert('Incorrect Login');
@@ -554,6 +566,13 @@ export default () => {
                               setUserToken('asdf');
                               setUserId(parseInt(regData[0].user_type_id));
                               setUserProfile(regData[0]);
+                              GetGallery.loadGallery()
+                                .then(data2 => data2.json())
+                                .then(data2 => {
+                                  if (data2.length > 0) {
+                                    setImages(data2);
+                                  }
+                                });
                             }
                             if (regData === false) {
                               Alert.alert(
@@ -602,6 +621,13 @@ export default () => {
                               setUserToken('asdf');
                               setUserId(parseInt(regData[0].user_type_id));
                               setUserProfile(regData[0]);
+                              GetGallery.loadGallery()
+                              .then(data2 => data2.json())
+                              .then(data2 => {
+                                if (data2.length > 0) {
+                                  setImages(data2);
+                                }
+                              });
                             }
                             if (regData === false) {
                               Alert.alert(
@@ -649,6 +675,13 @@ export default () => {
                               setUserToken('asdf');
                               setUserId(parseInt(regData[0].user_type_id));
                               setUserProfile(regData[0]);
+                              GetGallery.loadGallery()
+                              .then(data2 => data2.json())
+                              .then(data2 => {
+                                if (data2.length > 0) {
+                                  setImages(data2);
+                                }
+                              });
                             }
                             if (regData === false) {
                               Alert.alert(
@@ -696,6 +729,20 @@ export default () => {
                               setUserToken('asdf');
                               setUserId(parseInt(regData[0].user_type_id));
                               setUserProfile(regData[0]);
+                              GetGallery.loadGallery()
+                                .then(data2 => data2.json())
+                                .then(data2 => {
+                                  if (data2.length > 0) {
+                                    setImages(data2);
+                                  }
+                                });
+                              GetSchools.loadSchools()
+                                .then(data2 => data2.json())
+                                .then(data2 => {
+                                  if (data2.length > 0) {
+                                    setSchools(data2);
+                                  }
+                                });
                             }
                             if (regData === false) {
                               Alert.alert(
@@ -736,20 +783,23 @@ export default () => {
   }
 
   return (
-    <AuthContext.Provider value={authContext}>
-      <StateContext.Provider value={stateContext}>
-        <GalleryContext.Provider value={galleryContext}>
-          <NavigationContainer>
-            <RootStackScreen
-              userToken={userToken}
-              userId={userId}
-              userProfile={userProfile}
-              galleryImages={galleryImages}
-            />
-          </NavigationContainer>
-        </GalleryContext.Provider>
-      </StateContext.Provider>
-    </AuthContext.Provider>
+    <SchoolContext.Provider value={schoolInfoContext}>
+      <AuthContext.Provider value={authContext}>
+        <StateContext.Provider value={stateContext}>
+          <GalleryContext.Provider value={galleryContext}>
+            <NavigationContainer>
+              <RootStackScreen
+                userToken={userToken}
+                userId={userId}
+                userProfile={userProfile}
+                galleryImages={galleryImages}
+                schools={schools}
+              />
+            </NavigationContainer>
+          </GalleryContext.Provider>
+        </StateContext.Provider>
+      </AuthContext.Provider>
+    </SchoolContext.Provider>
   );
 };
 

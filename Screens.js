@@ -15,8 +15,7 @@ import {
   Dimensions,
 } from 'react-native';
 
-import {AuthContext, StateContext, GalleryContext} from './context';
-import GetGallery from './API/Gallery/getGallery';
+import {AuthContext, StateContext, GalleryContext, SchoolContext} from './context';
 //import {HeaderTitle} from '@react-navigation/stack';
 //import { doesNotReject } from 'assert';
 //import { monitorEventLoopDelay } from 'perf_hooks';
@@ -106,7 +105,7 @@ export const Welcome = ({navigation}) => {
   return (
     <ScreenContainer>
       <Image
-        source={require('./Assets/HeaderImages/logo.png')}
+        source={{uri:'http://musicdoors.org/Assets/HeaderImages/logo.png'}}
         style={styles.logo}
       />
       <TouchableOpacity
@@ -856,6 +855,9 @@ Instructor Screens
 export const InstructorCreateAccount = () => {
   const {signUp} = React.useContext(AuthContext);
 
+  const schoolsInfoContext = React.useContext(SchoolContext);
+  const [schools, setSchools] = schoolsInfoContext;
+
   const user_type_id = 5;
 
   const [email, setEmail] = React .useState('');
@@ -875,6 +877,8 @@ export const InstructorCreateAccount = () => {
   const [code, setAccessCode] = React.useState(0);
 
   const current_school = null;
+
+  
 
   /*
   const items = [
@@ -956,6 +960,28 @@ export const InstructorCreateAccount = () => {
         underlineColorAndroid="transparent"
         style={styles.TextInputStyleClass}
         onChangeText={val => setFS(val)}
+      />
+      <SearchableDropdown
+        onTextChange={text => console.log(text)}
+        //On text change listner on the searchable input
+        onItemSelect={item => setFS(item.name)}
+        //onItemSelect called after the selection from the dropdown
+        containerStyle={styles.ddContainerStyle}
+        //suggestion container style
+        textInputStyle={styles.ddInputStyle}
+        itemStyle={styles.ddItemStyle}
+        itemTextStyle={styles.ddItemTextStyle}
+        itemsContainerStyle={styles.ddItemsContainerStyle}
+        items={schools}
+        //mapping of item array
+        //defaultIndex={2}
+        //default selected item index
+        placeholder="Enter Target High School"
+        //place holder for the search input
+        resetValue={false}
+        //reset textInput Value with true and false state
+        underlineColorAndroid="transparent"
+        //To remove the underline from the android input
       />
       <SearchableDropdown
         onTextChange={text => console.log(text)}
@@ -1182,7 +1208,7 @@ export const Gallery = ({navigation}) => {
         flexWrap: 'wrap',
         flexDirection: 'row'
       }}
-      key="54323">
+      >
         {galleryImages.map((image, i) =>
           <View
             style={{
