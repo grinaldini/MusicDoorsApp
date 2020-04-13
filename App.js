@@ -14,6 +14,8 @@ import {
   ActivityIndicator,
 } from 'react-native';
 
+import moment from 'moment';
+
 //Navigators and Stack Containers
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -21,7 +23,13 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 
 //contexts
-import {AuthContext, StateContext, GalleryContext, SchoolContext} from './context';
+import {
+  AuthContext,
+  StateContext,
+  GalleryContext,
+  SchoolContext,
+  ResetContext,
+} from './context';
 
 //API's
 import AuthApi from './API/auth';
@@ -30,16 +38,37 @@ import UserRegistration from './API/User/userRegistration';
 import DupRegistration from './API/User/dupRegistration';
 import GetGallery from './API/Gallery/getGallery';
 import GetSchools from './API/SchoolsList/getSchools';
+import EmailPassword from './API/User/emailPassword';
 
 //Screens
 import {
   Welcome,
   SignIn,
-  AdminProfile, AdminHome, AdminCodeGenerator, EditAdminProfile,
-  DirectorCreateAccount, DirectorProfile, DirectorHome, EditDirectorProfile,
-  StudentCreateAccount, StudentProfile, StudentHome, EditStudentProfile,
-  PrivateStudentCreateAccount, PrivateStudentProfile, PrivateStudentHome, EditPrivateStudentProfile,
-  InstructorCreateAccount,InstructorProfile, InstructorHome, EditInstructorProfile,
+  ForgotPassword,
+  ResetPassword,
+  AdminProfile,
+  AdminHome,
+  AdminCodeGenerator,
+  EditAdminProfile,
+  AdminDirectorList,
+  AdminStudentList,
+  AdminPrivateStudentList,
+  AdminInstructorList,
+  AdminCreateAccessCode,
+  AdminDeleteAccessCode,
+  DirectorCreateAccount,
+  DirectorProfile,
+  DirectorHome,
+  EditDirectorProfile,
+  StudentCreateAccount,StudentProfile,StudentHome,EditStudentProfile,StudentInstructorList,StudentBookingCalendar,StudentAppointmentRequest,StudentAppointmentList,StudentPendingAppointmentList,StudentCancelAppointmentList,StudentAppointmentInfo,StudentAppointment,
+  PrivateStudentCreateAccount,
+  PrivateStudentProfile,
+  PrivateStudentHome,
+  EditPrivateStudentProfile,
+  InstructorCreateAccount,
+  InstructorProfile,
+  InstructorHome,
+  EditInstructorProfile,
   Gallery,
   Search,
   Home,
@@ -47,6 +76,8 @@ import {
   Search2,
   Splash,
 } from './Screens';
+import CreateAccessCode from './API/AccessCode/createAccessCode';
+import DeleteAccessCode from './API/AccessCode/deleteAccessCode';
 
 //Navigator => Authorization Stack
 const AuthStack = createStackNavigator();
@@ -68,6 +99,16 @@ const AuthStackScreen = () => (
       name="SignIn"
       component={SignIn}
       options={{title: 'Sign In'}}
+    />
+    <AuthStack.Screen
+      name="ForgotPassword"
+      component={ForgotPassword}
+      options={{title: 'Forgot Password'}}
+    />
+    <AuthStack.Screen
+      name="ResetPassword"
+      component={ResetPassword}
+      options={{title: 'Reset Password'}}
     />
     <AuthStack.Screen
       name="DirectorCreateAccount"
@@ -92,11 +133,13 @@ const AuthStackScreen = () => (
   </AuthStack.Navigator>
 );
 
-
 // Define Bottom Tabs navigator, and the Navigator for the Bottom Tab options
 
 const Tabs = createBottomTabNavigator();
+
 const SearchStack = createStackNavigator();
+const ListStack = createStackNavigator();
+
 const HomeStack = createStackNavigator();
 
 const Drawer = createDrawerNavigator();
@@ -104,7 +147,7 @@ const Drawer = createDrawerNavigator();
 const ProfileStack = createStackNavigator();
 
 //Administrator
-// + Bottom Tabs 
+// + Bottom Tabs
 // + Drawer
 
 const AdminTabsScreen = () => (
@@ -117,9 +160,24 @@ const AdminTabsScreen = () => (
 const AdminHomeStackScreen = () => (
   <HomeStack.Navigator>
     <HomeStack.Screen name="Home" component={AdminHome} />
+    <HomeStack.Screen name="Director List" component={AdminDirectorList} />
     <HomeStack.Screen
-      name="Details"
-      component={Details}
+      name="Admin Student List"
+      component={AdminStudentList}
+      options={({route}) => ({
+        parent: route.params.parent,
+      })}
+    />
+    <HomeStack.Screen
+      name="Admin Private Student List"
+      component={AdminPrivateStudentList}
+      options={({route}) => ({
+        title: route.params.name,
+      })}
+    />
+    <HomeStack.Screen
+      name="Admin Instructor List"
+      component={AdminInstructorList}
       options={({route}) => ({
         title: route.params.name,
       })}
@@ -127,9 +185,54 @@ const AdminHomeStackScreen = () => (
   </HomeStack.Navigator>
 );
 
+const AdminUserListsStackScreen = () => (
+  <ListStack.Navigator>
+    <ListStack.Screen
+      name="Admin Director List"
+      component={AdminDirectorList}
+      options={({route}) => ({
+        school: route.params.profile,
+      })}
+    />
+    <ListStack.Screen
+      name="Admin Student List"
+      component={AdminStudentList}
+      options={({route}) => ({
+        title: route.params.profile,
+      })}
+    />
+    <ListStack.Screen
+      name="Admin Private Student List"
+      component={AdminPrivateStudentList}
+      options={({route}) => ({
+        title: route.params.name,
+      })}
+    />
+    <ListStack.Screen
+      name="Admin Instructor List"
+      component={AdminInstructorList}
+      options={({route}) => ({
+        title: route.params.name,
+      })}
+    />
+    <ListStack.Screen name="Search2" component={Search2} />
+  </ListStack.Navigator>
+);
+
 const AdminCGStackScreen = () => (
   <SearchStack.Navigator>
-    <SearchStack.Screen name="Code Generator" component={AdminCodeGenerator} />
+    <SearchStack.Screen
+      name="Access Code Generator"
+      component={AdminCodeGenerator}
+    />
+    <SearchStack.Screen
+      name="Create Access Code"
+      component={AdminCreateAccessCode}
+    />
+    <SearchStack.Screen
+      name="Delete Access Code"
+      component={AdminDeleteAccessCode}
+    />
     <SearchStack.Screen name="Search2" component={Search2} />
   </SearchStack.Navigator>
 );
@@ -147,7 +250,6 @@ const AdminProfileStackScreen = () => (
   </ProfileStack.Navigator>
 );
 
-
 const DrawerScreen1 = () => (
   <Drawer.Navigator initialRouteName="Home">
     <Drawer.Screen name="Home" component={AdminTabsScreen} />
@@ -155,11 +257,8 @@ const DrawerScreen1 = () => (
   </Drawer.Navigator>
 );
 
-
-
-
 //Director
-// + Bottom Tabs 
+// + Bottom Tabs
 // + Drawer
 
 const DirectorTabsScreen = () => (
@@ -209,7 +308,7 @@ const DrawerScreen2 = () => (
 const StudentTabsScreen = () => (
   <Tabs.Navigator>
     <Tabs.Screen name="Home" component={StudentHomeStackScreen} />
-    <Tabs.Screen name="Gallery" component={GalleryStackScreen} />
+    <Tabs.Screen name="Appointment" component={StudentAppointmentStackScreen} />
   </Tabs.Navigator>
 );
 
@@ -217,13 +316,50 @@ const StudentHomeStackScreen = () => (
   <HomeStack.Navigator>
     <HomeStack.Screen name="Home" component={StudentHome} />
     <HomeStack.Screen
-      name="Details"
-      component={Details}
+      name="Instructor List"
+      component={StudentInstructorList}
+    />
+    <HomeStack.Screen
+      name="Booking Calendar"
+      component={StudentBookingCalendar}
       options={({route}) => ({
-        title: route.params.name,
+        parent: route.params.parent,
+      })}
+    />
+    <HomeStack.Screen
+      name="Appointment Request"
+      component={StudentAppointmentRequest}
+      options={({route}) => ({
+        parent: route.params.parent,
+        id: route.params.instructor_id,
       })}
     />
   </HomeStack.Navigator>
+);
+
+const StudentAppointmentStackScreen = () => (
+  <SearchStack.Navigator>
+    <SearchStack.Screen
+      name="Appointment Menu"
+      component={StudentAppointment}
+    />
+    <SearchStack.Screen name="Appointment" component={StudentAppointmentList} />
+    <SearchStack.Screen
+      name="Appointment Info"
+      component={StudentAppointmentInfo}
+      options={({route}) => ({
+        instructor_id: route.params.instructor_id,
+      })}
+    />
+    <SearchStack.Screen
+      name="Pending Appointment"
+      component={StudentPendingAppointmentList}
+    />
+    <SearchStack.Screen
+      name="Cancel Appointment"
+      component={StudentCancelAppointmentList}
+    />
+  </SearchStack.Navigator>
 );
 
 const StudentProfileStackScreen = () => (
@@ -240,17 +376,16 @@ const StudentProfileStackScreen = () => (
 );
 
 const DrawerScreen3 = () => (
-  <Drawer.Navigator initialRouteName="Profile">
+  <Drawer.Navigator initialRouteName="Home">
     <Drawer.Screen name="Home" component={StudentTabsScreen} />
     <Drawer.Screen name="Profile" component={StudentProfileStackScreen} />
+    <Drawer.Screen name="Gallery" component={GalleryStackScreen} />
   </Drawer.Navigator>
 );
-
 
 //Private Student
 // + Bottom Tabs
 // + Drawer
-
 
 const PrivateStudentTabsScreen = () => (
   <Tabs.Navigator>
@@ -274,7 +409,10 @@ const PrivateStudentHomeStackScreen = () => (
 
 const PrivateStudentProfileStackScreen = () => (
   <ProfileStack.Navigator>
-    <ProfileStack.Screen name="Private Student Profile" component={PrivateStudentProfile} />
+    <ProfileStack.Screen
+      name="Private Student Profile"
+      component={PrivateStudentProfile}
+    />
     <HomeStack.Screen
       name="Edit Profile"
       component={EditPrivateStudentProfile}
@@ -284,7 +422,6 @@ const PrivateStudentProfileStackScreen = () => (
     />
   </ProfileStack.Navigator>
 );
-
 
 const DrawerScreen4 = () => (
   <Drawer.Navigator initialRouteName="Profile">
@@ -322,7 +459,10 @@ const InstructorHomeStackScreen = () => (
 
 const InstructorProfileStackScreen = () => (
   <ProfileStack.Navigator>
-    <ProfileStack.Screen name="Instructor Profile" component={InstructorProfile}/>
+    <ProfileStack.Screen
+      name="Instructor Profile"
+      component={InstructorProfile}
+    />
     <HomeStack.Screen
       name="Edit Profile"
       component={EditInstructorProfile}
@@ -340,7 +480,6 @@ const DrawerScreen5 = () => (
   </Drawer.Navigator>
 );
 
-
 //Gallery Stack for Director, Student, Private Student, Instructor
 
 const GalleryStackScreen = () => (
@@ -349,8 +488,6 @@ const GalleryStackScreen = () => (
     <SearchStack.Screen name="Search2" component={Search2} />
   </SearchStack.Navigator>
 );
-
-
 
 //General User template
 
@@ -361,7 +498,7 @@ const TabsScreen = () => (
     <Tabs.Screen name="Search" component={SearchStackScreen} />
   </Tabs.Navigator>
 );
-      //Stack => Home  => will show lists in hierarchical order depending on user type
+//Stack => Home  => will show lists in hierarchical order depending on user type
 const HomeStackScreen = () => (
   <HomeStack.Navigator>
     <HomeStack.Screen name="Home" component={Home} />
@@ -374,19 +511,13 @@ const HomeStackScreen = () => (
     />
   </HomeStack.Navigator>
 );
-      //Stack => "Search" Page  => will change to code generator for admin, null for director, appointment list for students and instructors
+//Stack => "Search" Page  => will change to code generator for admin, null for director, appointment list for students and instructors
 const SearchStackScreen = () => (
   <SearchStack.Navigator>
     <SearchStack.Screen name="Search" component={Search} />
     <SearchStack.Screen name="Search2" component={Search2} />
   </SearchStack.Navigator>
 );
-
-
-
-
-
-
 
 //Stack => Root
 const RootStack = createStackNavigator();
@@ -446,6 +577,8 @@ const RootStackScreen = ({userToken, userId}) => (
   </RootStack.Navigator>
 );
 
+
+
 //State Context => Render from Root Stack onwards
 export default () => {
   const [isLoading, setIsLoading] = React.useState(true);
@@ -457,18 +590,99 @@ export default () => {
     setUserProfile,
   ]);
 
+  const resetContext = React.useMemo(() => {
+    return {
+      sendResetCode: (email, user_type_id) => {
+        //setIsLoading(true);
+        //here is where we need to send the email
+        //for now, just print the code to the screen
+        var part1 = moment().format('l');
+        var part2 = moment().format('LTS');
+        part2 = part2.replace(/:/g, '');
+        part2 = part2.replace(/PM/g, '');
+        part2 = part2.replace(/AM/g, '');
+
+        var code = part1 + part2;
+        var note = email + ' forgot password';
+
+        DupRegistration.checkDup(email, user_type_id)
+          .then(check => check.json)
+          .then(check => {
+            if (check === false) {
+              Alert.alert('Error try again later');
+            } 
+            if (
+              user_type_id !== 1 &&
+              user_type_id !== 2 &&
+              user_type_id !== 3 &&
+              user_type_id !== 4 &&
+              user_type_id !== 5
+            ) {
+              alert('Error try again later');
+            }else {
+              CreateAccessCode.createAC(code, 6, note, moment().format('llll'))
+                .then(data => data.json)
+                .then(data => {
+                  if (data === false) {
+                    Alert.alert('Error Adding Access Code, Try Again Later');
+                  } else {
+                    Alert.alert('Successfully Added Unique Access Code');
+                  }
+                });
+
+              EmailPassword.tempPass(email, code)
+                .then(data => data.json)
+                .then(data => {
+                  console.log(data);
+                  if (data === false) {
+                    Alert.alert('Error');
+                  } else {
+                    Alert.alert('Email sent');
+                  }
+
+                });
+            }
+          });
+        var al = "Temp Code:\n" + code + "\nFor:\n" + email;
+        alert(al);
+      },
+      resetPassword: (resetCode, newPassword, confPassword) => {
+        setIsLoading(false);
+        //here is where we need to send the email
+        //for now, just print the code to the screen
+        //
+        let user_type_id = 1; //this needs to be addressed. are we asking the user what type they are?
+        if (newPassword === confPassword) {
+          CheckAccessCode.authAccess(resetCode, user_type_id)
+            .then(data => data.json())
+            .then(data => {
+              if (data === true) {
+                Alert.alert('todo: update password');
+                //TODO: change the password to the new one, drop the code from the reset code list
+              } else {
+                Alert.alert('Invalid Code');
+              }
+            });
+        } else {
+          Alert.alert('Passwords must match');
+        }
+      },
+    }
+  });
+
   const [galleryImages, setImages] = React.useState(null);
   const galleryContext = React.useMemo(() => [galleryImages, setImages], [
     galleryImages,
     setImages,
   ]);
-  
-  const[schools, setSchools] = React.useState(null);
+
+  const [schools, setSchools] = React.useState(null);
   const schoolInfoContext = React.useMemo(() => [schools, setSchools], [
     schools,
     setSchools,
   ]);
 
+  //const listContext = React.useMemo
   const authContext = React.useMemo(() => {
     return {
       signIn: (email, pass) => {
@@ -622,12 +836,12 @@ export default () => {
                               setUserId(parseInt(regData[0].user_type_id));
                               setUserProfile(regData[0]);
                               GetGallery.loadGallery()
-                              .then(data2 => data2.json())
-                              .then(data2 => {
-                                if (data2.length > 0) {
-                                  setImages(data2);
-                                }
-                              });
+                                .then(data2 => data2.json())
+                                .then(data2 => {
+                                  if (data2.length > 0) {
+                                    setImages(data2);
+                                  }
+                                });
                             }
                             if (regData === false) {
                               Alert.alert(
@@ -676,12 +890,12 @@ export default () => {
                               setUserId(parseInt(regData[0].user_type_id));
                               setUserProfile(regData[0]);
                               GetGallery.loadGallery()
-                              .then(data2 => data2.json())
-                              .then(data2 => {
-                                if (data2.length > 0) {
-                                  setImages(data2);
-                                }
-                              });
+                                .then(data2 => data2.json())
+                                .then(data2 => {
+                                  if (data2.length > 0) {
+                                    setImages(data2);
+                                  }
+                                });
                             }
                             if (regData === false) {
                               Alert.alert(
@@ -783,23 +997,25 @@ export default () => {
   }
 
   return (
-    <SchoolContext.Provider value={schoolInfoContext}>
-      <AuthContext.Provider value={authContext}>
-        <StateContext.Provider value={stateContext}>
-          <GalleryContext.Provider value={galleryContext}>
-            <NavigationContainer>
-              <RootStackScreen
-                userToken={userToken}
-                userId={userId}
-                userProfile={userProfile}
-                galleryImages={galleryImages}
-                schools={schools}
-              />
-            </NavigationContainer>
-          </GalleryContext.Provider>
-        </StateContext.Provider>
-      </AuthContext.Provider>
-    </SchoolContext.Provider>
+    <ResetContext.Provider value={resetContext}>
+      <SchoolContext.Provider value={schoolInfoContext}>
+        <AuthContext.Provider value={authContext}>
+          <StateContext.Provider value={stateContext}>
+            <GalleryContext.Provider value={galleryContext}>
+              <NavigationContainer>
+                <RootStackScreen
+                  userToken={userToken}
+                  userId={userId}
+                  userProfile={userProfile}
+                  galleryImages={galleryImages}
+                  schools={schools}
+                />
+              </NavigationContainer>
+            </GalleryContext.Provider>
+          </StateContext.Provider>
+        </AuthContext.Provider>
+      </SchoolContext.Provider>
+    </ResetContext.Provider>
   );
 };
 

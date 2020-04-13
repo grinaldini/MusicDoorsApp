@@ -1,7 +1,22 @@
 <?php
+$HostName = "localhost";
 
-// Importing DBConfig.php file.
-include 'DBConfig.php';
+//Define your database name here.
+$DatabaseName = "musicdoo_database";
+
+//Define your database username here.
+$HostUser = "musicdoo_root_us";
+
+//Define your database password here.
+$HostPass = "musicdoors@dallas@2020";
+
+// Create connection
+$conn = mysqli_connect($HostName, $HostUser, $HostPass, $DatabaseName);
+
+if ($conn->connect_error) {
+
+ die("Connection failed: " . $conn->connect_error);
+}
 
 // Connecting to MySQL Database.
  $con = mysqli_connect($HostName,$HostUser,$HostPass,$DatabaseName);
@@ -12,38 +27,43 @@ include 'DBConfig.php';
  // decoding the received JSON and store into $obj variable.
  $obj = json_decode($json,true);
 
- // Populate Student name from JSON $obj array and store into $S_Name.
- $S_Name = $obj['student_name'];
+ 
+ $code = $obj['code'];
+ $user_type_id = $obj['user_type_id'];
+ $description = $obj['description'];
+ $dateString = $obj['dateString'];
 
- // Populate Student Class from JSON $obj array and store into $S_Class.
- $S_Class = $obj['student_class'];
-
- // Populate Student Phone Number from JSON $obj array and store into $S_Phone_Number.
- $S_Phone_Number = $obj['student_phone_number'];
-
- // Populate Email from JSON $obj array and store into $S_Email.
- $S_Email = $obj['student_email'];
 
  // Creating SQL query and insert the record into MySQL database table.
- $Sql_Query = "insert into StudentDetailsTable (student_name,student_class,student_phone_number,student_email) values ('$S_Name','$S_Class','$S_Phone_Number','$S_Email')";
+ $Sql_Query = " insert into accessCodes (code,user_type_id,description,dateString) values ('$code','$user_type_id','$description','$dateString') ";
+ $check1 = mysqli_query($con,$Sql_Query);
+ $Sql_Query2 = "SELECT * FROM accessCodes WHERE code = '$code' and user_type_id = '$user_type_id' ";
+ 
+// Executing SQL Query.
+$check2 = mysqli_query($con,$Sql_Query2);
+
+$rows = array();
+
+if ($check2->num_rows >0) {
+ $json = true;
+
+ $json = json_encode($rows);
 
 
- if(mysqli_query($con,$Sql_Query)){
-
- // If the record inserted successfully then show the message.
-$MSG = 'Record Successfully Inserted Into MySQL Database.' ;
-
-// Converting the message into JSON format.
-$json = json_encode($MSG);
-
-// Echo the message.
- echo $json ;
-
- }
+ echo $json;
+} 
+ 
  else{
-
- echo 'Try Again';
-
+ 
+ // If the record inserted successfully then show the message.
+$InvalidMSG = false;
+ 
+// Converting the message into JSON format.
+$InvalidMSGJSon = json_encode($InvalidMSG);
+ 
+// Echo the message.
+ echo $InvalidMSGJSon ;
+ 
  }
  mysqli_close($con);
 ?>

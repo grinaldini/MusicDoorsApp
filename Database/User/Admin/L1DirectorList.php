@@ -19,8 +19,9 @@ if ($conn->connect_error) {
 }
 
 
+$user_type_id = 2;
 // Creating SQL command to fetch all records from Table.
-$query = "SELECT * FROM mainTable";
+$query = "SELECT * FROM mainTable where user_type_id = '$user_type_id' ";
 
 $result = mysqli_query($conn, $query);
 
@@ -36,7 +37,7 @@ if ($result->num_rows >0) {
  $json = json_encode($rows);
 
 } else {
- echo "No Results Found.";
+ echo false;
 }
 
 echo $json;
