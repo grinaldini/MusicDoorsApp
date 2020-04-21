@@ -1,5 +1,12 @@
 <?php
 // Getting the received JSON into $json variable.
+//$json = file_get_contents('php://input');
+ 
+// decoding the received JSON and store into $obj variable.
+//$obj = json_decode($json,true);
+
+// Populate access code from JSON $obj array and store into $code.
+
 $json = file_get_contents('php://input');
  
 // decoding the received JSON and store into $obj variable.
@@ -9,41 +16,44 @@ $obj = json_decode($json,true);
 $email = $obj['email'];
 $code = $obj['code'];
 
-require('phpmailer/class.phpmailer.php');
+//hardcode emails and code for debugging 
+//$email = "sdfa@smu.edu";
+//$email2 = "fasasd@outlook.com";
+//$code = "1234";
+
+require ('./PHPMailer-master/PHPMailerAutoload.php');
 $mail = new PHPMailer();
 $subject = "Password Reset";
-$content = "<b>Here is your temporary password for you to access your account:\n\n'$code'\n\nNote: If you did not request reset please contact dallasmusicdoors@gmail.com for assistance.\n\n\nBest,\nMusic Doors</b>";
+$content = "<br>Here is your temporary reset code for you to access your account:<b>  $code</b><br><br>Go to: SignIn => Forgot Password => Reset Password<br><br><i>Note: If you did not request this message please contact <b>dallasmusicdoors@gmail.com</b> for assistance.</i></br><br>Best,</br><br>\nMusic Doors</br>";
+
 $mail->IsSMTP();
-$mail->SMTPDebug = 0;
-$mail->SMTPAuth = TRUE;
-$mail->SMTPSecure = "tls";
-$mail->Port     = 587;  
+$mail->SMTPDebug = 1;
+$mail->SMTPAuth = true;
+$mail->SMTPSecure = 'tls';
+$mail->Host = "smtp.gmail.com";
+$mail->Port = 587; 
+$mail->IsHTML(true);
 $mail->Username = "dallasmusicdoors@gmail.com";
 $mail->Password = "support@musicdoors@2020";
-$mail->Host     = "smtp.gmail.com";
-$mail->Mailer   = "smtp";
-$mail->SetFrom("dallasmusicdoors@gmail.com", "Music Doors Customer Support");
-$mail->AddReplyTo("dallasmusicdoors@gmail.com", "PHPPot");
-$mail->AddAddress("'$email'");
+$mail->SetFrom("dallasmusicdoors@gmail.com");
+
+$mail->AddReplyTo("dallasmusicdoors@gmail.com");
+
 $mail->Subject = $subject;
-$mail->WordWrap   = 80;
-$mail->MsgHTML($content);
-$mail->IsHTML(true);
+$mail->Body = $content;
+$mail->AddAddress($email);
+//add multiple emails
+//$mail->AddAddress($email2);
 
 if(!$mail->Send()){
-    $json = false;
-
-    $json = json_encode($json);//update on server
-
-
-    echo $json;
+    //it didnt work
+    echo true;
+    
 }
 else{
-    $json = true;
+    //it worked
 
-    $json = json_encode($json);//update on server
-
-
-    echo $json;
+    echo false;
+    
 }
 ?>

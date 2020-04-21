@@ -36,11 +36,12 @@ if ($result->num_rows >0) {
  }
  $json = json_encode($rows);
 
+ echo $json;
+
 } else {
  echo false;
 }
 
-echo $json;
 
 mysqli_close($conn);
 

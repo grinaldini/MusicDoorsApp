@@ -67,7 +67,7 @@ $HostPass = "musicdoors@dallas@2020";
     $InvalidMSG = false;
 
     // Converting the message into JSON format.
-    $InvalidMSG = json_encode($MSG);
+    $InvalidMSG = json_encode($InvalidMSG);
     
     // Echo the message.
      echo $InvalidMSG ;

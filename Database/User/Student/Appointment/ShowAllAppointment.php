@@ -54,7 +54,9 @@ if ($result->num_rows >0) {
  $json = json_encode($rows);
 
 } else {
- echo false;
+ $invalidMsg = false;
+ $invalidJson = json_encode($invalidMsg);
+ echo $invalidJson;
 }
 
 echo $json;

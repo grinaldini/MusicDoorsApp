@@ -34,6 +34,8 @@ import {
 //API's
 import AuthApi from './API/auth';
 import CheckAccessCode from './API/AccessCode/checkAccessCode';
+import CheckResetCode from './API/AccessCode/checkResetCode';
+import UpdateResetPassword from './API/User/resetPassword';
 import UserRegistration from './API/User/userRegistration';
 import DupRegistration from './API/User/dupRegistration';
 import GetGallery from './API/Gallery/getGallery';
@@ -54,13 +56,18 @@ import {
   AdminStudentList,
   AdminPrivateStudentList,
   AdminInstructorList,
+  AdminAppointmentList,
+  AdminParticipantsInfo,
   AdminCreateAccessCode,
   AdminDeleteAccessCode,
   DirectorCreateAccount,
   DirectorProfile,
   DirectorHome,
+  DirectorStudentList,
+  DirectorAppointmentList,
+  DirectorParticipantsInfo,
   EditDirectorProfile,
-  StudentCreateAccount,StudentProfile,StudentHome,EditStudentProfile,StudentInstructorList,StudentBookingCalendar,StudentAppointmentRequest,StudentAppointmentList,StudentPendingAppointmentList,StudentCancelAppointmentList,StudentAppointmentInfo,StudentAppointment,
+  StudentCreateAccount,StudentProfile,StudentHome,EditStudentProfile,StudentInstructorList,StudentBookingCalendar,StudentAppointmentRequest,StudentAppointmentList,StudentPendingAppointmentList,StudentCancelAppointmentList,StudentAppointmentInfo,StudentPendingAppointmentInfo,StudentAppointment,
   PrivateStudentCreateAccount,
   PrivateStudentProfile,
   PrivateStudentHome,
@@ -68,6 +75,10 @@ import {
   InstructorCreateAccount,
   InstructorProfile,
   InstructorHome,
+  InstructorStudentList,
+  InstructorDirectorList,
+  InstructorDirectorInfo,
+  InstructorPrivateStudentList,
   EditInstructorProfile,
   Gallery,
   Search,
@@ -169,17 +180,19 @@ const AdminHomeStackScreen = () => (
       })}
     />
     <HomeStack.Screen
-      name="Admin Private Student List"
+      name="Private Student List"
       component={AdminPrivateStudentList}
-      options={({route}) => ({
-        title: route.params.name,
-      })}
+    />
+    <HomeStack.Screen name="Instructor List" component={AdminInstructorList} />
+    <HomeStack.Screen
+      name="Appointment List"
+      component={AdminAppointmentList}
     />
     <HomeStack.Screen
-      name="Admin Instructor List"
-      component={AdminInstructorList}
+      name="Participants Info"
+      component={AdminParticipantsInfo}
       options={({route}) => ({
-        title: route.params.name,
+        parent: route.params.parent,
       })}
     />
   </HomeStack.Navigator>
@@ -215,7 +228,17 @@ const AdminUserListsStackScreen = () => (
         title: route.params.name,
       })}
     />
-    <ListStack.Screen name="Search2" component={Search2} />
+    <ListStack.Screen
+      name="Admin Appointment List"
+      component={AdminAppointmentList}
+    />
+    <ListStack.Screen
+      name="Admin Instructor Info"
+      component={AdminInstructorList}
+      options={({route}) => ({
+        title: route.params.name,
+      })}
+    />
   </ListStack.Navigator>
 );
 
@@ -271,11 +294,19 @@ const DirectorTabsScreen = () => (
 const DirectorHomeStackScreen = () => (
   <HomeStack.Navigator>
     <HomeStack.Screen name="Home" component={DirectorHome} />
+    <HomeStack.Screen name="Student List" component={DirectorStudentList} />
     <HomeStack.Screen
-      name="Details"
-      component={Details}
+      name="Appointment List"
+      component={DirectorAppointmentList}
       options={({route}) => ({
-        title: route.params.name,
+        student_id: route.params.student_id,
+      })}
+    />
+    <HomeStack.Screen
+      name="Participants Info"
+      component={DirectorParticipantsInfo}
+      options={({route}) => ({
+        parent: route.params.parent,
       })}
     />
   </HomeStack.Navigator>
@@ -284,7 +315,7 @@ const DirectorHomeStackScreen = () => (
 const DirectorProfileStackScreen = () => (
   <ProfileStack.Navigator>
     <ProfileStack.Screen name="Director Profile" component={DirectorProfile} />
-    <HomeStack.Screen
+    <ProfileStack.Screen
       name="Edit Profile"
       component={EditDirectorProfile}
       options={({route}) => ({
@@ -349,15 +380,21 @@ const StudentAppointmentStackScreen = () => (
       component={StudentAppointmentInfo}
       options={({route}) => ({
         instructor_id: route.params.instructor_id,
+        appointment_id: route.params.appointment_id,
+      })}
+    />
+    <SearchStack.Screen
+      name="Pending Appointment Info"
+      component={StudentPendingAppointmentInfo}
+      options={({route}) => ({
+        instructor_id: route.params.instructor_id,
+        appointment_id: route.params.appointment_id,
+
       })}
     />
     <SearchStack.Screen
       name="Pending Appointment"
       component={StudentPendingAppointmentList}
-    />
-    <SearchStack.Screen
-      name="Cancel Appointment"
-      component={StudentCancelAppointmentList}
     />
   </SearchStack.Navigator>
 );
@@ -390,7 +427,7 @@ const DrawerScreen3 = () => (
 const PrivateStudentTabsScreen = () => (
   <Tabs.Navigator>
     <Tabs.Screen name="Home" component={PrivateStudentHomeStackScreen} />
-    <Tabs.Screen name="Gallery" component={GalleryStackScreen} />
+    <Tabs.Screen name="Appointment" component={StudentAppointmentStackScreen} />
   </Tabs.Navigator>
 );
 
@@ -424,12 +461,13 @@ const PrivateStudentProfileStackScreen = () => (
 );
 
 const DrawerScreen4 = () => (
-  <Drawer.Navigator initialRouteName="Profile">
+  <Drawer.Navigator initialRouteName="Home">
     <Drawer.Screen name="Home" component={PrivateStudentTabsScreen} />
     <Drawer.Screen
       name="Profile"
       component={PrivateStudentProfileStackScreen}
     />
+    <Drawer.Screen name="Gallery" component={GalleryStackScreen} />
   </Drawer.Navigator>
 );
 
@@ -440,21 +478,90 @@ const DrawerScreen4 = () => (
 const InstructorTabsScreen = () => (
   <Tabs.Navigator>
     <Tabs.Screen name="Home" component={InstructorHomeStackScreen} />
-    <Tabs.Screen name="Gallery" component={GalleryStackScreen} />
+    <Tabs.Screen name="Appointment" component={InstructorAppointmentStackScreen} />
   </Tabs.Navigator>
 );
 
 const InstructorHomeStackScreen = () => (
   <HomeStack.Navigator>
     <HomeStack.Screen name="Home" component={InstructorHome} />
+    <HomeStack.Screen name="Student List" component={InstructorStudentList} />
     <HomeStack.Screen
-      name="Details"
-      component={Details}
+      name="Director List"
+      component={InstructorDirectorList}
       options={({route}) => ({
-        title: route.params.name,
+        parent: route.params.parent,
       })}
     />
+    <HomeStack.Screen
+      name="Director Info"
+      component={InstructorDirectorInfo}
+      options={({route}) => ({
+        parent: route.params.parent,
+      })}
+    />
+    <HomeStack.Screen
+      name="Private Student List"
+      component={InstructorPrivateStudentList}
+    />
   </HomeStack.Navigator>
+);
+
+const InstructorAppointmentStackScreen = () => (
+  <SearchStack.Navigator>
+    <SearchStack.Screen
+      name="Appointment Menu"
+      component={InstructorAppointment}
+    />
+    <SearchStack.Screen
+      name="Appointment"
+      component={InstructorAppointmentList}
+    />
+    <SearchStack.Screen
+      name="Appointment Info"
+      component={InstructorAppointmentInfo}
+      options={({route}) => ({
+        instructor_id: route.params.instructor_id,
+        appointment_id: route.params.appointment_id,
+      })}
+    />
+    <SearchStack.Screen
+      name="Pending Appointment"
+      component={InstructorPendingAppointmentList}
+    />
+    <SearchStack.Screen
+      name="Pending Appointment Info"
+      component={InstructorPendingAppointmentInfo}
+      options={({route}) => ({
+        instructor_id: route.params.instructor_id,
+        appointment_id: route.params.appointment_id,
+      })}
+    />
+    <SearchStack.Screen
+      name="Edit Schedule"
+      //component={InstructorEditSchedule}
+      options={({route}) => ({
+        instructor_id: route.params.instructor_id,
+        appointment_id: route.params.appointment_id,
+      })}
+    />
+    <SearchStack.Screen
+      name="Create Appointment"
+      //component={InstructorCreateAppointment}
+      options={({route}) => ({
+        instructor_id: route.params.instructor_id,
+        appointment_id: route.params.appointment_id,
+      })}
+    />
+    <SearchStack.Screen
+      name="Delete Appointment"
+      //component={InstructorDeleteAppointment}
+      options={({route}) => ({
+        instructor_id: route.params.instructor_id,
+        appointment_id: route.params.appointment_id,
+      })}
+    />
+  </SearchStack.Navigator>
 );
 
 const InstructorProfileStackScreen = () => (
@@ -474,9 +581,10 @@ const InstructorProfileStackScreen = () => (
 );
 
 const DrawerScreen5 = () => (
-  <Drawer.Navigator initialRouteName="Profile">
+  <Drawer.Navigator initialRouteName="Home">
     <Drawer.Screen name="Home" component={InstructorTabsScreen} />
     <Drawer.Screen name="Profile" component={InstructorProfileStackScreen} />
+    <Drawer.Screen name="Gallery" component={GalleryStackScreen} />
   </Drawer.Navigator>
 );
 
@@ -485,7 +593,6 @@ const DrawerScreen5 = () => (
 const GalleryStackScreen = () => (
   <SearchStack.Navigator>
     <SearchStack.Screen name="Gallery" component={Gallery} />
-    <SearchStack.Screen name="Search2" component={Search2} />
   </SearchStack.Navigator>
 );
 
@@ -597,33 +704,27 @@ export default () => {
         //here is where we need to send the email
         //for now, just print the code to the screen
         var part1 = moment().format('l');
+        part1 = part1.replace('/','');
+        part1 = part1.replace('/','');
         var part2 = moment().format('LTS');
         part2 = part2.replace(/:/g, '');
         part2 = part2.replace(/PM/g, '');
-        part2 = part2.replace(/AM/g, '');
-
+        part2 = part2.replace(/AM/g, '');   
         var code = part1 + part2;
-        var note = email + ' forgot password';
+        var note = email;
 
+        console.log(email);
+        console.log(user_type_id);
         DupRegistration.checkDup(email, user_type_id)
-          .then(check => check.json)
-          .then(check => {
-            if (check === false) {
+          .then(data => data.json())
+          .then(data => {
+            if (data === false) {
               Alert.alert('Error try again later');
-            } 
-            if (
-              user_type_id !== 1 &&
-              user_type_id !== 2 &&
-              user_type_id !== 3 &&
-              user_type_id !== 4 &&
-              user_type_id !== 5
-            ) {
-              alert('Error try again later');
-            }else {
+            } else {
               CreateAccessCode.createAC(code, 6, note, moment().format('llll'))
-                .then(data => data.json)
-                .then(data => {
-                  if (data === false) {
+                .then(data2 => data2.json())
+                .then(data2 => {
+                  if (data2 === false) {
                     Alert.alert('Error Adding Access Code, Try Again Later');
                   } else {
                     Alert.alert('Successfully Added Unique Access Code');
@@ -631,39 +732,58 @@ export default () => {
                 });
 
               EmailPassword.tempPass(email, code)
-                .then(data => data.json)
-                .then(data => {
-                  console.log(data);
-                  if (data === false) {
+                .then(data2 => {
+                  //console.log(data);
+                  if (data2 === false) {
                     Alert.alert('Error');
                   } else {
-                    Alert.alert('Email sent');
+                    Alert.alert('Email Sent');
                   }
 
                 });
             }
           });
-        var al = "Temp Code:\n" + code + "\nFor:\n" + email;
-        alert(al);
+        //var al = "Temp Code:\n" + code + "\nFor:\n" + email;
+        //alert(al);
       },
-      resetPassword: (resetCode, newPassword, confPassword) => {
+      resetPassword: (resetCode, newPassword, confPassword, email) => {
         setIsLoading(false);
         //here is where we need to send the email
         //for now, just print the code to the screen
         //
-        let user_type_id = 1; //this needs to be addressed. are we asking the user what type they are?
+        //let user_type_id = 1; //this needs to be addressed. are we asking the user what type they are?
         if (newPassword === confPassword) {
-          CheckAccessCode.authAccess(resetCode, user_type_id)
-            .then(data => data.json())
-            .then(data => {
-              if (data === true) {
-                Alert.alert('todo: update password');
-                //TODO: change the password to the new one, drop the code from the reset code list
-              } else {
-                Alert.alert('Invalid Code');
+          CheckResetCode.checkValid(resetCode, email)
+            .then(data=>data.json())
+            .then(data=>{
+              console.log(resetCode);
+              console.log(email);
+              if(data===false){
+                Alert.alert("Invalid Email or Code");
               }
+              else{
+                UpdateResetPassword.reset(email, newPassword)
+                .then(data2=>data2.json())
+                .then(data2 => {
+                    if (data2 === false) {
+                      Alert.alert('Error, try again later');
+                    } else {
+                      Alert.alert('Updated');
+                      DeleteAccessCode.deleteAC(resetCode, 6)
+                      .then(data3 => data3.json())
+                      .then(data3 => {
+                            if (data3 === false) {
+                              console.log('Deleted Successfully');
+                            } else {
+                              console.log('Not Deleted, Try Again Later');
+                            }
+                      });                      
+                    }
+                  });
+              } 
             });
-        } else {
+        }
+        else {
           Alert.alert('Passwords must match');
         }
       },
@@ -682,6 +802,25 @@ export default () => {
     setSchools,
   ]);
 
+  GetSchools.loadSchools()
+    .then(data2 => data2.json())
+    .then(data2 => {
+      if (data2.length > 0) {
+        
+        var jsonData = JSON.stringify(data2, [
+          'id',
+          'name',
+          'isd',
+          'zip_code'
+        ]);
+        jsonData = JSON.parse(jsonData);
+
+        setSchools(jsonData);
+      }
+    });
+  
+  //console.log(schools);
+
   //const listContext = React.useMemo
   const authContext = React.useMemo(() => {
     return {
@@ -694,7 +833,33 @@ export default () => {
               //Alert.alert(data[0].user_type_id);
               setUserToken('asdf');
               setUserId(parseInt(data[0].user_type_id));
-              setUserProfile(data[0]);
+
+              //console.log(data[0]);
+              var jsonData = JSON.stringify(data[0], [
+                'id',
+                'user_type_id',
+                'email',
+                'password',
+                'avatar',
+                'description',
+                'first_name',
+                'last_name',
+                'phone_number',
+                'street_address',
+                'city',
+                'state',
+                'zip_code',
+                'feeder_school',
+                'current_school',
+                'instrument',
+                'instrument_2',
+                'instrument_3',
+              ]);
+              jsonData = JSON.parse(jsonData);
+              console.log(jsonData);
+              setUserProfile(jsonData);
+
+              
               GetGallery.loadGallery()
                 .then(data2 => data2.json())
                 .then(data2 => {
@@ -702,13 +867,7 @@ export default () => {
                     setImages(data2);
                   }
                 });
-              GetSchools.loadSchools()
-                .then(data2 => data2.json())
-                .then(data2 => {
-                  if (data2.length > 0) {
-                    setSchools(data2);
-                  }
-                });
+              
             }
             if (data === false) {
               Alert.alert('Incorrect Login');
@@ -779,7 +938,29 @@ export default () => {
                               Alert.alert('Welcome to Music Doors');
                               setUserToken('asdf');
                               setUserId(parseInt(regData[0].user_type_id));
-                              setUserProfile(regData[0]);
+                              var jsonData = JSON.stringify(regData[0], [
+                                'id',
+                                'user_type_id',
+                                'email',
+                                'password',
+                                'avatar',
+                                'description',
+                                'first_name',
+                                'last_name',
+                                'phone_number',
+                                'street_address',
+                                'city',
+                                'state',
+                                'zip_code',
+                                'feeder_school',
+                                'current_school',
+                                'instrument',
+                                'instrument_2',
+                                'instrument_3',
+                              ]);
+                              jsonData = JSON.parse(jsonData);
+                              console.log(jsonData);
+                              setUserProfile(jsonData);
                               GetGallery.loadGallery()
                                 .then(data2 => data2.json())
                                 .then(data2 => {
@@ -834,7 +1015,29 @@ export default () => {
                               Alert.alert('Welcome to Music Doors');
                               setUserToken('asdf');
                               setUserId(parseInt(regData[0].user_type_id));
-                              setUserProfile(regData[0]);
+                              var jsonData = JSON.stringify(regData[0], [
+                                'id',
+                                'user_type_id',
+                                'email',
+                                'password',
+                                'avatar',
+                                'description',
+                                'first_name',
+                                'last_name',
+                                'phone_number',
+                                'street_address',
+                                'city',
+                                'state',
+                                'zip_code',
+                                'feeder_school',
+                                'current_school',
+                                'instrument',
+                                'instrument_2',
+                                'instrument_3',
+                              ]);
+                              jsonData = JSON.parse(jsonData);
+                              console.log(jsonData);
+                              setUserProfile(jsonData);
                               GetGallery.loadGallery()
                                 .then(data2 => data2.json())
                                 .then(data2 => {
@@ -888,7 +1091,29 @@ export default () => {
                               Alert.alert('Welcome to Music Doors');
                               setUserToken('asdf');
                               setUserId(parseInt(regData[0].user_type_id));
-                              setUserProfile(regData[0]);
+                              var jsonData = JSON.stringify(regData[0], [
+                                'id',
+                                'user_type_id',
+                                'email',
+                                'password',
+                                'avatar',
+                                'description',
+                                'first_name',
+                                'last_name',
+                                'phone_number',
+                                'street_address',
+                                'city',
+                                'state',
+                                'zip_code',
+                                'feeder_school',
+                                'current_school',
+                                'instrument',
+                                'instrument_2',
+                                'instrument_3',
+                              ]);
+                              jsonData = JSON.parse(jsonData);
+                              console.log(jsonData);
+                              setUserProfile(jsonData);
                               GetGallery.loadGallery()
                                 .then(data2 => data2.json())
                                 .then(data2 => {
@@ -942,7 +1167,29 @@ export default () => {
                               Alert.alert('Welcome to Music Doors');
                               setUserToken('asdf');
                               setUserId(parseInt(regData[0].user_type_id));
-                              setUserProfile(regData[0]);
+                              var jsonData = JSON.stringify(data[0], [
+                                'id',
+                                'user_type_id',
+                                'email',
+                                'password',
+                                'avatar',
+                                'description',
+                                'first_name',
+                                'last_name',
+                                'phone_number',
+                                'street_address',
+                                'city',
+                                'state',
+                                'zip_code',
+                                'feeder_school',
+                                'current_school',
+                                'instrument',
+                                'instrument_2',
+                                'instrument_3',
+                              ]);
+                              jsonData = JSON.parse(jsonData);
+                              console.log(jsonData);
+                              setUserProfile(jsonData);
                               GetGallery.loadGallery()
                                 .then(data2 => data2.json())
                                 .then(data2 => {

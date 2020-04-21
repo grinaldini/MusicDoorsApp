@@ -42,7 +42,7 @@ if ($conn->connect_error) {
 
 if ($check->num_rows >0) {
 
-    $json = false;
+    $json = true;
 
     $json = json_encode($rows);
 

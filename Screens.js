@@ -15,7 +15,10 @@ import {
   Dimensions,
   FlatList,
   TouchableHighlight,
+  SafeAreaView,
+  ImagePickerIOS,
 } from 'react-native';
+import ImagePicker from 'react-native-image-picker';
 
 import {Swipeable} from 'react-native-gesture-handler/Swipeable';
 import moment from 'moment';
@@ -33,24 +36,41 @@ import GetGallery from './API/Gallery/getGallery';
 
 import AdminDirectorL1 from './API/User/Admin/list1Director';
 import AdminStudentL2 from './API/User/Admin/list2Student';
+import AdminPrivateStudentL1 from './API/User/Admin/list1PrivateStudentList';
+import AdminInstructorL1 from './API/User/Admin/list1InstructorList';
+import AdminAppointmentL1 from './API/User/Admin/list1ApptList';
+import AdminApptStudentV2 from './API/User/Admin/view2Student';
+import AdminApptInstructorV2 from './API/User/Admin/view2Instructor';
+
+import DirectorStudentL1 from './API/User/Director/list1Student';
+import DirectorAppointmentL2 from './API/User/Director/list2ApptList';
+
 
 import StudentInstructorL1 from './API/User/Student/list1Instructor';
 import AvailableAppt from './API/User/Student/list2AvailableAppt';
 import InstAvailableAppt from './API/User/Student/list3InstAvailableAppt';
 import RequestAppointment from './API/User/Student/Appointment/requestAppt';
 import InstructorData from './API/User/Student/Appointment/instructorData';
+import CancelPendingRequest from './API/User/Student/Appointment/cancelPending';
+import CancelConfirmedAppt from './API/User/Student/Appointment/cancelConfirmed';
+
+import InstructorStudentL1 from './API/User/Instructor/list1Student';
+import InstructorPrivateStudentL1 from './API/User/Instructor/list1PrivateStudent';
+import DirectorList from './API/User/Instructor/list2DirectorList';
+import DirectorData from './API/User/Instructor/view2Director';
 
 import AccessCodeList from './API/AccessCode/listAccessCode';
 import CreateAccessCode from './API/AccessCode/createAccessCode';
 import DeleteAccessCode from './API/AccessCode/deleteAccessCode';
 
-
-
 import CalendarPicker from 'react-native-calendar-picker';
 import AllAppt from './API/User/Student/Appointment/studentShowAllAppt';
+import AllPendingAppt from './API/User/Student/Appointment/pendingShowAllAppt';
+import UpdateStudent from './API/User/Student/Profile/update';
 
+import ImageResizer from 'react-native-image-resizer';
 
-
+import RNFetchBlob from 'rn-fetch-blob';
 
 const userTypes = [
   {
@@ -140,6 +160,9 @@ const items = [
     id: 17,
     name: "Violin"
   },
+  { id: 18,
+    name: "None"
+  },
 ];
 
 const ScreenContainer = ({children}) => (
@@ -194,8 +217,8 @@ export const Welcome = ({navigation}) => {
 // test 'directorSchool1@gmail.com', 'password_directorSchool1'
 export const SignIn = ({navigation}) => {
   const {signIn} = React.useContext(AuthContext);
-  const [email, setEmail] = useState('Email');
-  const [password, setPassword] = useState('Password');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   return (
     <ScreenContainer>
       <TextInput
@@ -266,8 +289,12 @@ export const ForgotPassword = ({navigation}) => {
       <TouchableOpacity
         activeOpacity={0.4}
         style={styles.TouchableOpacityStyle}
-        onPress={() => sendResetCode(email, userTypeId)}
-      >
+        onPress={() =>{
+          console.log(email);
+          console.log(userTypeId);
+          sendResetCode(email, userTypeId);
+          }
+        }>
         <Text style={styles.TextStyle}> Send Code </Text>
       </TouchableOpacity>
       <TouchableOpacity
@@ -285,12 +312,21 @@ export const ResetPassword = ({navigation}) => {
   const [resetCode, setResetCode] = useState('Reset Code');
   const [newPassword, setNewPassword] = useState('New Password');
   const [confPassword, setConfPassword] = useState('Confirm New Password');
+  const [email, setEmail] = useState('Email');
+  
   return (
     <ScreenContainer>
        <TextInput
         placeholder="Reset Code"
         underlineColorAndroid="transparent"
         onChangeText={val => setResetCode(val)}
+        autoCapitalize="none"
+        style={styles.TextInputStyleClass}
+      />
+       <TextInput
+        placeholder="Email"
+        underlineColorAndroid="transparent"
+        onChangeText={val => setEmail(val)}
         autoCapitalize="none"
         style={styles.TextInputStyleClass}
       />
@@ -311,7 +347,7 @@ export const ResetPassword = ({navigation}) => {
       <TouchableOpacity
         activeOpacity={0.4}
         style={styles.TouchableOpacityStyle}
-        onPress={() => resetPassword(resetCode, newPassword, confPassword)}>
+        onPress={() => resetPassword(resetCode, newPassword, confPassword, email)}>
         <Text style={styles.TextStyle}> Reset </Text>
       </TouchableOpacity>
     </ScreenContainer>
@@ -338,11 +374,12 @@ export const AdminProfile = ({navigation, route}) => {
       <Text>
         Admin Profile Screen {userProfile ? userProfile.email : 'abc'}
       </Text>
-      <Button title="Edit Admin Profile" onPress={() => navigation.push('Edit Profile',{name: 'Edit Admin Profile '})}/>
-      <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
       <Button title="Sign Out" onPress={() => signOut()} />
     </ScreenContainer>
   );
+  //<Button title="Edit Admin Profile" onPress={() => navigation.push('Edit Profile',{name: 'Edit Admin Profile '})}/>
+  //<Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
+
 };
 
 
@@ -350,10 +387,9 @@ export const AdminHome = ({navigation, route}) => {
   const stateContext = React.useContext(StateContext);
   const [userProfile, setUserProfile] = stateContext;
 
-
+  //TODO: Remove userProfile 
   return (
     <ScreenContainer>
-      <Text>Master List Screen</Text>
       <Text>{userProfile ? userProfile.email : 'abc'}</Text>
       <Button
         title="Director List"
@@ -362,12 +398,27 @@ export const AdminHome = ({navigation, route}) => {
       <Button
         title="Private Student List"
         onPress={() =>
-          navigation.push('Details', {name: 'React Native School'})
+          navigation.push('Private Student List')
         }
       />
-      <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
+      <Button
+        title="Instructor List"
+        onPress={() =>
+          navigation.push('Instructor List')
+        }
+      />
+      <Button
+        title="Appointment List"
+        onPress={() =>
+          navigation.push('Appointment List')
+        }
+      />
     </ScreenContainer>
+    
   );
+  
+  //<Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
+  //<Text>Master List Screen</Text>
 };
 
 export const FlatListItemSeparator = () => {
@@ -410,7 +461,7 @@ export const AdminDirectorList = ({navigation, route}) => {
               <TouchableHighlight onPress={() => navigation.push('Admin Student List', {parent: item})} underlayColor={'#FF5722'}>
                 <View style={{flex:1, flexDirection: 'row'}}>
                   <Image source = {{ uri: item.avatar }} style={userListStyles.imageView} />
-                  <Text style={userListStyles.textView}>{item.first_name} {item.last_name}{"\n"}{item.current_school}{"\n"}{item.email}{"\n"}{item.phone_number}</Text>
+                  <Text style={userListStyles.textView}>{item.first_name} {item.last_name}{"\n\n"}{item.current_school}{"\n"}{item.email}{"\n"}{item.phone_number}</Text>
                 </View>
               </TouchableHighlight>
           }
@@ -458,22 +509,238 @@ export const AdminStudentList = ({navigation, route}) => {
           ItemSeparatorComponent = {FlatListItemSeparator}
 
           renderItem={({item}) => 
-              <TouchableHighlight  underlayColor={'#FF5722'}>
                 <View style={{flex:1, flexDirection: 'row'}}>
                   <Image source = {{ uri: item.avatar }} style={userListStyles.imageView} />
-                  <Text style={userListStyles.textView}>{item.first_name} {item.last_name}{"\n"}{item.current_school}{"\n"}{item.target_school}{"\n"}{item.email}</Text>
+                  <Text style={userListStyles.textView}>{item.first_name} {item.last_name}{"\n\n"}{item.current_school}{"\n"}{item.feeder_school}{"\n"}{item.email}</Text>
                 </View>
-              </TouchableHighlight>
           }
 
           keyExtractor={(item, index) => index.toString()}
           
           />
       </View>
-      <Text>{route.params.parent.current_school}</Text>
     </ScreenContainer>
   );
 };
+
+export const AdminPrivateStudentList = ({route}) => {
+  const [studentUser, setStudentUser] = React.useState(null);
+
+  AdminPrivateStudentL1.getPS()
+    .then(data2=>data2.json())
+    .then(data2=>{
+      if (data2.length > 0) {
+        setStudentUser(data2);
+      
+      }
+      if (data2 === false) {
+        Alert.alert(
+          'No Private Students Registered',
+        );
+      }
+      
+    });
+
+
+  return (
+    <ScreenContainer>
+      <View style = {userListStyles.MainContainer}>
+          <FlatList
+          
+          data={studentUser}
+          
+          ItemSeparatorComponent = {FlatListItemSeparator}
+
+          renderItem={({item}) => 
+                <View style={{flex:1, flexDirection: 'row'}}>
+                  <Image source = {{ uri: item.avatar }} style={userListStyles.imageView} />
+                  <Text style={userListStyles.textView}>{item.first_name} {item.last_name}{"\n\n"}{item.email}</Text>
+                </View>
+          }
+
+          keyExtractor={(item, index) => index.toString()}
+          
+          />
+      </View>
+    </ScreenContainer>
+  );
+};
+
+export const AdminInstructorList = ({route}) => {
+  const [instructorUser, setInstructorUser] = React.useState(null);
+
+  AdminInstructorL1.getInstructors()
+    .then(data2=>data2.json())
+    .then(data2=>{
+      if (data2.length > 0) {
+        setInstructorUser(data2);
+      }
+      if (data2 === false) {
+        Alert.alert(
+          'No Instructors Registered'
+        );
+      }
+      
+    });
+
+  return (
+    <ScreenContainer>
+      <View style = {userListStyles.MainContainer}>
+          <FlatList
+          
+          data={instructorUser}
+          
+          ItemSeparatorComponent = {FlatListItemSeparator}
+
+          renderItem={({item}) => 
+                <View style={{flex:1, flexDirection: 'row'}}>
+                  <Image source = {{ uri: item.avatar }} style={userListStyles.imageView} />
+                  <Text style={userListStyles.textView}>{item.first_name} {item.last_name}{"\n\n"}{item.feeder_school}{"\n"}{item.email}{"\n"}{item.phone_number}</Text>
+                </View>
+          }
+
+          keyExtractor={(item, index) => index.toString()}
+          
+          />
+      </View>
+    </ScreenContainer>
+  );
+};
+
+
+
+
+export const AdminAppointmentList = ({navigation, route}) => {
+  const [appointment, setAppointment] = React.useState(null);
+
+  AdminAppointmentL1.getAppt()
+    .then(data2=>data2.json())
+    .then(data2=>{
+      if (data2.length > 0) {
+        setAppointment(data2);
+      }else{
+        Alert.alert(
+          'No Instructors Registered'
+        );
+      }
+      
+    });
+
+  return (
+    <ScreenContainer>
+      <View style = {userListStyles.MainContainer}>
+          <FlatList
+          
+          data={appointment}
+          
+          ItemSeparatorComponent = {FlatListItemSeparator}
+
+          renderItem={({item}) => 
+           
+            <TouchableHighlight
+                    onPress={() =>
+                      navigation.push('Participants Info', {parent: item})
+                    }
+                    underlayColor={'#FF5722'}>
+                  <View style={{flex:1, flexDirection: 'row'}}>
+                    <Image source = {{ uri: 'http://musicdoors.org/Assets/generalAppointment.png' }} style={userListStyles.imageView} />
+                    <Text style={userListStyles.textView}>
+                            {item.date}
+                            {'\n\n'}
+                            {item.start}
+                            {'-'}
+                            {item.end}
+                            {'\n\n'}
+                            {'Appointment Status: Confirmed'}
+                    </Text>    
+                  </View>
+            </TouchableHighlight>
+
+          }
+          keyExtractor={(item, index) => index.toString()}       
+          />
+      </View>
+    </ScreenContainer>
+  );
+};
+
+
+export const AdminParticipantsInfo = ({navigation, route}) => {
+  const [student, setStudent] = React.useState([]);
+  const [instructor, setInstructor] = React.useState([]);
+  const [check, setCheck] = React.useState(0);
+
+
+  AdminApptStudentV2.getParticipant(route.params.parent.student_id)
+    .then(data2=>data2.json())
+    .then(data2=>{
+      if (data2.length > 0) {
+        setStudent(data2[0]);
+      }else{
+        Alert.alert(
+          'No Instructors Registered'
+        );
+      }
+      
+    });
+  
+  AdminApptInstructorV2.getParticipant(route.params.parent.instructor_id)
+  .then(data2=>data2.json())
+  .then(data2=>{
+    if (data2.length > 0) {
+      setInstructor(data2[0]);
+      setCheck(1);
+    }else{
+      Alert.alert(
+        'No Instructors Registered'
+      );
+    }
+    
+  });
+
+  console.log(student);
+  console.log(instructor);
+
+  if(check>0){
+    return(
+     <ScreenContainer>
+      <ScrollView>
+          <View style={profilePage.container}>
+            <View style={[profilePage.card, profilePage.profileCard]}> 
+              <Image style={profilePage.avatar} source={{uri: 'http://musicdoors.org/Assets/generalAppointment.png'}} />
+              <Text style={profilePage.name}>
+                {route.params.parent.date}  
+              </Text>
+            </View> 
+            <View style={profilePage.card}>
+              <Text style={profilePage.cardTittle}>Appointment Details:</Text>
+              <Text> -  {route.params.parent.start}{'-'}{route.params.parent.end}</Text>
+              <Text> -  {instructor.street_address},{instructor.city},{instructor.state},{instructor.zip_code}</Text>
+            </View>
+            <View style={profilePage.card}>
+              <Text style={profilePage.cardTittle}>Instructor: {instructor.first_name} {instructor.last_name}</Text>
+              <Text> -  {instructor.email}</Text>
+              <Text> -  {instructor.phone_number}</Text>
+            </View>
+            <View style={profilePage.card}>
+              <Text style={profilePage.cardTittle}>Student: {student.first_name}{student.last_name}</Text>
+              <Text> -  {student.email}</Text>
+              <Text> -  Current School: {student.current_school}</Text>
+              <Text> -  Feeder School:  {student.feeder_school}</Text>
+            </View>
+          </View>
+      </ScrollView>
+    </ScreenContainer>
+    );
+  }else{
+    return (
+      <ScreenContainer>
+        <ActivityIndicator size="large" color="#c70046" />
+      </ScreenContainer>
+    );
+  }
+};
+
 
 export const AdminCodeGenerator = ({navigation, route}) => {
   const stateContext = React.useContext(StateContext);
@@ -623,7 +890,7 @@ export const AdminDeleteAccessCode = ({navigation, route}) => {
                               if (data === false) {
                                 Alert.alert('Deleted Successfully');
                               } else {
-                                ('Not Deleted, Try Again Later');
+                                Alert.alert('Not Deleted, Try Again Later');
                               }
                             }); 
                           }
@@ -655,6 +922,9 @@ Director Screens
 */
 export const DirectorCreateAccount = () => {
   const {signUp} = React.useContext(AuthContext);
+
+  const schoolsInfoContext = React.useContext(SchoolContext);
+  const [schools, setSchools] = schoolsInfoContext;
 
   const user_type_id = 2;
 
@@ -704,11 +974,27 @@ export const DirectorCreateAccount = () => {
         style={styles.TextInputStyleClass}
         onChangeText={val => setLName(val)}
       />
-      <TextInput
-        placeholder="Enter Current School"
+      <SearchableDropdown
+        onTextChange={text => console.log(text)}
+        //On text change listener on the searchable input
+        onItemSelect={item => setCS(item.name)}
+        //onItemSelect called after the selection from the dropdown
+        containerStyle={styles.ddContainerStyle}
+        //suggestion container style
+        textInputStyle={styles.ddInputStyle}
+        itemStyle={styles.ddItemStyle}
+        itemTextStyle={styles.ddItemTextStyle}
+        itemsContainerStyle={styles.ddItemsContainerStyle}
+        items={schools}
+        //mapping of item array
+        //defaultIndex={2}
+        //default selected item index
+        placeholder="Select Current School"
+        //place holder for the search input
+        resetValue={false}
+        //reset textInput Value with true and false state
         underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setCS(val)}
+        //To remove the underline from the android input
       />
       <TextInput
         placeholder="Enter Phone Number"
@@ -758,7 +1044,12 @@ export const DirectorProfile = ({navigation, route}) => {
   return (
     <ScreenContainer>
       <Text>Director Profile Screen</Text>
-      <Button title="Edit Director Profile" onPress={() => navigation.push('Edit Profile', {name: 'Edit Director Profile '})}/>
+      <Button
+        title="Edit Director Profile"
+        onPress={() =>
+          navigation.push('Edit Profile', {name: 'Edit Director Profile '})
+        }
+      />
       <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
       <Button title="Sign Out" onPress={() => signOut()} />
     </ScreenContainer>
@@ -774,20 +1065,199 @@ export const DirectorHome = ({navigation, route}) => {
       <Text>Home</Text>
       <Text>{userProfile ? userProfile.email : 'abc'}</Text>
       <Button
-        title="User Lists"
+        title="Student List"
         onPress={() =>
-          navigation.push('Details', {name: 'React Native by Example '})
-        }
-      />
-      <Button
-        title="Appointment List"
-        onPress={() =>
-          navigation.push('Details', {name: 'React Native School'})
+          navigation.push('Student List')
         }
       />
       <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
     </ScreenContainer>
   );
+};
+
+export const DirectorStudentList = ({navigation, route}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+
+  const [studentUser, setStudentUser] = React.useState(null);
+
+  DirectorStudentL1.getStudentList(userProfile.current_school)
+    .then(data2=>data2.json())
+    .then(data2=>{
+      if (data2.length > 0) {
+        setStudentUser(data2);
+      
+      }
+      else{
+        Alert.alert(
+          'No Students Registered Under Director',
+        );
+      }
+      
+    });
+
+  //console.log(studentUser);
+
+  return (
+    <ScreenContainer>
+      <View style = {userListStyles.MainContainer}>
+          <FlatList
+          
+          data={studentUser}
+          
+          ItemSeparatorComponent = {FlatListItemSeparator}
+
+          renderItem={({item}) => 
+          <TouchableHighlight
+                    onPress={() =>
+                      navigation.push('Appointment List', {student_id: item.id})
+                    }
+                    underlayColor={'#FF5722'}>
+                <View style={{flex:1, flexDirection: 'row'}}>
+                  <Image source = {{ uri: item.avatar }} style={userListStyles.imageView} />
+                  <Text style={userListStyles.textView}>{item.first_name} {item.last_name}{"\n\n"}{item.current_school}{"\n"}{item.feeder_school}{"\n"}{item.email}</Text>
+                </View>
+          </TouchableHighlight>
+          }
+
+          keyExtractor={(item, index) => index.toString()}
+          
+          />
+      </View>
+    </ScreenContainer>
+  );
+};
+
+export const DirectorAppointmentList = ({navigation, route}) => {
+  const [appointment, setAppointment] = React.useState(null);
+  console.log(route.params.student_id);
+  DirectorAppointmentL2.getAppt(route.params.student_id)
+    .then(data2=>data2.json())
+    .then(data2=>{
+      if (data2.length > 0) {
+        setAppointment(data2);
+      }else{
+        Alert.alert(
+          'No Instructors Registered'
+        );
+      }
+      
+    });
+  
+  console.log(route.params.student_id);
+
+  return (
+    <ScreenContainer>
+      <View style = {userListStyles.MainContainer}>
+          <FlatList
+          
+          data={appointment}
+          
+          ItemSeparatorComponent = {FlatListItemSeparator}
+
+          renderItem={({item}) => 
+           
+            <TouchableHighlight
+                    onPress={() =>
+                      navigation.push('Participants Info', {parent: item})
+                    }
+                    underlayColor={'#FF5722'}>
+                  <View style={{flex:1, flexDirection: 'row'}}>
+                    <Image source = {{ uri: 'http://musicdoors.org/Assets/generalAppointment.png' }} style={userListStyles.imageView} />
+                    <Text style={userListStyles.textView}>
+                            {item.date}
+                            {'\n\n'}
+                            {item.start}
+                            {'-'}
+                            {item.end}
+                            {'\n\n'}
+                            {'Appointment Status: Confirmed'}
+                    </Text>    
+                  </View>
+            </TouchableHighlight>
+
+          }
+          keyExtractor={(item, index) => index.toString()}       
+          />
+      </View>
+    </ScreenContainer>
+  );
+};
+
+export const DirectorParticipantsInfo = ({navigation, route}) => {
+  const [student, setStudent] = React.useState([]);
+  const [instructor, setInstructor] = React.useState([]);
+  const [check, setCheck] = React.useState(0);
+
+
+  AdminApptStudentV2.getParticipant(route.params.parent.student_id)
+    .then(data2=>data2.json())
+    .then(data2=>{
+      if (data2.length > 0) {
+        setStudent(data2[0]);
+      }else{
+        Alert.alert(
+          'No Instructors Registered'
+        );
+      }
+      
+    });
+  
+  AdminApptInstructorV2.getParticipant(route.params.parent.instructor_id)
+  .then(data2=>data2.json())
+  .then(data2=>{
+    if (data2.length > 0) {
+      setInstructor(data2[0]);
+      setCheck(1);
+    }else{
+      Alert.alert(
+        'No Instructors Registered'
+      );
+    }
+    
+  });
+
+  console.log(student);
+  console.log(instructor);
+
+  if(check>0){
+    return(
+     <ScreenContainer>
+      <ScrollView>
+          <View style={profilePage.container}>
+            <View style={[profilePage.card, profilePage.profileCard]}> 
+              <Image style={profilePage.avatar} source={{uri: 'http://musicdoors.org/Assets/generalAppointment.png'}} />
+              <Text style={profilePage.name}>
+                {route.params.parent.date}  
+              </Text>
+            </View> 
+            <View style={profilePage.card}>
+              <Text style={profilePage.cardTittle}>Appointment Details:</Text>
+              <Text> -  {route.params.parent.start}{'-'}{route.params.parent.end}</Text>
+              <Text> -  {instructor.street_address},{instructor.city},{instructor.state},{instructor.zip_code}</Text>
+            </View>
+            <View style={profilePage.card}>
+              <Text style={profilePage.cardTittle}>Instructor: {instructor.first_name} {instructor.last_name}</Text>
+              <Text> -  {instructor.email}</Text>
+              <Text> -  {instructor.phone_number}</Text>
+            </View>
+            <View style={profilePage.card}>
+              <Text style={profilePage.cardTittle}>Student: {student.first_name}{student.last_name}</Text>
+              <Text> -  {student.email}</Text>
+              <Text> -  Current School: {student.current_school}</Text>
+              <Text> -  Feeder School:  {student.feeder_school}</Text>
+            </View>
+          </View>
+      </ScrollView>
+    </ScreenContainer>
+    );
+  }else{
+    return (
+      <ScreenContainer>
+        <ActivityIndicator size="large" color="#c70046" />
+      </ScreenContainer>
+    );
+  }
 };
 
 /*
@@ -797,6 +1267,9 @@ Student Screens
 */
 export const StudentCreateAccount = () => {
   const {signUp} = React.useContext(AuthContext);
+
+  const schoolsInfoContext = React.useContext(SchoolContext);
+  const [schools, setSchools] = schoolsInfoContext;
 
   const user_type_id = 3;
 
@@ -885,18 +1358,50 @@ export const StudentCreateAccount = () => {
         onChangeText={val => setZC(val)}
       />
 
-      <TextInput
-        placeholder="Enter Current School"
+      <SearchableDropdown
+        onTextChange={text => console.log(text)}
+        //On text change listener on the searchable input
+        onItemSelect={item => setCS(item.name)}
+        //onItemSelect called after the selection from the dropdown
+        containerStyle={styles.ddContainerStyle}
+        //suggestion container style
+        textInputStyle={styles.ddInputStyle}
+        itemStyle={styles.ddItemStyle}
+        itemTextStyle={styles.ddItemTextStyle}
+        itemsContainerStyle={styles.ddItemsContainerStyle}
+        items={schools}
+        //mapping of item array
+        //defaultIndex={2}
+        //default selected item index
+        placeholder="Select Current School"
+        //place holder for the search input
+        resetValue={false}
+        //reset textInput Value with true and false state
         underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setCS(val)}
+        //To remove the underline from the android input
       />
 
-      <TextInput
-        placeholder="Enter Feeder High School"
+      <SearchableDropdown
+        onTextChange={text => console.log(text)}
+        //On text change listner on the searchable input
+        onItemSelect={item => setFS(item.name)}
+        //onItemSelect called after the selection from the dropdown
+        containerStyle={styles.ddContainerStyle}
+        //suggestion container style
+        textInputStyle={styles.ddInputStyle}
+        itemStyle={styles.ddItemStyle}
+        itemTextStyle={styles.ddItemTextStyle}
+        itemsContainerStyle={styles.ddItemsContainerStyle}
+        items={schools}
+        //mapping of item array
+        //defaultIndex={2}
+        //default selected item index
+        placeholder="Select Feeder High School"
+        //place holder for the search input
+        resetValue={false}
+        //reset textInput Value with true and false state
         underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setFS(val)}
+        //To remove the underline from the android input
       />
 
       <SearchableDropdown
@@ -996,9 +1501,284 @@ export const StudentProfile = ({navigation, route}) => {
   );
 };
 
+export const EditStudentProfile = ({navigation,route}) => {
+  const stateContext = React.useContext(StateContext);
+
+  const [userProfile, setUserProfile] = stateContext;
+
+
+  const [email, setEmail] = React.useState(userProfile.email);
+  const [password, setPass] = React.useState(userProfile.password);
+  const [first_name, setFName] = React.useState(userProfile.first_name);
+  const [last_name, setLName] = React.useState(userProfile.last_name);
+  const [city, setCity] = React.useState(userProfile.city);
+  const [st, setS] = React.useState(userProfile.state);
+  const [zip_code, setZC] = React.useState(userProfile.zip_code);
+  const [current_school, setCS] = React.useState(userProfile.current_school);
+  const [feeder_school, setFS] = React.useState(userProfile.feeder_school);
+  const [instrument, setInstrument] = React.useState(userProfile.instrument);
+  const [instrument_2, setInstrument2] = React.useState(userProfile.instrument_2);
+  const [instrument_3, setInstrument3] = React.useState(userProfile.instrument_3);
+  
+
+
+  const street_address = false;
+  const phone_number = false;
+
+  return(
+  <ScreenContainer>
+  <ScrollView keyboardShouldPersistTaps="always">
+  <View style={profilePage.container}>
+      <View style={[profilePage.card, profilePage.profileCard]}> 
+        <Image style={profilePage.avatar} source={{uri: userProfile.avatar}} />
+        <Text style={profilePage.name}>
+          {userProfile.first_name} {userProfile.last_name}
+        </Text>
+      </View> 
+      <Button title="Upload Avatar" onPress={ () => {
+        chooseImage()
+          .then(originalResponse => {
+            if (!originalResponse.cancelled) {
+              //console.log(originalResponse.uri);
+         
+         
+
+              //console.log(originalResponse.uri.type);
+
+              ImageResizer.createResizedImage(originalResponse.uri, 600, 600, 'JPEG', 100).then((resizedImageUri)=>{
+                  //console.log(resizedImageUri);
+            
+                  var imageName = moment().format('LTS');
+                  imageName = imageName.replace(/:/g, '');
+                  imageName = imageName.replace(/PM/g, '');
+                  imageName = imageName.replace(/AM/g, '');
+                  imageName = imageName.replace(' ','');
+                  var imageName = userProfile.id + userProfile.first_name + imageName;
+                  var domainName = `http://musicdoors.org/Assets/Avatar/${imageName}.jpeg`;
+
+                  var data = new FormData(); 
+                  data.append('avatar', {
+                    uri: resizedImageUri.uri,
+                    name: 'avatar.jpg',
+                    type: originalResponse.uri.type,
+                  });
+                  
+                   data.append('email', userProfile.email)
+                  data.append('imageName',  imageName)
+                  fetch('http://musicdoors.org/Assets/UploadImage.php', 
+                  {
+                    method:"POST",
+                    body:data,
+                    headers: {
+                      'Accept': 'application/json',
+                    },
+                  })
+                  .then(data2=>data2.json())
+                  .then(data2=>{
+                      console.log(data2); 
+                      if(data2 === false){
+                      //setUserProfile({...userProfile, avatar: data.avatar});
+                        alert('An error occurred while uploading avatar.');
+                      }else{
+                        console.log(userProfile); 
+                        setUserProfile({...userProfile, avatar: data2.avatar});
+                        setTimeout(()=>console.log(userProfile), 1000); 
+                        console.log("here");                    
+                      }
+                  })
+                  .then(data2=>{     
+                        //console.log(domainName);
+                  })
+                  .catch(err => {
+                    console.error('upload error: ' + err);
+                    alert('An error occurred while uploading avatar.');
+                  });
+                  
+
+            }).catch((err) => {
+                // Oops, something went wrong. Check that the filename is correct and
+                // inspect err to get more details.
+              });
+
+            }
+           
+          })
+          .catch(err => {
+            console.error('ImagePicker error: ' + err);
+            alert('An error occurred while selecting the avatar.');
+          });
+        }}/>
+      <TextInput
+        placeholder= {userProfile.email}
+        underlineColorAndroid="transparent"
+        style={styles2.TextInputStyleClass}
+        onChangeText={val => setEmail(val)}
+        autoCapitalize="none"
+      />
+      <TextInput
+        placeholder= {userProfile.password}
+        underlineColorAndroid="transparent"
+        style={styles2.TextInputStyleClass}
+        onChangeText={val => setPass(val)}
+        autoCapitalize="none"
+      />
+      <TextInput
+        placeholder= {userProfile.first_name}
+        underlineColorAndroid="transparent"
+        style={styles2.TextInputStyleClass}
+        onChangeText={val => setFName(val)}
+      />
+      <TextInput
+        placeholder= {userProfile.last_name}
+        underlineColorAndroid="transparent"
+        style={styles2.TextInputStyleClass}
+        onChangeText={val => setLName(val)}
+      />
+
+      <TextInput
+        placeholder= {userProfile.city}
+        underlineColorAndroid="transparent"
+        style={styles2.TextInputStyleClass}
+        onChangeText={val => setCity(val)}
+      />
+
+      <TextInput
+        placeholder= {userProfile.state}
+        underlineColorAndroid="transparent"
+        style={styles2.TextInputStyleClass}
+        onChangeText={val => setS(val)}
+      />
+
+      <TextInput
+        placeholder= {userProfile.zip_code}
+        underlineColorAndroid="transparent"
+        style={styles2.TextInputStyleClass}
+        onChangeText={val => setZC(val)}
+      />
+
+      <TextInput
+        placeholder= {userProfile.current_school}
+        underlineColorAndroid="transparent"
+        style={styles2.TextInputStyleClass}
+        onChangeText={val => setCS(val)}
+      />
+
+      <TextInput
+        placeholder= {userProfile.feeder_school}
+        underlineColorAndroid="transparent"
+        style={styles2.TextInputStyleClass}
+        onChangeText={val => setFS(val)}
+      />
+      <SearchableDropdown
+        onTextChange={text => console.log(text)}
+        //On text change listner on the searchable input
+        onItemSelect={item => setInstrument(item.name)}
+        //onItemSelect called after the selection from the dropdown
+        containerStyle={styles2.ddContainerStyle}
+        //suggestion container style
+        textInputStyle={styles2.ddInputStyle}
+        itemStyle={styles2.ddItemStyle}
+        itemTextStyle={styles2.ddItemTextStyle}
+        itemsContainerStyle={styles2.ddItemsContainerStyle}
+        items={items}
+        //mapping of item array
+        //defaultIndex={2}
+        //default selected item index
+        placeholder= {userProfile.instrument}
+        //place holder for the search input
+        resetValue={false}
+        //reset textInput Value with true and false state
+        underlineColorAndroid="transparent"
+        //To remove the underline from the android input
+      />
+      <SearchableDropdown
+        onTextChange={text => console.log(text)}
+        //On text change listner on the searchable input
+        onItemSelect={item => setInstrument2(item.name)}
+        //onItemSelect called after the selection from the dropdown
+        containerStyle={styles2.ddContainerStyle}
+        //suggestion container style
+        textInputStyle={styles2.ddInputStyle}
+        itemStyle={styles2.ddItemStyle}
+        itemTextStyle={styles2.ddItemTextStyle}
+        itemsContainerStyle={styles2.ddItemsContainerStyle}
+        items={items}
+        //mapping of item array
+        //defaultIndex={2}
+        //default selected item index
+        placeholder={userProfile.instrument_2}
+        //place holder for the search input
+        resetValue={false}
+        //reset textInput Value with true and false state
+        underlineColorAndroid="transparent"
+        //To remove the underline from the android input
+      />
+      <SearchableDropdown
+        onTextChange={text => console.log(text)}
+        //On text change listner on the searchable input
+        onItemSelect={item => setInstrument3(item.name)}
+        //onItemSelect called after the selection from the dropdown
+        containerStyle={styles2.ddContainerStyle}
+        //suggestion container style
+        textInputStyle={styles2.ddInputStyle}
+        itemStyle={styles2.ddItemStyle}
+        itemTextStyle={styles2.ddItemTextStyle}
+        itemsContainerStyle={styles2.ddItemsContainerStyle}
+        items={items}
+        //mapping of item array
+        //defaultIndex={2}
+        //default selected item index
+        placeholder={userProfile.instrument_3}
+        //place holder for the search input
+        resetValue={false}
+        //reset textInput Value with true and false state
+        underlineColorAndroid="transparent"
+        //To remove the underline from the android input
+      />
+      <TouchableOpacity
+        activeOpacity={0.4}
+        style={styles2.TouchableOpacityStyle}
+        onPress={() => {
+            console.log(instrument_2);
+            if(instrument =='None'){
+              setInstrument(null);
+            }
+            if(instrument_2=='None'){
+              setInstrument2(null);
+            }
+            console.log(instrument_2);
+            if(instrument_3=='None'){
+              setInstrument3(null);
+            }
+            UpdateStudent.update(userProfile.id,email,password,first_name,last_name,phone_number, street_address, city,st,zip_code,feeder_school,current_school,instrument,instrument_2,instrument_3)
+              .then(data=>data.json())
+              .then(data=>{
+                if(data===false){
+                  Alert.alert("Error, try again later ");               
+                }else{
+                  Alert.alert("Profile updated successfully");
+                }
+              });
+          }
+        }
+      >
+        <Text style={styles2.TextStyle}> Update Account </Text>
+      </TouchableOpacity>
+  </View>
+  </ScrollView>
+  </ScreenContainer>
+  
+  );
+};
+
 export const StudentHome = ({navigation, route}) => {
   const stateContext = React.useContext(StateContext);
   const [userProfile, setUserProfile] = stateContext;
+
+  const schoolsContext = React.useContext(SchoolContext);
+  const [schools, setSchools] = schoolsContext;
+  
+  //TODO: Remove Student Home and userProfile
   return (
       <ScreenContainer>
         <Text>Student Home</Text>
@@ -1007,9 +1787,9 @@ export const StudentHome = ({navigation, route}) => {
           title="Instructor List"
           onPress={() => navigation.push('Instructor List')}
         />
-        <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
       </ScreenContainer>
   );
+  //<Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
 };
 
 export const StudentAppointment = ({navigation, route}) => {
@@ -1019,16 +1799,12 @@ export const StudentAppointment = ({navigation, route}) => {
   return (
     <ScreenContainer>
       <Button
-        title="Appointment"
+        title="Appointment List"
         onPress={() => navigation.push('Appointment')}
       />
       <Button
-        title="Pending Appointment"
-        onPress={() => navigation.push('Appointment Request')}
-      />
-      <Button
-        title="Cancel Appointment"
-        onPress={() => navigation.push('Cancel Appointment')}
+        title="Pending Appointment List"
+        onPress={() => navigation.push('Pending Appointment')}
       />
     </ScreenContainer>
   );
@@ -1038,7 +1814,7 @@ export const StudentAppointmentList = ({navigation, route}) => {
   const stateContext = React.useContext(StateContext);
   const [userProfile, setUserProfile] = stateContext;
 
-  const [appt, setAppt] = React.useState(null);
+  const [appt, setAppt] = React.useState([]);
   //console.log(userProfile.feeder_school);
   //console.log(userProfile.instrument);
   //console.log(userProfile.instrument_2);
@@ -1052,6 +1828,10 @@ export const StudentAppointmentList = ({navigation, route}) => {
       } else {
         Alert.alert('No Appointments');
       }
+    })
+    .catch(function(error) {
+      Alert.alert('Error try again later');
+      throw error;
     });
   
   //InstructorData.getInfo()
@@ -1064,12 +1844,12 @@ export const StudentAppointmentList = ({navigation, route}) => {
                 renderItem={({item}) => (
                   <TouchableHighlight
                   onPress={() =>
-                    navigation.push('Appointment Info', {instructor_id: item.instructor_id})
+                    navigation.push('Appointment Info', {instructor_id: item.instructor_id, appointment_id: item.id})
                   }
                   underlayColor={'#FF5722'}>
                       <View style={{flex: 1, flexDirection: 'row'}}>
                         <Image
-                          source={{uri: 'http://musicdoors.org/Assets/generalAppointment.jpg'}}
+                          source={{uri: 'http://musicdoors.org/Assets/generalAppointment.png'}}
                           style={userListStyles.imageView}
                         />
                         <Text style={userListStyles.textView}>
@@ -1090,7 +1870,7 @@ export const StudentAppointmentList = ({navigation, route}) => {
     );
 };
 
-export const StudentAppointmentInfo = ({navigation,route}) => {
+export const StudentAppointmentInfo = ({navigation, route}) => {
   const stateContext = React.useContext(StateContext);
   const [userProfile, setUserProfile] = stateContext;
   const [apptInfo, setAI] = React.useState([]);
@@ -1112,11 +1892,11 @@ export const StudentAppointmentInfo = ({navigation,route}) => {
       }
     }); 
 
-  console.log(check);
+  //console.log(check);
   if(check > 0){
     return (
       <ScreenContainer>
-      <ScrollView>
+        <ScrollView>
           <View style={profilePage.container}>
             <View style={[profilePage.card, profilePage.profileCard]}> 
               <Image style={profilePage.avatar} source={{uri: apptInfo.avatar}} />
@@ -1136,6 +1916,167 @@ export const StudentAppointmentInfo = ({navigation,route}) => {
               <Text> -  Description:  {apptInfo.description}</Text>
             </View>
           </View>
+          <Button textStyle={{fontSize: 5,}} color="#ff5c5c"  title="Request Cancelation" onPress={()=>{
+                    Alert.alert(
+                      'Requesting Cancellation: \n',
+                      `Notifying ${apptInfo.first_name} ${apptInfo.last_name}`,
+                      [
+                        {
+                          text: 'Cancel',
+                          onPress: () => console.log('PRESSED'),
+                          style: 'cancel',
+                        },
+                        {
+                          text: 'Confirm', 
+                          onPress: () =>{
+                            console.log(route.params.appointment_id);
+                            CancelConfirmedAppt.requestCancel(route.params.appointment_id)
+                              .then(cancelData=>cancelData.json())
+                              .then(cancelData=>{
+                                 if(cancelData===false){
+                                    Alert.alert("Cancelation Request Pending:\n Tutor will email you shortly");
+                                 }else{
+                                    Alert.alert("Error, Try Again Later");                  
+                                 }
+                              });
+                          },
+                          
+                        },
+                      ],
+                      {cancelable: false},
+                    );
+                }
+           }/>
+        </ScrollView>
+      </ScreenContainer>
+    );
+  } else {
+    return (
+      <ScreenContainer>
+        <ActivityIndicator size="large" color="#c70046" />
+      </ScreenContainer>
+    );
+  }
+};
+
+
+export const StudentPendingAppointmentList = ({navigation}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+
+  const [appt, setAppt] = React.useState([]);
+  //console.log(userProfile.feeder_school);
+  //console.log(userProfile.instrument);
+  //console.log(userProfile.instrument_2);
+  //console.log(userProfile.instrument_3);
+
+  AllPendingAppt.getAllPendingAppt(userProfile.id)
+    .then(data2 => data2.json())
+    .then(data2 => {
+      
+      if (data2.length > 0) {
+        setAppt(data2);
+      } else {
+        Alert.alert('No Appointments Requested');
+      }
+    });
+
+  //console.log(user);
+
+  return (
+    <ScreenContainer>
+      <View style={userListStyles.MainContainer}>
+        <FlatList
+          data={appt}
+          ItemSeparatorComponent={FlatListItemSeparator}
+          renderItem={({item}) => (
+            <TouchableHighlight
+                  onPress={() =>
+                    navigation.push('Pending Appointment Info', {instructor_id: item.instructor_id, appointment_id: item.id})
+                  }
+                  underlayColor={'#FF5722'}>
+                      <View style={{flex: 1, flexDirection: 'row'}}>
+                        <Image
+                          source={{uri: 'http://musicdoors.org/Assets/generalAppointment.png'}}
+                          style={userListStyles.imageView}
+                        />
+                        <Text style={userListStyles.textView}>
+                          {item.date}
+                          {'\n\n'}
+                          {item.start}
+                          {'-'}
+                          {item.end}
+                          {'\n\n'}
+                          {'Appointment Status: Pending'}
+                        </Text>                                    
+                      </View>
+                       
+            </TouchableHighlight>              
+          )}
+          keyExtractor={(item, index) => index.toString()}
+        />
+      </View>
+    </ScreenContainer>
+  );
+};
+
+export const StudentPendingAppointmentInfo = ({navigation,route}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+  const [apptInfo, setAI] = React.useState([]);
+
+  //console.log(userProfile.feeder_school);
+  //console.log(userProfile.instrument);
+  //console.log(userProfile.instrument_2);
+  //console.log(userProfile.instrument_3);
+  const [check, setCheck] = React.useState(0);
+  InstructorData.getApptInfo(route.params.instructor_id)
+    .then(data => data.json())
+    .then(data =>{
+      //console.log(data);
+      if (data === false) {
+        Alert.alert('Error, Try Again Later');
+      } else {
+        setAI(data[0]);
+        setCheck(1);
+      }
+    }); 
+
+  //console.log(check);
+  if(check > 0){
+    return (
+      <ScreenContainer>
+        <ScrollView>
+          <View style={profilePage.container}>
+            <View style={[profilePage.card, profilePage.profileCard]}> 
+              <Image style={profilePage.avatar} source={{uri: apptInfo.avatar}} />
+              <Text style={profilePage.name}>
+                {apptInfo.first_name} {apptInfo.last_name}
+              </Text>
+            </View> 
+            <View style={profilePage.card}>
+              <Text style={profilePage.cardTittle}>Contact Info</Text>
+              <Text> -  {apptInfo.street_address}</Text>
+              <Text> -  {apptInfo.city},{apptInfo.state},{apptInfo.zip_code}</Text>
+              <Text> -  {apptInfo.phone_number}</Text>
+            </View>
+            <View style={profilePage.card}>
+              <Text style={profilePage.cardTittle}>About</Text>
+              <Text> -  Instrument: {apptInfo.instrument}</Text>
+              <Text> -  Description:  {apptInfo.description}</Text>
+            </View>
+          </View>
+          <Button color="#ff5c5c"  title="Cancel" onPress={()=>{
+          CancelPendingRequest.cancelPending(route.params.appointment_id)
+            .then(cancelData=>cancelData.json())
+            .then(cancelData=>{
+              if(cancelData===false){
+                Alert.alert("Error, Try Again Later");
+              }else{
+                Alert.alert("Canceled Succesfully");
+              }
+            });
+          }}/>
         </ScrollView>
       </ScreenContainer>
     );
@@ -1148,134 +2089,11 @@ export const StudentAppointmentInfo = ({navigation,route}) => {
   }
 };
 
-export const StudentPendingAppointmentList = ({navigation, route}) => {
-  const stateContext = React.useContext(StateContext);
-  const [userProfile, setUserProfile] = stateContext;
-
-  const [appt, setAppt] = React.useState(null);
-  //console.log(userProfile.feeder_school);
-  //console.log(userProfile.instrument);
-  //console.log(userProfile.instrument_2);
-  //console.log(userProfile.instrument_3);
-
-  AllAppt.getAllAppt(userProfile.id)
-    .then(data2 => data2.json())
-    .then(data2 => {
-      if (data2.length > 0) {
-        setAppt(data2);
-      } else {
-        Alert.alert('No Appointments Requested');
-      }
-    });
-  
-  InstructorData.getInfo()
-
-  //console.log(user);
-
-  return (
-    <ScreenContainer>
-      <View style={userListStyles.MainContainer}>
-        <FlatList
-          data={appt}
-          ItemSeparatorComponent={FlatListItemSeparator}
-          renderItem={({item}) => (
-              <View style={{flex: 1, flexDirection: 'row'}}>
-                <Image
-                  source={{uri: 'http://musicdoors.org/Assets/generalAppointment.jpg'}}
-                  style={userListStyles.imageView}
-                />
-                <Text style={userListStyles.textView}>
-                  {item.first_name} {item.last_name}
-                  {'\n'}
-                  {item.feeder_school}
-                  {'\n'}
-                  {item.email}
-                  {'\n'}
-                  {item.phone_number}
-                </Text>
-                <TouchableOpacity
-                   activeOpacity={0.4}
-                   style={styles.TouchableOpacityStyle}
-                   onPress={() => console.log("cancel appointment")}>
-                   <Text style={styles.TextStyle}> Cancel </Text>
-                </TouchableOpacity>r3
-              </View>
-          )}
-          keyExtractor={(item, index) => index.toString()}
-        />
-      </View>
-    </ScreenContainer>
-  );
-};
-
-
-export const StudentCancelAppointmentList = ({navigation,route}) => {
-  const stateContext = React.useContext(StateContext);
-  const [userProfile, setUserProfile] = stateContext;
-
-  const [appt, setAppt] = React.useState(null);
-  //console.log(userProfile.feeder_school);
-  //console.log(userProfile.instrument);
-  //console.log(userProfile.instrument_2);
-  //console.log(userProfile.instrument_3);
-
-  AllAppt.getAllAppt(userProfile.id)
-    .then(data2 => data2.json())
-    .then(data2 => {
-      if (data2.length > 0) {
-        setAppt(data2);
-      } else {
-        Alert.alert('No Appointments Requested');
-      }
-    });
-  
-  InstructorData.getInfo()
-
-  //console.log(user);
-
-  return (
-    <ScreenContainer>
-      <View style={userListStyles.MainContainer}>
-        <FlatList
-          data={appt}
-          ItemSeparatorComponent={FlatListItemSeparator}
-          renderItem={({item}) => (
-              <View style={{flex: 1, flexDirection: 'row'}}>
-                <Image
-                  source={{uri: 'http://musicdoors.org/Assets/generalAppointment.jpg'}}
-                  style={userListStyles.imageView}
-                />
-                <Text style={userListStyles.textView}>
-                  {item.first_name} {item.last_name}
-                  {'\n'}
-                  {item.feeder_school}
-                  {'\n'}
-                  {item.email}
-                  {'\n'}
-                  {item.phone_number}
-                </Text>
-                <TouchableOpacity
-                   activeOpacity={0.4}
-                   style={styles.TouchableOpacityStyle}
-                   onPress={() => console.log("cancel appointment")}>
-                   <Text style={styles.TextStyle}> Cancel </Text>
-                </TouchableOpacity>r3
-              </View>
-          )}
-          keyExtractor={(item, index) => index.toString()}
-        />
-      </View>
-    </ScreenContainer>
-  );
-};
-
-
-
 export const StudentInstructorList = ({navigation,route}) => {
   const stateContext = React.useContext(StateContext);
   const [userProfile, setUserProfile] = stateContext;
 
-  const [user, setUser] = React.useState(null);
+  const [user, setUser] = React.useState([]);
   //console.log(userProfile.feeder_school);
   //console.log(userProfile.instrument);
   //console.log(userProfile.instrument_2);
@@ -1434,7 +2252,7 @@ export const StudentAppointmentRequest = ({navigation,route}) => {
           renderItem={({item}) => (
             <View style={{flex: 1, flexDirection: 'row'}}>
               <Image
-                source={{uri: 'http://musicdoors.org/Assets/generalAppointment.jpg'}}
+                source={{uri: 'http://musicdoors.org/Assets/generalAppointment.png'}}
                 style={userListStyles.imageView}
               />
               <Text
@@ -1467,7 +2285,7 @@ export const StudentAppointmentRequest = ({navigation,route}) => {
                             item.end,)
                             .then(data3 => data3.json())
                             .then(data3 => {
-                              console.log(data3);
+                              //console.log(data3);
                               if (data3 === false) {
                                 Alert.alert('Did Not Book, Try Again Later');
                               }
@@ -1816,12 +2634,6 @@ export const InstructorCreateAccount = () => {
         style={styles.TextInputStyleClass}
         onChangeText={val => setZC(val)}
       />
-      <TextInput
-        placeholder="Enter Target High School"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setFS(val)}
-      />
       <SearchableDropdown
         onTextChange={text => console.log(text)}
         //On text change listner on the searchable input
@@ -1948,32 +2760,237 @@ export const InstructorHome = ({navigation,route}) => {
       <Text>InstructorHome</Text>
       <Text>{userProfile ? userProfile.email : 'abc'}</Text>
       <Button
-        title="Director List"
+        title="Student List"
         onPress={() =>
-          navigation.push('Details', {name: 'React Native by Example '})
+          navigation.push('Student List')
         }
       />
       <Button
         title="Private Student List"
         onPress={() =>
-          navigation.push('Details', {name: 'React Native School'})
-        }
-      />
-      <Button
-        title="Appointment List"
-        onPress={() =>
-          navigation.push('Details', {name: 'React Native School'})
-        }
-      />
-      <Button
-        title="Calendar"
-        onPress={() =>
-          navigation.push('Details', {name: 'React Native School'})
+          navigation.push('Private Student List')
         }
       />
       <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
     </ScreenContainer>
   );
+};
+
+export const InstructorStudentList = ({navigation, route}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+
+  const [studentUser, setStudentUser] = React.useState(null);
+
+  InstructorStudentL1.getStudentList(userProfile.feeder_school, userProfile.instrument, userProfile.instrument_2, userProfile.instrument_3)
+    .then(data2=>data2.json())
+    .then(data2=>{
+      if (data2.length > 0) {
+        setStudentUser(data2);
+      
+      }
+      else{
+        Alert.alert(
+          'No Students Booked Under Instructor',
+        );
+      }
+      
+    });
+
+  //console.log(studentUser);
+
+  return (
+    <ScreenContainer>
+      <View style = {userListStyles.MainContainer}>
+          <FlatList
+          
+          data={studentUser}
+          
+          ItemSeparatorComponent = {FlatListItemSeparator}
+
+          renderItem={({item}) => 
+          <TouchableHighlight
+                    onPress={() =>
+                      navigation.push('Director List', {parent: item})
+                    }
+                    underlayColor={'#FF5722'}>
+                <View style={{flex:1, flexDirection: 'row'}}>
+                  <Image source = {{ uri: item.avatar }} style={userListStyles.imageView} />
+                  <Text style={userListStyles.textView}>{item.first_name} {item.last_name}{"\n\n"}{item.current_school}{"\n"}{item.feeder_school}{"\n"}{item.email}</Text>
+                </View>
+          </TouchableHighlight>
+          }
+
+          keyExtractor={(item, index) => index.toString()}
+          
+          />
+      </View>
+    </ScreenContainer>
+  );
+};
+
+export const InstructorDirectorList = ({navigation, route}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+
+  const [directorUsers, setDirectorUser] = React.useState(null);
+
+  DirectorList.getDirectorList(route.params.parent.current_school)
+    .then(data2=>data2.json())
+    .then(data2=>{
+      if (data2.length > 0) {
+        setDirectorUser(data2);
+      
+      }
+      else{
+        Alert.alert(
+          'No Director',
+        );
+      }
+      
+    });
+
+  //console.log(studentUser);
+
+  return (
+    <ScreenContainer>
+      <View style = {userListStyles.MainContainer}>
+          <FlatList
+          
+          data={directorUsers}
+          
+          ItemSeparatorComponent = {FlatListItemSeparator}
+
+          renderItem={({item}) => 
+          <TouchableHighlight
+                    onPress={() =>
+                      navigation.push('Director Info', {parent: item})
+                    }
+                    underlayColor={'#FF5722'}>
+                <View style={{flex:1, flexDirection: 'row'}}>
+                  <Image source = {{ uri: item.avatar }} style={userListStyles.imageView} />
+                  <Text style={userListStyles.textView}>{item.first_name} {item.last_name}{"\n\n"}{item.current_school}{"\n"}{item.email}</Text>
+                </View>
+          </TouchableHighlight>
+          }
+
+          keyExtractor={(item, index) => index.toString()}
+          
+          />
+      </View>
+    </ScreenContainer>
+  );
+};
+
+
+
+export const InstructorDirectorInfo = ({navigation, route}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+  const [director, setDirector] = React.useState([]);
+
+  //console.log(userProfile.feeder_school);
+  //console.log(userProfile.instrument);
+  //console.log(userProfile.instrument_2);
+  //console.log(userProfile.instrument_3);
+  const [check, setCheck] = React.useState(0);
+  console.log(route.params.parent.id)
+  DirectorData.getInfo(route.params.parent.id)
+    .then(data => data.json())
+    .then(data =>{
+      console.log(data);
+      if (data.length > 0) {
+        setDirector(data[0]);
+        setCheck(1);
+      
+      }
+      else{
+        Alert.alert('Error, Try Again Later');
+      }
+    }); 
+
+  //console.log(check);
+  if(check > 0){
+    return (
+      <ScreenContainer>
+        <ScrollView>
+          <View style={profilePage.container}>
+            <View style={[profilePage.card, profilePage.profileCard]}> 
+              <Image style={profilePage.avatar} source={{uri: director.avatar}} />
+              <Text style={profilePage.name}>
+                {director.first_name} {director.last_name}
+              </Text>
+            </View> 
+            <View style={profilePage.card}>
+              <Text style={profilePage.cardTittle}>Contact Info</Text>    
+              <Text> -  {director.city},{director.state},{director.zip_code}</Text>
+              <Text> -  {director.email}</Text>
+              <Text> -  {director.phone_number}</Text>
+
+            </View>
+            <View style={profilePage.card}>
+              <Text style={profilePage.cardTittle}>About</Text>
+              <Text> -  School: {director.current_school}</Text>
+              <Text> -  Description:  {director.description}</Text>
+            </View>
+          </View>
+        </ScrollView>
+      </ScreenContainer>
+    );
+  } else {
+    return (
+      <ScreenContainer>
+        <ActivityIndicator size="large" color="#c70046" />
+      </ScreenContainer>
+    );
+  }
+};
+
+export const InstructorPrivateStudentList = ({navigation, route}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+
+  const [studentUser, setStudentUser] = React.useState(null);
+
+  InstructorPrivateStudentL1.getPrivateStudentList(userProfile.instrument,userProfile.instrument_2,userProfile.instrument_3)
+    .then(data2=>data2.json())
+    .then(data2=>{
+      if (data2.length > 0) {
+        
+        setStudentUser(data2);
+      }
+      else{
+        Alert.alert(
+          'No Private Students Booked Under Instructor',
+        );
+      }
+    });
+
+  //console.log(studentUser);
+
+  return (
+    <ScreenContainer>
+      <View style = {userListStyles.MainContainer}>
+          <FlatList
+          
+          data={studentUser}
+          
+          ItemSeparatorComponent = {FlatListItemSeparator}
+
+          renderItem={({item}) => 
+                <View style={{flex:1, flexDirection: 'row'}}>
+                  <Image source = {{ uri: item.avatar }} style={userListStyles.imageView} />
+                  <Text style={userListStyles.textView}>{item.first_name} {item.last_name}{"\n\n"}{item.current_school}{"\n"}{item.feeder_school}{"\n"}{item.email}</Text>
+                </View>
+          }
+
+          keyExtractor={(item, index) => index.toString()}
+          
+          />
+      </View>
+    </ScreenContainer>
+  );
+
 };
 
 //In Progress Edit Profile Screens
@@ -1992,31 +3009,86 @@ export const EditAdminProfile = ({navigation,route}) => {
 
 export const EditDirectorProfile = ({navigation,route}) => {
   const stateContext = React.useContext(StateContext);
+
   const [userProfile, setUserProfile] = stateContext;
 
-  return(
-    <ScreenContainer>
-      <Text>Details For Director</Text>
-      {route.params.name && <Text>{route.params.name}</Text>}
-    </ScreenContainer>
-  );
-};
 
-export const EditStudentProfile = ({navigation,route}) => {
-  const stateContext = React.useContext(StateContext);
-  const [userProfile, setUserProfile] = stateContext;
+  const [email, setEmail] = React.useState(userProfile.email);
+  const [password, setPass] = React.useState(userProfile.password);
+  const [first_name, setFName] = React.useState(userProfile.first_name);
+  const [last_name, setLName] = React.useState(userProfile.last_name);
+  const [city, setCity] = React.useState(userProfile.city);
+  const [st, setS] = React.useState(userProfile.state);
+  const [zip_code, setZC] = React.useState(userProfile.zip_code);
+  const [current_school, setCS] = React.useState(userProfile.current_school);
+  const [feeder_school, setFS] = React.useState(userProfile.feeder_school);
+  const [instrument, setInstrument] = React.useState(userProfile.instrument);
+  const [instrument_2, setInstrument2] = React.useState(userProfile.instrument_2);
+  const [instrument_3, setInstrument3] = React.useState(userProfile.instrument_3);
+  const [phone_number, setPhoneNumber] = React.useState(userProfile.phone_number);
+
+
+  const street_address = false;
 
   return(
   <ScreenContainer>
-    <ScrollView>
-    <View style={profilePage.container}>
+  <ScrollView keyboardShouldPersistTaps="always">
+  <View style={profilePage.container}>
       <View style={[profilePage.card, profilePage.profileCard]}> 
         <Image style={profilePage.avatar} source={{uri: userProfile.avatar}} />
         <Text style={profilePage.name}>
           {userProfile.first_name} {userProfile.last_name}
         </Text>
       </View> 
-      <Button title="Upload Avatar" onPress={()=>{console.log("upload from photo library")}}/>
+      <Button title="Upload Avatar" onPress={ () => {
+        chooseImage()
+          .then(originalResponse => {
+            console.log(originalResponse.cancelled);
+            if (!originalResponse.cancelled) {
+              console.log(originalResponse.uri);
+              
+              ImageResizer.createResizedImage(originalResponse.uri, 400, 300,"PNG",80).then(response=>{
+                      var data = new FormData(); 
+                      data.append('avatar', {
+                        uri: response,
+                        name: 'avatar.jpg',
+                        type: originalResponse.uri.type,
+                      });
+                      
+                       data.append('email', userProfile.email)
+                      fetch('http://musicdoors.org/Assets/UploadImage.php', 
+                      {
+                        method:"POST",
+                        body:data,
+                        headers: {
+                          'Accept': 'application/json',
+                        },
+                      })
+                      .then(data=>data.json())
+                      .then(data=>{
+                        console.log(data);
+                        if(data.status===true){
+                          //Alert.alert("Notify: Image Uploaded Succesfully");
+                          setUserProfile({...userProfile, avatar: data.avatar})
+                        }
+                        else{
+                          Alert.alert("Notify: Error Uploading Image");
+                        }
+                      })
+                      .catch(err => {
+                        console.error('upload error: ' + err);
+                        alert('An error occurred while uploading avatar.');
+                      });
+
+              }).catch((err)=>{console.log("Error")});
+
+            }
+          })
+          .catch(err => {
+            console.error('ImagePicker error: ' + err);
+            alert('An error occurred while selecting the avatar.');
+          });
+        }}/>
       <TextInput
         placeholder= {userProfile.email}
         underlineColorAndroid="transparent"
@@ -2043,7 +3115,12 @@ export const EditStudentProfile = ({navigation,route}) => {
         style={styles2.TextInputStyleClass}
         onChangeText={val => setLName(val)}
       />
-
+      <TextInput
+        placeholder= {userProfile.phone_number}
+        underlineColorAndroid="transparent"
+        style={styles2.TextInputStyleClass}
+        onChangeText={val => setPhoneNumber(val)}
+      />
       <TextInput
         placeholder= {userProfile.city}
         underlineColorAndroid="transparent"
@@ -2071,92 +3148,43 @@ export const EditStudentProfile = ({navigation,route}) => {
         style={styles2.TextInputStyleClass}
         onChangeText={val => setCS(val)}
       />
-
-      <TextInput
-        placeholder= {userProfile.feeder_school}
-        underlineColorAndroid="transparent"
-        style={styles2.TextInputStyleClass}
-        onChangeText={val => setFS(val)}
-      />
-
-      <SearchableDropdown
-        onTextChange={text => console.log(text)}
-        //On text change listner on the searchable input
-        onItemSelect={item => setInstrument(item.name)}
-        //onItemSelect called after the selection from the dropdown
-        containerStyle={styles2.ddContainerStyle}
-        //suggestion container style
-        textInputStyle={styles2.ddInputStyle}
-        itemStyle={styles2.ddItemStyle}
-        itemTextStyle={styles2.ddItemTextStyle}
-        itemsContainerStyle={styles2.ddItemsContainerStyle}
-        items={items}
-        //mapping of item array
-        //defaultIndex={2}
-        //default selected item index
-        placeholder= {userProfile.instrument}
-        //place holder for the search input
-        resetValue={false}
-        //reset textInput Value with true and false state
-        underlineColorAndroid="transparent"
-        //To remove the underline from the android input
-      />
-      <SearchableDropdown
-        onTextChange={text => console.log(text)}
-        //On text change listner on the searchable input
-        onItemSelect={item => setInstrument2(item.name)}
-        //onItemSelect called after the selection from the dropdown
-        containerStyle={styles2.ddContainerStyle}
-        //suggestion container style
-        textInputStyle={styles2.ddInputStyle}
-        itemStyle={styles2.ddItemStyle}
-        itemTextStyle={styles2.ddItemTextStyle}
-        itemsContainerStyle={styles2.ddItemsContainerStyle}
-        items={items}
-        //mapping of item array
-        //defaultIndex={2}
-        //default selected item index
-        placeholder={userProfile.instrument_2}
-        //place holder for the search input
-        resetValue={false}
-        //reset textInput Value with true and false state
-        underlineColorAndroid="transparent"
-        //To remove the underline from the android input
-      />
-      <SearchableDropdown
-        onTextChange={text => console.log(text)}
-        //On text change listner on the searchable input
-        onItemSelect={item => setInstrument3(item.name)}
-        //onItemSelect called after the selection from the dropdown
-        containerStyle={styles2.ddContainerStyle}
-        //suggestion container style
-        textInputStyle={styles2.ddInputStyle}
-        itemStyle={styles2.ddItemStyle}
-        itemTextStyle={styles2.ddItemTextStyle}
-        itemsContainerStyle={styles2.ddItemsContainerStyle}
-        items={items}
-        //mapping of item array
-        //defaultIndex={2}
-        //default selected item index
-        placeholder={userProfile.instrument_3}
-        //place holder for the search input
-        resetValue={false}
-        //reset textInput Value with true and false state
-        underlineColorAndroid="transparent"
-        //To remove the underline from the android input
-      />
       <TouchableOpacity
         activeOpacity={0.4}
         style={styles2.TouchableOpacityStyle}
-        onPress={() => {console.log("update student profile");}}
+        onPress={() => {
+            console.log(instrument_2);
+            if(instrument =='None'){
+              setInstrument(null);
+            }
+            if(instrument_2=='None'){
+              setInstrument2(null);
+            }
+            console.log(instrument_2);
+            if(instrument_3=='None'){
+              setInstrument3(null);
+            }
+            UpdateStudent.update(userProfile.id,email,password,first_name,last_name,phone_number, street_address, city,st,zip_code,feeder_school,current_school,instrument,instrument_2,instrument_3)
+              .then(data=>data.json())
+              .then(data=>{
+                if(data===false){
+                  Alert.alert("Error, try again later ");               
+                }else{
+                  Alert.alert("Profile updated successfully");
+                }
+              });
+          }
+        }
       >
         <Text style={styles2.TextStyle}> Update Account </Text>
       </TouchableOpacity>
-    </View>
-    </ScrollView>
+  </View>
+  </ScrollView>
   </ScreenContainer>
+  
   );
 };
+
+
 export const EditPrivateStudentProfile = ({navigation,route}) => {
   const stateContext = React.useContext(StateContext);
   const [userProfile, setUserProfile] = stateContext;
@@ -2202,7 +3230,6 @@ export const Gallery = ({navigation,route}) => {
     resizeMode: "contain",
     borderWidth: 0
   };
-
   const screenWidth = Dimensions.get('window').width;
   return (
       <ScrollView>
@@ -2232,6 +3259,62 @@ export const Gallery = ({navigation,route}) => {
     );
   
 };
+
+function chooseImage() {
+  return new Promise((resolve, reject) => {
+    
+    let options = {
+      title: "Select Avatar",
+      storageOptions: {
+        skipBackup: true,
+        path: 'images'
+      }
+    };
+
+    ImagePicker.showImagePicker(options, response => {
+      console.log(response);
+      if (response.didCancel) {
+        resolve({ cancelled: true });
+      }
+      else if (response.error) {
+        console.error('ImagePicker Error: ' + response.error);
+        reject(response.error);
+      }
+      else {
+        resolve({
+          path: response,
+          data: response.data,
+          uri: response.uri
+        });
+      }
+    });
+    
+  });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //Loading display for all users
 export const Splash = () => (
@@ -2367,30 +3450,6 @@ export const AdminDirectorList = ({route}) => {
 };
 */
 
-export const AdminPrivateStudentList = ({route}) => {
-  const stateContext = React.useContext(StateContext);
-  const [userProfile, setUserProfile] = stateContext;
-
-  return (
-    <ScreenContainer>
-      <Text>Details Screen</Text>
-      {route.params.name && <Text>{route.params.name}</Text>}
-    </ScreenContainer>
-  );
-};
-
-export const AdminInstructorList = ({route}) => {
-  const stateContext = React.useContext(StateContext);
-  const [userProfile, setUserProfile] = stateContext;
-
-  return (
-    <ScreenContainer>
-      <Text>Details Screen</Text>
-      {route.params.name && <Text>{route.params.name}</Text>}
-    </ScreenContainer>
-  );
-};
-
 //Details => Music Doors User Details
 export const Details = ({route}) => {
   const stateContext = React.useContext(StateContext);
@@ -2407,10 +3466,15 @@ export const Details = ({route}) => {
 
 //Style Sheet => IOS and Android
 const styles = StyleSheet.create({
+  Orange: {
+    color:'#FF5722',
+    fontSize: 10,
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    alignSelf: 'stretch'
   },
   horizontal: {
     flexDirection: "row",
@@ -2569,6 +3633,7 @@ const styles2 = StyleSheet.create({
     marginBottom: 7,
     width: '90%',
     backgroundColor: '#00BCD4',
+    alignContent: 'center',
   },
 
   TextStyle: {
@@ -2680,6 +3745,7 @@ const PickerStyles = StyleSheet.create({
   },
   listTextViewStyle: {
     color: '#000',
+    backgroundColor: 'rgba(255,255,255,1)',
     marginVertical: 10,
     flex: 0.9,
     marginLeft: 20,
@@ -2814,12 +3880,14 @@ const profilePage = StyleSheet.create({
   container:{
     flex:1,
     padding:40,
-    backgroundColor : "#ffaaaa",
+    backgroundColor : "#ffa500",
+    alignItems: 'center',
   },
   container2:{
     flex:1,
     padding:40,
     backgroundColor : "#d3d3d3",
+    textDecorationColor : "#fff",
   },
   cardTittle:{
     fontSize:20,
@@ -2864,6 +3932,61 @@ const profilePage = StyleSheet.create({
     height:113,
     marginTop:5,
     marginRight:5,
+  },
+
+});
+
+const iconStyles = StyleSheet.create({ 
+  image: {
+    width: 100,
+    height:100,
+  },
+  box: {
+    padding:20,
+    marginTop:5,
+    marginBottom:5,
+    backgroundColor: 'white',
+    flexDirection: 'row',
+  },
+  boxContent: {
+    flex:1,
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    marginLeft:10,
+  },
+  title:{
+    fontSize:18,
+    color:"#151515",
+  },
+  description:{
+    fontSize:15,
+    color: "#646464",
+  },
+  buttons:{
+    flexDirection: 'row',
+  },
+  button: {
+    height:35,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius:10,
+    width:50,
+    marginRight:5,
+    marginTop:5,
+  },
+  icon:{
+    width:20,
+    height:20,
+  },
+  view: {
+    backgroundColor: "#FF1493",
+  },
+  profile: {
+    backgroundColor: "#1E90FF",
+  },
+  message: {
+    backgroundColor: "#228B22",
   },
 
 });
