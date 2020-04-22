@@ -1,4 +1,4 @@
-class AllAppt {
+class StudentAllAppt {
     static getAllAppt(student_id) {
       let payload = {
         method: 'POST',
@@ -15,5 +15,5 @@ class AllAppt {
       );
     }
   }
-  export default AllAppt;
+  export default StudentAllAppt;
   

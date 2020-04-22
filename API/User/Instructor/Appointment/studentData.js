@@ -1,5 +1,5 @@
-class AllPendingAppt {
-  static getAllPendingAppt(student_id) {
+class StudentData {
+  static getApptInfo(student_id) {
     let payload = {
       method: 'POST',
       headers: {
@@ -10,9 +10,9 @@ class AllPendingAppt {
       }),
     };
     return fetch(
-      'http://musicdoors.org/Database/User/Student/Appointment/PendingShowAllAppt.php',
+      'http://musicdoors.org/Database/User/Instructor/Appointment/StudentData.php',
       payload,
     );
   }
 }
-export default AllPendingAppt;
+export default StudentData;

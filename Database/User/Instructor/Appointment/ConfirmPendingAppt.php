@@ -32,24 +32,20 @@ $json = file_get_contents('php://input');
 
 $obj = json_decode($json,true);
 
-$instructor_id = $obj['instructor_id'];
-$date = $obj['date'];
+$appointment_id = $obj['appointment_id'];
 
 
 
 
+$query = "UPDATE lessonAppointments SET available='No' WHERE id='$appointment_id' ";
 
-// Creating SQL command to fetch all records from Table.
+$check1 = mysqli_query($conn, $query);
 
+$SQLquery = "SELECT * FROM lessonAppointments WHERE id = '$appointment_id' AND available = 'No' ";
 
-
-$query = "SELECT * FROM lessonAppointments WHERE instructor_id = '$instructor_id' AND available = 'Yes' AND date = '$date' ORDER BY date ASC";
-
-$result = mysqli_query($conn, $query);
+$result = mysqli_query($conn, $SQLquery);
 
 $rows = array();
-
-
 
 if ($result->num_rows >0) {
 
@@ -61,7 +57,9 @@ if ($result->num_rows >0) {
  $json = json_encode($rows);
 
 } else {
- echo false;
+    $invalidMsg = false;
+    $invalidJson = json_encode($invalidMsg);
+    echo $invalidJson;
 }
 
 echo $json;

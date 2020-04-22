@@ -53,20 +53,33 @@ import RequestAppointment from './API/User/Student/Appointment/requestAppt';
 import InstructorData from './API/User/Student/Appointment/instructorData';
 import CancelPendingRequest from './API/User/Student/Appointment/cancelPending';
 import CancelConfirmedAppt from './API/User/Student/Appointment/cancelConfirmed';
+import StudentAllAppt from './API/User/Student/Appointment/studentShowAllAppt';
+import AllPendingAppt from './API/User/Student/Appointment/pendingShowAllAppt';
+import UpdateStudent from './API/User/Student/Profile/update';
+
+import PrivateStudentInstructorL1 from './API/User/PrivateStudent/list1Instructor';
 
 import InstructorStudentL1 from './API/User/Instructor/list1Student';
 import InstructorPrivateStudentL1 from './API/User/Instructor/list1PrivateStudent';
 import DirectorList from './API/User/Instructor/list2DirectorList';
 import DirectorData from './API/User/Instructor/view2Director';
+import InstructorAllAppt from './API/User/Instructor/Appointment/instructorShowAllAppt';
+import InstructorAllPendingAppt from './API/User/Instructor/Appointment/pendingShowAllAppt';
+import StudentData from './API/User/Instructor/Appointment/studentData';
+import ConfirmPendingRequest from './API/User/Instructor/Appointment/confirmPending';
+import CreateAppointment from './API/User/Instructor/Appointment/createAppointment';
+import InstructorAllOpenAppt from './API/User/Instructor/Appointment/instructorShowAllOpenAppt';
+import DeleteAppointment from './API/User/Instructor/Appointment/deleteAppointment';
+import DayApptList from './API/User/Instructor/Appointment/dayApptList';
+import InstructorAllCancelAppt from './API/User/Instructor/Appointment/instructorShowAllCancelAppt';
+import InstructorCancelPendingRequest from './API/User/Instructor/Appointment/instructorCancelPending';
+
 
 import AccessCodeList from './API/AccessCode/listAccessCode';
 import CreateAccessCode from './API/AccessCode/createAccessCode';
 import DeleteAccessCode from './API/AccessCode/deleteAccessCode';
 
 import CalendarPicker from 'react-native-calendar-picker';
-import AllAppt from './API/User/Student/Appointment/studentShowAllAppt';
-import AllPendingAppt from './API/User/Student/Appointment/pendingShowAllAppt';
-import UpdateStudent from './API/User/Student/Profile/update';
 
 import ImageResizer from 'react-native-image-resizer';
 
@@ -165,6 +178,104 @@ const items = [
   },
 ];
 
+
+const fixedTimes = [
+  {
+    id: 1,
+    name: "1:00 AM "
+  },
+  {
+    id: 2,
+    name: "2:00 AM"
+  },
+  {
+    id: 3,
+    name: "3:00 AM"
+  },
+  {
+    id: 4,
+    name: "4:00 AM"
+  },
+  {
+    id: 5,
+    name: "5:00 AM"
+  },
+  {
+    id: 6,
+    name: "6:00 AM"
+  },
+  {
+    id: 7,
+    name: "7:00 AM"
+  },
+  {
+    id: 8,
+    name: "8:00 AM"
+  },
+  {
+    id: 9,
+    name: "9:00 AM"
+  },
+  {
+    id: 10,
+    name: "10:00 AM"
+  },
+  {
+    id: 11,
+    name: "11:00 AM"
+  },
+  {
+    id: 12,
+    name: "12:00 PM"
+  },
+  {
+    id: 13,
+    name: "1:00 PM"
+  },
+  {
+    id: 14,
+    name: "2:00 PM"
+  },
+  {
+    id: 15,
+    name: "3:00 PM"
+  },
+  {
+    id: 16,
+    name: "4:00 PM"
+  },
+  {
+    id: 17,
+    name: "5:00 PM"
+  },
+  { id: 18,
+    name: "6:00 PM"
+  }, 
+  {
+    id: 19,
+    name: "7:00 PM"
+  },
+  {
+    id: 20,
+    name: "8:00 PM"
+  },
+  {
+    id: 21,
+    name: "9:00 PM"
+  },
+  {
+    id: 22,
+    name: "10:00 PM"
+  },
+  {
+    id: 23,
+    name: "11:00 PM"
+  },
+  { id: 24,
+    name: "12:00 AM"
+  },
+];
+
 const ScreenContainer = ({children}) => (
   <View style={styles.container}>{children}</View>
 );
@@ -217,8 +328,8 @@ export const Welcome = ({navigation}) => {
 // test 'directorSchool1@gmail.com', 'password_directorSchool1'
 export const SignIn = ({navigation}) => {
   const {signIn} = React.useContext(AuthContext);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('instructorViolin2@gmail.com');
+  const [password, setPassword] = useState('password_instructorViolin2');
   return (
     <ScreenContainer>
       <TextInput
@@ -371,15 +482,74 @@ export const AdminProfile = ({navigation, route}) => {
   const [userProfile, setUserProfile] = stateContext;
   return (
     <ScreenContainer>
-      <Text>
-        Admin Profile Screen {userProfile ? userProfile.email : 'abc'}
-      </Text>
+      <Button title="Edit Admin Profile" onPress={() => navigation.push('Edit Profile',{name: 'Edit Admin Profile '})}/>
       <Button title="Sign Out" onPress={() => signOut()} />
     </ScreenContainer>
   );
-  //<Button title="Edit Admin Profile" onPress={() => navigation.push('Edit Profile',{name: 'Edit Admin Profile '})}/>
-  //<Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
+};
 
+export const EditAdminProfile = ({navigation,route}) => {
+  const stateContext = React.useContext(StateContext);
+
+  const [userProfile, setUserProfile] = stateContext;
+
+
+  const [email, setEmail] = React.useState(userProfile.email);
+  const [password, setPass] = React.useState(userProfile.password);
+  const [first_name, setFName] = React.useState(userProfile.first_name);
+  const [last_name, setLName] = React.useState(userProfile.last_name);
+  const [city, setCity] = React.useState(userProfile.city);
+  const [st, setS] = React.useState(userProfile.state);
+  const [zip_code, setZC] = React.useState(userProfile.zip_code);
+  const [current_school, setCS] = React.useState(userProfile.current_school);
+  const [feeder_school, setFS] = React.useState(userProfile.feeder_school);
+  const [instrument, setInstrument] = React.useState(userProfile.instrument);
+  const [instrument_2, setInstrument2] = React.useState(userProfile.instrument_2);
+  const [instrument_3, setInstrument3] = React.useState(userProfile.instrument_3);
+  const [phone_number, setPhoneNumber] = React.useState(userProfile.phone_number);
+  const [street_address, setSA] = React.useState(userProfile.street_address);
+
+  return(
+  <ScreenContainer>
+  <ScrollView keyboardShouldPersistTaps="always">
+  <View style={profilePage.container}>
+      <TextInput
+        placeholder= {userProfile.email}
+        underlineColorAndroid="transparent"
+        style={styles2.TextInputStyleClass}
+        onChangeText={val => setEmail(val)}
+        autoCapitalize="none"
+      />
+      <TextInput
+        placeholder= {userProfile.password}
+        underlineColorAndroid="transparent"
+        style={styles2.TextInputStyleClass}
+        onChangeText={val => setPass(val)}
+        autoCapitalize="none"
+      />
+      <TouchableOpacity
+        activeOpacity={0.4}
+        style={styles2.TouchableOpacityStyle}
+        onPress={() => {
+            UpdateStudent.update(userProfile.id,email,password,first_name,last_name,phone_number, street_address, city,st,zip_code,feeder_school,current_school,instrument,instrument_2,instrument_3)
+              .then(data=>data.json())
+              .then(data=>{
+                if(data===false){
+                  Alert.alert("Error, try again later ");               
+                }else{
+                  setUserProfile({...userProfile, email: email,password:password});
+                  Alert.alert("Profile updated successfully");
+                }
+              });
+        }}
+      >
+        <Text style={styles2.TextStyle}> Update Account </Text>
+      </TouchableOpacity>
+  </View>
+  </ScrollView>
+  </ScreenContainer>
+  
+  );
 };
 
 
@@ -444,7 +614,8 @@ export const AdminDirectorList = ({navigation, route}) => {
     .then(data=>data.json())
     .then(data=>{
       setUser(data);
-    });
+    })
+    .catch((err)=>{ Alert.alert('No Students Registered Under Director');});
 
   //console.log(user);
   
@@ -495,7 +666,8 @@ export const AdminStudentList = ({navigation, route}) => {
         );
       }
       
-    });
+    })
+    .catch((err)=>{ Alert.alert('No Students Registered Under Director');});
 
   console.log(studentUser);
 
@@ -539,7 +711,8 @@ export const AdminPrivateStudentList = ({route}) => {
         );
       }
       
-    });
+    })
+    .catch((err)=>{ Alert.alert('No Private Students Registered');});
 
 
   return (
@@ -581,7 +754,8 @@ export const AdminInstructorList = ({route}) => {
         );
       }
       
-    });
+    })
+    .catch((err)=>{ Alert.alert('No Instructors Registered');});
 
   return (
     <ScreenContainer>
@@ -620,11 +794,12 @@ export const AdminAppointmentList = ({navigation, route}) => {
         setAppointment(data2);
       }else{
         Alert.alert(
-          'No Instructors Registered'
+          'No Confirmed Appointments'
         );
       }
       
-    });
+    })
+    .catch((err)=>{ Alert.alert('No Confirmed Appointments');});
 
   return (
     <ScreenContainer>
@@ -678,11 +853,12 @@ export const AdminParticipantsInfo = ({navigation, route}) => {
         setStudent(data2[0]);
       }else{
         Alert.alert(
-          'No Instructors Registered'
+          'No Students Info'
         );
       }
       
-    });
+    })
+    .catch((err)=>{ Alert.alert('No Students Info Available');});
   
   AdminApptInstructorV2.getParticipant(route.params.parent.instructor_id)
   .then(data2=>data2.json())
@@ -692,11 +868,12 @@ export const AdminParticipantsInfo = ({navigation, route}) => {
       setCheck(1);
     }else{
       Alert.alert(
-        'No Instructors Registered'
+        'No Instructors Info'
       );
     }
     
-  });
+  })
+  .catch((err)=>{ Alert.alert('No Instructors Info Available');});
 
   console.log(student);
   console.log(instructor);
@@ -749,17 +926,15 @@ export const AdminCodeGenerator = ({navigation, route}) => {
 
   return (
     <ScreenContainer>
-      <Text>Code Generator</Text>
       <Button
         title="Create Access Code"
         onPress={() => navigation.push('Create Access Code')}
       />
       <Button
-        title="Delete Access Code"
+        title="View Access Codes"
         onPress={() =>
-          navigation.push('Delete Access Code')}
+          navigation.push('View Access Codes')}
       />
-      <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
     </ScreenContainer>
   );
 };
@@ -830,7 +1005,7 @@ export const AdminCreateAccessCode = ({navigation,route}) => {
               if (data === false) {
                 Alert.alert('Error Adding Access Code, Try Again Later');
               } else {
-                Alert.alert('Successfully Added Unique Access Code');
+                Alert.alert(`Successfully Added ${code} for:\n\n${description}`);
               }
             });
         }}>
@@ -855,7 +1030,7 @@ export const AdminDeleteAccessCode = ({navigation, route}) => {
       if (data2 === false) {
         Alert.alert('No Access Codes Available');
       }
-    });
+    })
 
   return (
     <ScreenContainer>
@@ -888,7 +1063,7 @@ export const AdminDeleteAccessCode = ({navigation, route}) => {
                             .then(data => data.json())
                             .then(data => {
                               if (data === false) {
-                                Alert.alert('Deleted Successfully');
+                                Alert.alert(`Deleted ${item.code}`);
                               } else {
                                 Alert.alert('Not Deleted, Try Again Later');
                               }
@@ -1038,6 +1213,186 @@ export const DirectorCreateAccount = () => {
   );
 };
 
+
+export const EditDirectorProfile = ({navigation,route}) => {
+  const stateContext = React.useContext(StateContext);
+
+  const [userProfile, setUserProfile] = stateContext;
+
+
+  const [email, setEmail] = React.useState(userProfile.email);
+  const [password, setPass] = React.useState(userProfile.password);
+  const [first_name, setFName] = React.useState(userProfile.first_name);
+  const [last_name, setLName] = React.useState(userProfile.last_name);
+  const [city, setCity] = React.useState(userProfile.city);
+  const [st, setS] = React.useState(userProfile.state);
+  const [zip_code, setZC] = React.useState(userProfile.zip_code);
+  const [current_school, setCS] = React.useState(userProfile.current_school);
+  const [feeder_school, setFS] = React.useState(userProfile.feeder_school);
+  const [instrument, setInstrument] = React.useState(userProfile.instrument);
+  const [instrument_2, setInstrument2] = React.useState(userProfile.instrument_2);
+  const [instrument_3, setInstrument3] = React.useState(userProfile.instrument_3);
+  const [phone_number, setPhoneNumber] = React.useState(userProfile.phone_number);
+
+
+  const street_address = false;
+
+  return(
+  <ScreenContainer>
+  <ScrollView keyboardShouldPersistTaps="always">
+  <View style={profilePage.container}>
+      <View style={[profilePage.card, profilePage.profileCard]}> 
+        <Image style={profilePage.avatar} source={{uri: userProfile.avatar}} />
+        <Text style={profilePage.name}>
+          {userProfile.first_name} {userProfile.last_name}
+        </Text>
+      </View> 
+      <Button title="Upload Avatar" onPress={ () => {
+        chooseImage()
+          .then(originalResponse => {
+            console.log(originalResponse.cancelled);
+            if (!originalResponse.cancelled) {
+              console.log(originalResponse.uri);
+              
+              ImageResizer.createResizedImage(originalResponse.uri, 400, 300,"PNG",80).then(response=>{
+                      var data = new FormData(); 
+                      data.append('avatar', {
+                        uri: response,
+                        name: 'avatar.jpg',
+                        type: originalResponse.uri.type,
+                      });
+                      
+                       data.append('email', userProfile.email)
+                      fetch('http://musicdoors.org/Assets/UploadImage.php', 
+                      {
+                        method:"POST",
+                        body:data,
+                        headers: {
+                          'Accept': 'application/json',
+                        },
+                      })
+                      .then(data=>data.json())
+                      .then(data=>{
+                        console.log(data);
+                        if(data.status===true){
+                          //Alert.alert("Notify: Image Uploaded Succesfully");
+                          setUserProfile({...userProfile, avatar: data.avatar})
+                        }
+                        else{
+                          Alert.alert("Notify: Error Uploading Image");
+                        }
+                      })
+                      .catch(err => {
+                        console.error('upload error: ' + err);
+                        alert('An error occurred while uploading avatar.');
+                      });
+
+              }).catch((err)=>{console.log("Error")});
+
+            }
+          })
+          .catch(err => {
+            console.error('ImagePicker error: ' + err);
+            alert('An error occurred while selecting the avatar.');
+          });
+        }}/>
+      <TextInput
+        placeholder= {userProfile.email}
+        underlineColorAndroid="transparent"
+        style={styles2.TextInputStyleClass}
+        onChangeText={val => setEmail(val)}
+        autoCapitalize="none"
+      />
+      <TextInput
+        placeholder= {userProfile.password}
+        underlineColorAndroid="transparent"
+        style={styles2.TextInputStyleClass}
+        onChangeText={val => setPass(val)}
+        autoCapitalize="none"
+      />
+      <TextInput
+        placeholder= {userProfile.first_name}
+        underlineColorAndroid="transparent"
+        style={styles2.TextInputStyleClass}
+        onChangeText={val => setFName(val)}
+      />
+      <TextInput
+        placeholder= {userProfile.last_name}
+        underlineColorAndroid="transparent"
+        style={styles2.TextInputStyleClass}
+        onChangeText={val => setLName(val)}
+      />
+      <TextInput
+        placeholder= {userProfile.phone_number}
+        underlineColorAndroid="transparent"
+        style={styles2.TextInputStyleClass}
+        onChangeText={val => setPhoneNumber(val)}
+      />
+      <TextInput
+        placeholder= {userProfile.city}
+        underlineColorAndroid="transparent"
+        style={styles2.TextInputStyleClass}
+        onChangeText={val => setCity(val)}
+      />
+
+      <TextInput
+        placeholder= {userProfile.state}
+        underlineColorAndroid="transparent"
+        style={styles2.TextInputStyleClass}
+        onChangeText={val => setS(val)}
+      />
+
+      <TextInput
+        placeholder= {userProfile.zip_code}
+        underlineColorAndroid="transparent"
+        style={styles2.TextInputStyleClass}
+        onChangeText={val => setZC(val)}
+      />
+
+      <TextInput
+        placeholder= {userProfile.current_school}
+        underlineColorAndroid="transparent"
+        style={styles2.TextInputStyleClass}
+        onChangeText={val => setCS(val)}
+      />
+      <TouchableOpacity
+        activeOpacity={0.4}
+        style={styles2.TouchableOpacityStyle}
+        onPress={() => {
+            console.log(instrument_2);
+            if(instrument =='None'){
+              setInstrument(null);
+            }
+            if(instrument_2=='None'){
+              setInstrument2(null);
+            }
+            console.log(instrument_2);
+            if(instrument_3=='None'){
+              setInstrument3(null);
+            }
+            UpdateStudent.update(userProfile.id,email,password,first_name,last_name,phone_number, street_address, city,st,zip_code,feeder_school,current_school,instrument,instrument_2,instrument_3)
+              .then(data=>data.json())
+              .then(data=>{
+                if(data===false){
+                  Alert.alert("Error, try again later ");               
+                }else{
+                  setUserProfile({...userProfile, email: email,password:password,first_name:first_name, last_name:last_name, phone_number:phone_number, street_address:street_address, city:city, st:st, zip_code:zip_code, feeder_school:feeder_school, current_school:current_school, instrument:instrument, instrument_2: instrument_2, instrument_3: instrument_3});
+                  Alert.alert("Profile updated successfully");
+                }
+              });
+          }
+        }
+      >
+        <Text style={styles2.TextStyle}> Update Account </Text>
+      </TouchableOpacity>
+  </View>
+  </ScrollView>
+  </ScreenContainer>
+  
+  );
+};
+
+
 export const DirectorProfile = ({navigation, route}) => {
   const {signOut} = React.useContext(AuthContext);
 
@@ -1094,7 +1449,8 @@ export const DirectorStudentList = ({navigation, route}) => {
         );
       }
       
-    });
+    })
+    .catch((err)=>{ Alert.alert('No Students Registered Under Director');});
 
   //console.log(studentUser);
 
@@ -1142,7 +1498,8 @@ export const DirectorAppointmentList = ({navigation, route}) => {
         );
       }
       
-    });
+    })
+    .catch((err)=>{ Alert.alert('No Students Have Confirmed Appointments');});
   
   console.log(route.params.student_id);
 
@@ -1197,11 +1554,12 @@ export const DirectorParticipantsInfo = ({navigation, route}) => {
         setStudent(data2[0]);
       }else{
         Alert.alert(
-          'No Instructors Registered'
+          'No Student Info'
         );
       }
       
-    });
+    })
+    .catch((err)=>{ Alert.alert('No Student Info Available');});
   
   AdminApptInstructorV2.getParticipant(route.params.parent.instructor_id)
   .then(data2=>data2.json())
@@ -1211,11 +1569,12 @@ export const DirectorParticipantsInfo = ({navigation, route}) => {
       setCheck(1);
     }else{
       Alert.alert(
-        'No Instructors Registered'
+        'No Instructor Info'
       );
     }
     
-  });
+  })
+  .catch((err)=>{ Alert.alert('No Instructor Info Available');});
 
   console.log(student);
   console.log(instructor);
@@ -1756,6 +2115,7 @@ export const EditStudentProfile = ({navigation,route}) => {
                 if(data===false){
                   Alert.alert("Error, try again later ");               
                 }else{
+                  setUserProfile({...userProfile, email: email,password:password,first_name:first_name, last_name:last_name, phone_number:phone_number, street_address:street_address, city:city, st:st, zip_code:zip_code, feeder_school:feeder_school, current_school:current_school, instrument:instrument, instrument_2: instrument_2, instrument_3: instrument_3});
                   Alert.alert("Profile updated successfully");
                 }
               });
@@ -1781,8 +2141,6 @@ export const StudentHome = ({navigation, route}) => {
   //TODO: Remove Student Home and userProfile
   return (
       <ScreenContainer>
-        <Text>Student Home</Text>
-        <Text>{userProfile ? userProfile.email : 'abc'}</Text>
         <Button
           title="Instructor List"
           onPress={() => navigation.push('Instructor List')}
@@ -1820,7 +2178,7 @@ export const StudentAppointmentList = ({navigation, route}) => {
   //console.log(userProfile.instrument_2);
   //console.log(userProfile.instrument_3);
 
-  AllAppt.getAllAppt(userProfile.id)
+  StudentAllAppt.getAllAppt(userProfile.id)
     .then(data2 => data2.json())
     .then(data2 => {
       if (data2.length > 0) {
@@ -1829,10 +2187,7 @@ export const StudentAppointmentList = ({navigation, route}) => {
         Alert.alert('No Appointments');
       }
     })
-    .catch(function(error) {
-      Alert.alert('Error try again later');
-      throw error;
-    });
+    .catch((err)=>{ Alert.alert('No Appointments Confirmed');});
   
   //InstructorData.getInfo()
   return (
@@ -1890,7 +2245,8 @@ export const StudentAppointmentInfo = ({navigation, route}) => {
         setAI(data[0]);
         setCheck(1);
       }
-    }); 
+    })
+    .catch((err)=>{ Alert.alert('No Appointment Info');});
 
   //console.log(check);
   if(check > 0){
@@ -1979,7 +2335,8 @@ export const StudentPendingAppointmentList = ({navigation}) => {
       } else {
         Alert.alert('No Appointments Requested');
       }
-    });
+    })
+    .catch((err)=>{ Alert.alert('No Pending Appointments');});
 
   //console.log(user);
 
@@ -2040,7 +2397,8 @@ export const StudentPendingAppointmentInfo = ({navigation,route}) => {
         setAI(data[0]);
         setCheck(1);
       }
-    }); 
+    })
+    .catch((err)=>{ Alert.alert('No Pending Appointment Information Available');}); 
 
   //console.log(check);
   if(check > 0){
@@ -2112,7 +2470,8 @@ export const StudentInstructorList = ({navigation,route}) => {
       } else {
         Alert.alert('No instructor with same instrument in your area');
       }
-    });
+    })
+    .catch((err)=>{ Alert.alert('No Instructors Available');});
 
   //console.log(user);
 
@@ -2185,9 +2544,10 @@ export const StudentBookingCalendar = ({route, navigation}) => {
         //console.log([data2])
         setSC(data2);
       } else {
-        Alert.alert('No Appt Available');
+        Alert.alert('No Appointment Available');
       }
-    });
+    })
+    .catch((err)=>{ Alert.alert('No Appointment Available');});
   /*
     onDateChange={val => {
       setChoice(val.format('l'));
@@ -2240,7 +2600,7 @@ export const StudentAppointmentRequest = ({navigation,route}) => {
         setAppt(data2);
       }
       if (data2 === false) {
-        Alert.alert('No Appt Available');
+        Alert.alert('No Appointments Available');
       }
     });
 
@@ -2488,51 +2848,827 @@ export const PrivateStudentCreateAccount = () => {
   );
 };
 
+export const EditPrivateStudentProfile = ({navigation,route}) => {
+  const stateContext = React.useContext(StateContext);
+
+  const [userProfile, setUserProfile] = stateContext;
+
+
+  const [email, setEmail] = React.useState(userProfile.email);
+  const [password, setPass] = React.useState(userProfile.password);
+  const [first_name, setFName] = React.useState(userProfile.first_name);
+  const [last_name, setLName] = React.useState(userProfile.last_name);
+  const [city, setCity] = React.useState(userProfile.city);
+  const [st, setS] = React.useState(userProfile.state);
+  const [zip_code, setZC] = React.useState(userProfile.zip_code);
+  const [current_school, setCS] = React.useState(userProfile.current_school);
+  const [feeder_school, setFS] = React.useState(userProfile.feeder_school);
+  const [instrument, setInstrument] = React.useState(userProfile.instrument);
+  const [instrument_2, setInstrument2] = React.useState(userProfile.instrument_2);
+  const [instrument_3, setInstrument3] = React.useState(userProfile.instrument_3);
+  
+
+
+  const street_address = false;
+  const phone_number = false;
+
+  return(
+  <ScreenContainer>
+  <ScrollView keyboardShouldPersistTaps="always">
+  <View style={profilePage.container}>
+      <View style={[profilePage.card, profilePage.profileCard]}> 
+        <Image style={profilePage.avatar} source={{uri: userProfile.avatar}} />
+        <Text style={profilePage.name}>
+          {userProfile.first_name} {userProfile.last_name}
+        </Text>
+      </View> 
+      <Button title="Upload Avatar" onPress={ () => {
+        chooseImage()
+          .then(originalResponse => {
+            if (!originalResponse.cancelled) {
+              //console.log(originalResponse.uri);
+         
+         
+
+              //console.log(originalResponse.uri.type);
+
+              ImageResizer.createResizedImage(originalResponse.uri, 600, 600, 'JPEG', 100).then((resizedImageUri)=>{
+                  //console.log(resizedImageUri);
+            
+                  var imageName = moment().format('LTS');
+                  imageName = imageName.replace(/:/g, '');
+                  imageName = imageName.replace(/PM/g, '');
+                  imageName = imageName.replace(/AM/g, '');
+                  imageName = imageName.replace(' ','');
+                  var imageName = userProfile.id + userProfile.first_name + imageName;
+                  var domainName = `http://musicdoors.org/Assets/Avatar/${imageName}.jpeg`;
+
+                  var data = new FormData(); 
+                  data.append('avatar', {
+                    uri: resizedImageUri.uri,
+                    name: 'avatar.jpg',
+                    type: originalResponse.uri.type,
+                  });
+                  
+                   data.append('email', userProfile.email)
+                  data.append('imageName',  imageName)
+                  fetch('http://musicdoors.org/Assets/UploadImage.php', 
+                  {
+                    method:"POST",
+                    body:data,
+                    headers: {
+                      'Accept': 'application/json',
+                    },
+                  })
+                  .then(data2=>data2.json())
+                  .then(data2=>{
+                      console.log(data2); 
+                      if(data2 === false){
+                      //setUserProfile({...userProfile, avatar: data.avatar});
+                        alert('An error occurred while uploading avatar.');
+                      }else{
+                        console.log(userProfile); 
+                        setUserProfile({...userProfile, avatar: data2.avatar});
+                        setTimeout(()=>console.log(userProfile), 1000); 
+                        console.log("here");                    
+                      }
+                  })
+                  .then(data2=>{     
+                        //console.log(domainName);
+                  })
+                  .catch(err => {
+                    console.error('upload error: ' + err);
+                    alert('An error occurred while uploading avatar.');
+                  });
+                  
+
+            }).catch((err) => {
+                // Oops, something went wrong. Check that the filename is correct and
+                // inspect err to get more details.
+              });
+
+            }
+           
+          })
+          .catch(err => {
+            console.error('ImagePicker error: ' + err);
+            alert('An error occurred while selecting the avatar.');
+          });
+        }}/>
+      <TextInput
+        placeholder= {userProfile.email}
+        underlineColorAndroid="transparent"
+        style={styles2.TextInputStyleClass}
+        onChangeText={val => setEmail(val)}
+        autoCapitalize="none"
+      />
+      <TextInput
+        placeholder= {userProfile.password}
+        underlineColorAndroid="transparent"
+        style={styles2.TextInputStyleClass}
+        onChangeText={val => setPass(val)}
+        autoCapitalize="none"
+      />
+      <TextInput
+        placeholder= {userProfile.first_name}
+        underlineColorAndroid="transparent"
+        style={styles2.TextInputStyleClass}
+        onChangeText={val => setFName(val)}
+      />
+      <TextInput
+        placeholder= {userProfile.last_name}
+        underlineColorAndroid="transparent"
+        style={styles2.TextInputStyleClass}
+        onChangeText={val => setLName(val)}
+      />
+
+      <TextInput
+        placeholder= {userProfile.city}
+        underlineColorAndroid="transparent"
+        style={styles2.TextInputStyleClass}
+        onChangeText={val => setCity(val)}
+      />
+
+      <TextInput
+        placeholder= {userProfile.state}
+        underlineColorAndroid="transparent"
+        style={styles2.TextInputStyleClass}
+        onChangeText={val => setS(val)}
+      />
+
+      <TextInput
+        placeholder= {userProfile.zip_code}
+        underlineColorAndroid="transparent"
+        style={styles2.TextInputStyleClass}
+        onChangeText={val => setZC(val)}
+      />
+
+      <SearchableDropdown
+        onTextChange={text => console.log(text)}
+        //On text change listner on the searchable input
+        onItemSelect={item => setInstrument(item.name)}
+        //onItemSelect called after the selection from the dropdown
+        containerStyle={styles2.ddContainerStyle}
+        //suggestion container style
+        textInputStyle={styles2.ddInputStyle}
+        itemStyle={styles2.ddItemStyle}
+        itemTextStyle={styles2.ddItemTextStyle}
+        itemsContainerStyle={styles2.ddItemsContainerStyle}
+        items={items}
+        //mapping of item array
+        //defaultIndex={2}
+        //default selected item index
+        placeholder= {userProfile.instrument}
+        //place holder for the search input
+        resetValue={false}
+        //reset textInput Value with true and false state
+        underlineColorAndroid="transparent"
+        //To remove the underline from the android input
+      />
+      <SearchableDropdown
+        onTextChange={text => console.log(text)}
+        //On text change listner on the searchable input
+        onItemSelect={item => setInstrument2(item.name)}
+        //onItemSelect called after the selection from the dropdown
+        containerStyle={styles2.ddContainerStyle}
+        //suggestion container style
+        textInputStyle={styles2.ddInputStyle}
+        itemStyle={styles2.ddItemStyle}
+        itemTextStyle={styles2.ddItemTextStyle}
+        itemsContainerStyle={styles2.ddItemsContainerStyle}
+        items={items}
+        //mapping of item array
+        //defaultIndex={2}
+        //default selected item index
+        placeholder={userProfile.instrument_2}
+        //place holder for the search input
+        resetValue={false}
+        //reset textInput Value with true and false state
+        underlineColorAndroid="transparent"
+        //To remove the underline from the android input
+      />
+      <SearchableDropdown
+        onTextChange={text => console.log(text)}
+        //On text change listner on the searchable input
+        onItemSelect={item => setInstrument3(item.name)}
+        //onItemSelect called after the selection from the dropdown
+        containerStyle={styles2.ddContainerStyle}
+        //suggestion container style
+        textInputStyle={styles2.ddInputStyle}
+        itemStyle={styles2.ddItemStyle}
+        itemTextStyle={styles2.ddItemTextStyle}
+        itemsContainerStyle={styles2.ddItemsContainerStyle}
+        items={items}
+        //mapping of item array
+        //defaultIndex={2}
+        //default selected item index
+        placeholder={userProfile.instrument_3}
+        //place holder for the search input
+        resetValue={false}
+        //reset textInput Value with true and false state
+        underlineColorAndroid="transparent"
+        //To remove the underline from the android input
+      />
+      <TouchableOpacity
+        activeOpacity={0.4}
+        style={styles2.TouchableOpacityStyle}
+        onPress={() => {
+            console.log(instrument_2);
+            if(instrument =='None'){
+              setInstrument(null);
+            }
+            if(instrument_2=='None'){
+              setInstrument2(null);
+            }
+            console.log(instrument_2);
+            if(instrument_3=='None'){
+              setInstrument3(null);
+            }
+            UpdateStudent.update(userProfile.id,email,password,first_name,last_name,phone_number, street_address, city,st,zip_code,feeder_school,current_school,instrument,instrument_2,instrument_3)
+              .then(data=>data.json())
+              .then(data=>{
+                if(data===false){
+                  Alert.alert("Error, try again later ");               
+                }else{
+                  setUserProfile({...userProfile, email: email,password:password,first_name:first_name, last_name:last_name, phone_number:phone_number, street_address:street_address, city:city, st:st, zip_code:zip_code, feeder_school:feeder_school, current_school:current_school, instrument:instrument, instrument_2: instrument_2, instrument_3: instrument_3});
+                  Alert.alert("Profile updated successfully");
+                }
+              });
+          }
+        }
+      >
+        <Text style={styles2.TextStyle}> Update Account </Text>
+      </TouchableOpacity>
+  </View>
+  </ScrollView>
+  </ScreenContainer>
+  
+  );
+};
+
+
+
+
 export const PrivateStudentProfile = ({navigation,route}) => {
   const {signOut} = React.useContext(AuthContext);
 
   return (
     <ScreenContainer>
-      <Text>Private Student Profile Screen</Text>
       <Button title="Edit Private Student Profile" onPress={() => navigation.push('Edit Profile', {name: 'Edit Private Student Profile'})}/>
-      <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
       <Button title="Sign Out" onPress={() => signOut()} />
     </ScreenContainer>
   );
 };
 
-export const PrivateStudentHome = ({navigation,route}) => {
+export const PrivateStudentHome = ({navigation, route}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+
+  const schoolsContext = React.useContext(SchoolContext);
+  const [schools, setSchools] = schoolsContext;
+  
+  //TODO: Remove Student Home and userProfile
+  return (
+      <ScreenContainer>
+        <Button
+          title="Instructor List"
+          onPress={() => navigation.push('Instructor List')}
+        />
+      </ScreenContainer>
+  );
+  //<Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
+};
+
+export const PrivateStudentAppointment = ({navigation, route}) => {
   const stateContext = React.useContext(StateContext);
   const [userProfile, setUserProfile] = stateContext;
 
   return (
     <ScreenContainer>
-      <Text>Private Student Home</Text>
-      <Text>{userProfile ? userProfile.email : 'abc'}</Text>
-      <Button
-        title="Instructor List"
-        onPress={() =>
-          navigation.push('Details', {name: 'React Native by Example '})
-        }
-      />
       <Button
         title="Appointment List"
-        onPress={() =>
-          navigation.push('Details', {name: 'React Native School'})
-        }
+        onPress={() => navigation.push('Appointment')}
       />
-      <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
+      <Button
+        title="Pending Appointment List"
+        onPress={() => navigation.push('Pending Appointment')}
+      />
+    </ScreenContainer>
+  );
+};
+
+export const PrivateStudentAppointmentList = ({navigation, route}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+
+  const [appt, setAppt] = React.useState([]);
+  //console.log(userProfile.feeder_school);
+  //console.log(userProfile.instrument);
+  //console.log(userProfile.instrument_2);
+  //console.log(userProfile.instrument_3);
+
+  StudentAllAppt.getAllAppt(userProfile.id)
+    .then(data2 => data2.json())
+    .then(data2 => {
+      if (data2.length > 0) {
+        setAppt(data2);
+      } else {
+        Alert.alert('No Appointments');
+      }
+    })
+    .catch((err)=>{ Alert.alert('No Appointments Confirmed');});
+  
+  //InstructorData.getInfo()
+  return (
+      <ScreenContainer>
+        <View style={userListStyles.MainContainer}>
+              <FlatList
+                data={appt}
+                ItemSeparatorComponent={FlatListItemSeparator}
+                renderItem={({item}) => (
+                  <TouchableHighlight
+                  onPress={() =>
+                    navigation.push('Appointment Info', {instructor_id: item.instructor_id, appointment_id: item.id})
+                  }
+                  underlayColor={'#FF5722'}>
+                      <View style={{flex: 1, flexDirection: 'row'}}>
+                        <Image
+                          source={{uri: 'http://musicdoors.org/Assets/generalAppointment.png'}}
+                          style={userListStyles.imageView}
+                        />
+                        <Text style={userListStyles.textView}>
+                          {item.date}
+                          {'\n\n'}
+                          {item.start}
+                          {'-'}
+                          {item.end}
+                          {'\n\n'}
+                        </Text>   
+                      </View>
+                  </TouchableHighlight>
+                )}
+                keyExtractor={(item, index) => index.toString()}
+              />
+        </View>
+      </ScreenContainer>
+    );
+};
+
+export const PrivateStudentAppointmentInfo = ({navigation, route}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+  const [apptInfo, setAI] = React.useState([]);
+
+  //console.log(userProfile.feeder_school);
+  //console.log(userProfile.instrument);
+  //console.log(userProfile.instrument_2);
+  //console.log(userProfile.instrument_3);
+  const [check, setCheck] = React.useState(0);
+  InstructorData.getApptInfo(route.params.instructor_id)
+    .then(data => data.json())
+    .then(data =>{
+      //console.log(data);
+      if (data === false) {
+        Alert.alert('Error, Try Again Later');
+      } else {
+        setAI(data[0]);
+        setCheck(1);
+      }
+    })
+    .catch((err)=>{ Alert.alert('No Appointment Info');});
+
+  //console.log(check);
+  if(check > 0){
+    return (
+      <ScreenContainer>
+        <ScrollView>
+          <View style={profilePage.container}>
+            <View style={[profilePage.card, profilePage.profileCard]}> 
+              <Image style={profilePage.avatar} source={{uri: apptInfo.avatar}} />
+              <Text style={profilePage.name}>
+                {apptInfo.first_name} {apptInfo.last_name}
+              </Text>
+            </View> 
+            <View style={profilePage.card}>
+              <Text style={profilePage.cardTittle}>Contact Info</Text>
+              <Text> -  {apptInfo.street_address}</Text>
+              <Text> -  {apptInfo.city},{apptInfo.state},{apptInfo.zip_code}</Text>
+              <Text> -  {apptInfo.phone_number}</Text>
+            </View>
+            <View style={profilePage.card}>
+              <Text style={profilePage.cardTittle}>About</Text>
+              <Text> -  Instrument: {apptInfo.instrument}</Text>
+              <Text> -  Description:  {apptInfo.description}</Text>
+            </View>
+          </View>
+          <Button textStyle={{fontSize: 5,}} color="#ff5c5c"  title="Request Cancelation" onPress={()=>{
+                    Alert.alert(
+                      'Requesting Cancellation: \n',
+                      `Notifying ${apptInfo.first_name} ${apptInfo.last_name}`,
+                      [
+                        {
+                          text: 'Cancel',
+                          onPress: () => console.log('PRESSED'),
+                          style: 'cancel',
+                        },
+                        {
+                          text: 'Confirm', 
+                          onPress: () =>{
+                            console.log(route.params.appointment_id);
+                            CancelConfirmedAppt.requestCancel(route.params.appointment_id)
+                              .then(cancelData=>cancelData.json())
+                              .then(cancelData=>{
+                                 if(cancelData===false){
+                                    Alert.alert("Cancelation Request Pending:\n Tutor will email you shortly");
+                                 }else{
+                                    Alert.alert("Error, Try Again Later");                  
+                                 }
+                              });
+                          },
+                          
+                        },
+                      ],
+                      {cancelable: false},
+                    );
+                }
+           }/>
+        </ScrollView>
+      </ScreenContainer>
+    );
+  } else {
+    return (
+      <ScreenContainer>
+        <ActivityIndicator size="large" color="#c70046" />
+      </ScreenContainer>
+    );
+  }
+};
+
+
+export const PrivateStudentPendingAppointmentList = ({navigation}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+
+  const [appt, setAppt] = React.useState([]);
+  //console.log(userProfile.feeder_school);
+  //console.log(userProfile.instrument);
+  //console.log(userProfile.instrument_2);
+  //console.log(userProfile.instrument_3);
+
+  AllPendingAppt.getAllPendingAppt(userProfile.id)
+    .then(data2 => data2.json())
+    .then(data2 => {
+      
+      if (data2.length > 0) {
+        setAppt(data2);
+      } else {
+        Alert.alert('No Appointments Requested');
+      }
+    })
+    .catch((err)=>{ Alert.alert('No Pending Appointments');});
+
+  //console.log(user);
+
+  return (
+    <ScreenContainer>
+      <View style={userListStyles.MainContainer}>
+        <FlatList
+          data={appt}
+          ItemSeparatorComponent={FlatListItemSeparator}
+          renderItem={({item}) => (
+            <TouchableHighlight
+                  onPress={() =>
+                    navigation.push('Pending Appointment Info', {instructor_id: item.instructor_id, appointment_id: item.id})
+                  }
+                  underlayColor={'#FF5722'}>
+                      <View style={{flex: 1, flexDirection: 'row'}}>
+                        <Image
+                          source={{uri: 'http://musicdoors.org/Assets/generalAppointment.png'}}
+                          style={userListStyles.imageView}
+                        />
+                        <Text style={userListStyles.textView}>
+                          {item.date}
+                          {'\n\n'}
+                          {item.start}
+                          {'-'}
+                          {item.end}
+                          {'\n\n'}
+                          {'Appointment Status: Pending'}
+                        </Text>                                    
+                      </View>
+                       
+            </TouchableHighlight>              
+          )}
+          keyExtractor={(item, index) => index.toString()}
+        />
+      </View>
+    </ScreenContainer>
+  );
+};
+
+export const PrivateStudentPendingAppointmentInfo = ({navigation,route}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+  const [apptInfo, setAI] = React.useState([]);
+
+  //console.log(userProfile.feeder_school);
+  //console.log(userProfile.instrument);
+  //console.log(userProfile.instrument_2);
+  //console.log(userProfile.instrument_3);
+  const [check, setCheck] = React.useState(0);
+  InstructorData.getApptInfo(route.params.instructor_id)
+    .then(data => data.json())
+    .then(data =>{
+      //console.log(data);
+      if (data === false) {
+        Alert.alert('Error, Try Again Later');
+      } else {
+        setAI(data[0]);
+        setCheck(1);
+      }
+    })
+    .catch((err)=>{ Alert.alert('No Pending Appointment Information Available');}); 
+
+  //console.log(check);
+  if(check > 0){
+    return (
+      <ScreenContainer>
+        <ScrollView>
+          <View style={profilePage.container}>
+            <View style={[profilePage.card, profilePage.profileCard]}> 
+              <Image style={profilePage.avatar} source={{uri: apptInfo.avatar}} />
+              <Text style={profilePage.name}>
+                {apptInfo.first_name} {apptInfo.last_name}
+              </Text>
+            </View> 
+            <View style={profilePage.card}>
+              <Text style={profilePage.cardTittle}>Contact Info</Text>
+              <Text> -  {apptInfo.street_address}</Text>
+              <Text> -  {apptInfo.city},{apptInfo.state},{apptInfo.zip_code}</Text>
+              <Text> -  {apptInfo.phone_number}</Text>
+            </View>
+            <View style={profilePage.card}>
+              <Text style={profilePage.cardTittle}>About</Text>
+              <Text> -  Instrument: {apptInfo.instrument}</Text>
+              <Text> -  Description:  {apptInfo.description}</Text>
+            </View>
+          </View>
+          <Button color="#ff5c5c"  title="Cancel" onPress={()=>{
+          CancelPendingRequest.cancelPending(route.params.appointment_id)
+            .then(cancelData=>cancelData.json())
+            .then(cancelData=>{
+              if(cancelData===false){
+                Alert.alert("Error, Try Again Later");
+              }else{
+                Alert.alert("Canceled Succesfully");
+              }
+            });
+          }}/>
+        </ScrollView>
+      </ScreenContainer>
+    );
+  }else{
+    return(
+      <ScreenContainer>
+        <ActivityIndicator size="large" color="#c70046" />
+      </ScreenContainer>
+    );
+  }
+};
+
+export const PrivateStudentInstructorList = ({navigation,route}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+
+  const [user, setUser] = React.useState([]);
+  //console.log(userProfile.feeder_school);
+  //console.log(userProfile.instrument);
+  //console.log(userProfile.instrument_2);
+  //console.log(userProfile.instrument_3);
+
+  PrivateStudentInstructorL1.getInstructorList(
+    userProfile.instrument,
+    userProfile.instrument_2,
+    userProfile.instrument_3,
+  )
+    .then(data2 => data2.json())
+    .then(data2 => {
+      if (data2.length > 0) {
+        setUser(data2);
+      } else {
+        Alert.alert('No instructor with same instrument in your area');
+      }
+    })
+    .catch((err)=>{ Alert.alert('No Instructors Available');});
+
+  //console.log(user);
+
+  return (
+    <ScreenContainer>
+      <View style={userListStyles.MainContainer}>
+        <FlatList
+          data={user}
+          ItemSeparatorComponent={FlatListItemSeparator}
+          renderItem={({item}) => (
+            <TouchableHighlight
+              onPress={() =>
+                navigation.push('Booking Calendar', {parent: item})
+              }
+              underlayColor={'#FF5722'}>
+              <View style={{flex: 1, flexDirection: 'row'}}>
+                <Image
+                  source={{uri: item.avatar}}
+                  style={userListStyles.imageView}
+                />
+                <Text style={userListStyles.textView}>
+                  {item.first_name} {item.last_name}
+                  {'\n'}
+                  {item.city}, {item.state}, {item.zip_code}
+                  {'\n'}
+                  {item.email}
+                  {'\n'}
+                  {item.phone_number}
+                </Text>
+              </View>
+            </TouchableHighlight>
+          )}
+          keyExtractor={(item, index) => index.toString()}
+        />
+      </View>
     </ScreenContainer>
   );
 };
 
 
+
+export const PrivateStudentBookingCalendar = ({route, navigation}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+  const [choice, setChoice] = React.useState(null);
+  const [customDatesStyles, setSC] = React.useState([]);
+  //const [customDatesStyles, setSC] = React.useState(null);
+
+  //console.log(route.params.parent.id);
+
+  let today = moment();
+  let day = today.clone().startOf('month');
+
+  //console.log(day.clone());
+
+  AvailableAppt.getAllAppt(route.params.parent.id)
+    .then(data => data.json())
+    .then(data => {
+      //console.log(data2)
+      if (data.length > 0) {
+        var data2 = data.map(function(item) {
+          let date = moment(item.date, 'MM/DD/YYYY');
+          return {
+            "date": date.clone(),
+            "style": {backgroundColor: '#00FF7F'},
+            "textStyle": {color: 'black'},
+            "containerStyle": [],
+          };
+        });
+        //console.log([data2])
+        setSC(data2);
+      } else {
+        Alert.alert('No Appointment Available');
+      }
+    })
+    .catch((err)=>{ Alert.alert('No Appointment Available');});
+  /*
+    onDateChange={val => {
+      setChoice(val.format('l'));
+      navigation.push('Appointment Request', {
+        date: choice,
+        id: route.params.parent.id,
+      });
+    }}
+*/
+  //console.log(customDatesStyles);
+  //console.log(user);
+  return (
+    <ScreenContainer>
+    <View style={styles.container}>
+        <CalendarPicker   
+          todayBackgroundColor = "#00BCD4"
+          selectedDayColor="#FF5722"
+          onDateChange= {(val)=>{ 
+          //console.log(val.format('l'));
+          navigation.push("Appointment Request", {date:val.format('l'), id: route.params.parent.id});}}
+          customDatesStyles= {customDatesStyles}
+          minDate={moment()}
+          disabledDates = {(val)=>
+          {
+            if((customDatesStyles.some(item => val.format('l') === item.date.format('l')))===false){
+              return true;
+            } else {
+              return false;
+            }
+          }}
+        />
+      </View>
+    </ScreenContainer>
+  );
+};
+
+export const PrivateStudentAppointmentRequest = ({navigation,route}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+
+  const [date, setDate] = React.useState('');
+  //console.log(user);
+
+  const [appt, setAppt] = React.useState([]);
+
+  InstAvailableAppt.getInstAppt(route.params.id, route.params.date)
+    .then(data2 => data2.json())
+    .then(data2 => {
+      if (data2.length > 0) {
+        setAppt(data2);
+      }
+      if (data2 === false) {
+        Alert.alert('No Appointments Available');
+      }
+    });
+
+  return (
+    <ScreenContainer>
+      <FlatList
+          data={appt}
+          ItemSeparatorComponent={FlatListItemSeparator}
+          renderItem={({item}) => (
+            <View style={{flex: 1, flexDirection: 'row'}}>
+              <Image
+                source={{uri: 'http://musicdoors.org/Assets/generalAppointment.png'}}
+                style={userListStyles.imageView}
+              />
+              <Text
+                style={userListStyles.textView}
+                onPress={() => {
+                  //const textString = 'Requesting Appointment on: ' + toString(item.date) + '\nFrom: ' + toString(item.start) + '\nTo: ' + toString(item.end);
+                   // textString = toString(textString)
+                  console.log(typeof(userProfile.id));
+                  console.log(typeof(item.instructor_id));
+                  console.log(typeof(item.date));
+                  console.log(typeof(item.start));
+                  console.log(typeof(item.end));
+                  Alert.alert(
+                    'Requesting Appointment',
+                    `Date: ${item.date} \nFrom: ${item.start} \nTo: ${item.end}\n`,
+                    [
+                      {
+                        text: 'Cancel',
+                        onPress: () => console.log('Cancel Pressed'),
+                        style: 'cancel',
+                      },
+                      {
+                        text: 'OK',
+                        onPress: () => {
+                          RequestAppointment.reqAppt(
+                            userProfile.id,
+                            item.instructor_id,
+                            item.date,
+                            item.start,
+                            item.end,)
+                            .then(data3 => data3.json())
+                            .then(data3 => {
+                              //console.log(data3);
+                              if (data3 === false) {
+                                Alert.alert('Did Not Book, Try Again Later');
+                              }
+                              if (data3.length > 0) {
+                                Alert.alert('Requested Successfully');
+                              }
+                            });
+                        },
+                    },
+                  ],
+                  {cancelable: false},
+                );
+              }}>
+              {item.date}
+              {'\n\n'}
+              {item.start}
+              {'-'}
+              {item.end}
+              {'\n\n'}
+              Available: {item.available}
+            </Text>
+          </View>
+        )}
+        keyExtractor={(item, index) => index.toString()}
+      />
+    </ScreenContainer>
+  );
+};
 
 /*
 Instructor Screens
   + Create Account
   + Profile Screen
 */
+
 export const InstructorCreateAccount = () => {
   const {signUp} = React.useContext(AuthContext);
 
@@ -2738,14 +3874,281 @@ export const InstructorCreateAccount = () => {
   );
 };
 
+export const EditInstructorProfile = ({navigation,route}) => {
+  const stateContext = React.useContext(StateContext);
+
+  const [userProfile, setUserProfile] = stateContext;
+  const [street_address, setAddress] = React.useState(userProfile.street_address);
+  const [email, setEmail] = React.useState(userProfile.email);
+  const [password, setPass] = React.useState(userProfile.password);
+  const [first_name, setFName] = React.useState(userProfile.first_name);
+  const [last_name, setLName] = React.useState(userProfile.last_name);
+  const [city, setCity] = React.useState(userProfile.city);
+  const [st, setS] = React.useState(userProfile.state);
+  const [zip_code, setZC] = React.useState(userProfile.zip_code);
+  const [current_school, setCS] = React.useState(userProfile.current_school);
+  const [feeder_school, setFS] = React.useState(userProfile.feeder_school);
+  const [instrument, setInstrument] = React.useState(userProfile.instrument);
+  const [instrument_2, setInstrument2] = React.useState(userProfile.instrument_2);
+  const [instrument_3, setInstrument3] = React.useState(userProfile.instrument_3);
+  const [phone_number, setPN] = React.useState(userProfile.phone_number);
+  
+
+  return(
+  <ScreenContainer>
+  <ScrollView keyboardShouldPersistTaps="always">
+  <View style={profilePage.container}>
+      <View style={[profilePage.card, profilePage.profileCard]}> 
+        <Image style={profilePage.avatar} source={{uri: userProfile.avatar}} />
+        <Text style={profilePage.name}>
+          {userProfile.first_name} {userProfile.last_name}
+        </Text>
+      </View> 
+      <Button title="Upload Avatar" onPress={ () => {
+        chooseImage()
+          .then(originalResponse => {
+            if (!originalResponse.cancelled) {
+              //console.log(originalResponse.uri);
+         
+         
+
+              //console.log(originalResponse.uri.type);
+
+              ImageResizer.createResizedImage(originalResponse.uri, 600, 600, 'JPEG', 100).then((resizedImageUri)=>{
+                  //console.log(resizedImageUri);
+            
+                  var imageName = moment().format('LTS');
+                  imageName = imageName.replace(/:/g, '');
+                  imageName = imageName.replace(/PM/g, '');
+                  imageName = imageName.replace(/AM/g, '');
+                  imageName = imageName.replace(' ','');
+                  var imageName = userProfile.id + userProfile.first_name + imageName;
+                  var domainName = `http://musicdoors.org/Assets/Avatar/${imageName}.jpeg`;
+
+                  var data = new FormData(); 
+                  data.append('avatar', {
+                    uri: resizedImageUri.uri,
+                    name: 'avatar.jpg',
+                    type: originalResponse.uri.type,
+                  });
+                  
+                   data.append('email', userProfile.email)
+                  data.append('imageName',  imageName)
+                  fetch('http://musicdoors.org/Assets/UploadImage.php', 
+                  {
+                    method:"POST",
+                    body:data,
+                    headers: {
+                      'Accept': 'application/json',
+                    },
+                  })
+                  .then(data2=>data2.json())
+                  .then(data2=>{
+                      console.log(data2); 
+                      if(data2 === false){
+                      //setUserProfile({...userProfile, avatar: data.avatar});
+                        alert('An error occurred while uploading avatar.');
+                      }else{
+                        console.log(userProfile); 
+                        setUserProfile({...userProfile, avatar: data2.avatar});
+                        setTimeout(()=>console.log(userProfile), 1000); 
+                        console.log("here");                    
+                      }
+                  })
+                  .then(data2=>{     
+                        //console.log(domainName);
+                  })
+                  .catch(err => {
+                    console.error('upload error: ' + err);
+                    alert('An error occurred while uploading avatar.');
+                  });
+                  
+
+            }).catch((err) => {
+                // Oops, something went wrong. Check that the filename is correct and
+                // inspect err to get more details.
+              });
+
+            }
+           
+          })
+          .catch(err => {
+            console.error('ImagePicker error: ' + err);
+            alert('An error occurred while selecting the avatar.');
+          });
+        }}/>
+      <TextInput
+        placeholder= {userProfile.email}
+        underlineColorAndroid="transparent"
+        style={styles2.TextInputStyleClass}
+        onChangeText={val => setEmail(val)}
+        autoCapitalize="none"
+      />
+      <TextInput
+        placeholder= {userProfile.password}
+        underlineColorAndroid="transparent"
+        style={styles2.TextInputStyleClass}
+        onChangeText={val => setPass(val)}
+        autoCapitalize="none"
+      />
+      <TextInput
+        placeholder= {userProfile.first_name}
+        underlineColorAndroid="transparent"
+        style={styles2.TextInputStyleClass}
+        onChangeText={val => setFName(val)}
+      />
+      <TextInput
+        placeholder= {userProfile.last_name}
+        underlineColorAndroid="transparent"
+        style={styles2.TextInputStyleClass}
+        onChangeText={val => setLName(val)}
+      />
+      <TextInput
+        placeholder= {userProfile.phone_number}
+        underlineColorAndroid="transparent"
+        style={styles2.TextInputStyleClass}
+        onChangeText={val => setPN(val)}
+      />
+      <TextInput
+        placeholder= {userProfile.street_address}
+        underlineColorAndroid="transparent"
+        style={styles2.TextInputStyleClass}
+        onChangeText={val => setAddress(val)}
+      />
+      <TextInput
+        placeholder= {userProfile.city}
+        underlineColorAndroid="transparent"
+        style={styles2.TextInputStyleClass}
+        onChangeText={val => setCity(val)}
+      />
+      <TextInput
+        placeholder= {userProfile.state}
+        underlineColorAndroid="transparent"
+        style={styles2.TextInputStyleClass}
+        onChangeText={val => setS(val)}
+      />
+      <TextInput
+        placeholder= {userProfile.zip_code}
+        underlineColorAndroid="transparent"
+        style={styles2.TextInputStyleClass}
+        onChangeText={val => setZC(val)}
+      />
+      <TextInput
+        placeholder= {userProfile.feeder_school}
+        underlineColorAndroid="transparent"
+        style={styles2.TextInputStyleClass}
+        onChangeText={val => setFS(val)}
+      />
+      <SearchableDropdown
+        onTextChange={text => console.log(text)}
+        //On text change listner on the searchable input
+        onItemSelect={item => setInstrument(item.name)}
+        //onItemSelect called after the selection from the dropdown
+        containerStyle={styles2.ddContainerStyle}
+        //suggestion container style
+        textInputStyle={styles2.ddInputStyle}
+        itemStyle={styles2.ddItemStyle}
+        itemTextStyle={styles2.ddItemTextStyle}
+        itemsContainerStyle={styles2.ddItemsContainerStyle}
+        items={items}
+        //mapping of item array
+        //defaultIndex={2}
+        //default selected item index
+        placeholder= {userProfile.instrument}
+        //place holder for the search input
+        resetValue={false}
+        //reset textInput Value with true and false state
+        underlineColorAndroid="transparent"
+        //To remove the underline from the android input
+      />
+      <SearchableDropdown
+        onTextChange={text => console.log(text)}
+        //On text change listner on the searchable input
+        onItemSelect={item => setInstrument2(item.name)}
+        //onItemSelect called after the selection from the dropdown
+        containerStyle={styles2.ddContainerStyle}
+        //suggestion container style
+        textInputStyle={styles2.ddInputStyle}
+        itemStyle={styles2.ddItemStyle}
+        itemTextStyle={styles2.ddItemTextStyle}
+        itemsContainerStyle={styles2.ddItemsContainerStyle}
+        items={items}
+        //mapping of item array
+        //defaultIndex={2}
+        //default selected item index
+        placeholder={userProfile.instrument_2}
+        //place holder for the search input
+        resetValue={false}
+        //reset textInput Value with true and false state
+        underlineColorAndroid="transparent"
+        //To remove the underline from the android input
+      />
+      <SearchableDropdown
+        onTextChange={text => console.log(text)}
+        //On text change listner on the searchable input
+        onItemSelect={item => setInstrument3(item.name)}
+        //onItemSelect called after the selection from the dropdown
+        containerStyle={styles2.ddContainerStyle}
+        //suggestion container style
+        textInputStyle={styles2.ddInputStyle}
+        itemStyle={styles2.ddItemStyle}
+        itemTextStyle={styles2.ddItemTextStyle}
+        itemsContainerStyle={styles2.ddItemsContainerStyle}
+        items={items}
+        //mapping of item array
+        //defaultIndex={2}
+        //default selected item index
+        placeholder={userProfile.instrument_3}
+        //place holder for the search input
+        resetValue={false}
+        //reset textInput Value with true and false state
+        underlineColorAndroid="transparent"
+        //To remove the underline from the android input
+      />
+      <TouchableOpacity
+        activeOpacity={0.4}
+        style={styles2.TouchableOpacityStyle}
+        onPress={() => {
+            
+            if(instrument =='None'){
+              setInstrument(null);
+            }
+            if(instrument_2=='None'){
+              setInstrument2(null);
+            }
+            console.log(instrument_2);
+            if(instrument_3=='None'){
+              setInstrument3(null);
+            }
+            UpdateStudent.update(userProfile.id,email,password,first_name,last_name,phone_number, street_address, city,st,zip_code,feeder_school,current_school,instrument,instrument_2,instrument_3)
+              .then(data=>data.json())
+              .then(data=>{
+                if(data===false){
+                  Alert.alert("Error, try again later ");               
+                }else{
+                  setUserProfile({...userProfile, email: email,password:password,first_name:first_name, last_name:last_name, phone_number:phone_number, street_address:street_address, city:city, st:st, zip_code:zip_code, feeder_school:feeder_school, current_school:current_school, instrument:instrument, instrument_2: instrument_2, instrument_3: instrument_3});
+                  Alert.alert("Profile updated successfully");
+                }
+              });
+
+          }
+        }
+      >
+        <Text style={styles2.TextStyle}> Update Account </Text>
+      </TouchableOpacity>
+  </View>
+  </ScrollView>
+  </ScreenContainer>
+  
+  );
+};
+
 export const InstructorProfile = ({navigation,route}) => {
   const {signOut} = React.useContext(AuthContext);
 
   return (
     <ScreenContainer>
-      <Text>Instructor Profile Screen</Text>
       <Button title="Edit Instructor Profile" onPress={() => navigation.push('Edit Profile', {name: 'Edit Instructor Profile'})}/>
-      <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
       <Button title="Sign Out" onPress={() => signOut()} />
     </ScreenContainer>
   );
@@ -2755,10 +4158,9 @@ export const InstructorHome = ({navigation,route}) => {
   const stateContext = React.useContext(StateContext);
   const [userProfile, setUserProfile] = stateContext;
 
+  //<Text>{userProfile ? userProfile.email : 'abc'}</Text>
   return (
     <ScreenContainer>
-      <Text>InstructorHome</Text>
-      <Text>{userProfile ? userProfile.email : 'abc'}</Text>
       <Button
         title="Student List"
         onPress={() =>
@@ -2771,7 +4173,6 @@ export const InstructorHome = ({navigation,route}) => {
           navigation.push('Private Student List')
         }
       />
-      <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
     </ScreenContainer>
   );
 };
@@ -2795,7 +4196,8 @@ export const InstructorStudentList = ({navigation, route}) => {
         );
       }
       
-    });
+    })
+    .catch((err)=>{ Alert.alert('No Students Available');});
 
   //console.log(studentUser);
 
@@ -2848,7 +4250,8 @@ export const InstructorDirectorList = ({navigation, route}) => {
         );
       }
       
-    });
+    })
+    .catch((err)=>{ Alert.alert('No Directors Available');});
 
   //console.log(studentUser);
 
@@ -2907,7 +4310,8 @@ export const InstructorDirectorInfo = ({navigation, route}) => {
       else{
         Alert.alert('Error, Try Again Later');
       }
-    }); 
+    })
+    .catch((err)=>{ Alert.alert('No Director Info Available');});
 
   //console.log(check);
   if(check > 0){
@@ -2961,10 +4365,11 @@ export const InstructorPrivateStudentList = ({navigation, route}) => {
       }
       else{
         Alert.alert(
-          'No Private Students Booked Under Instructor',
+          'No Private Students Matched'
         );
       }
-    });
+    })
+    .catch((err)=>{ Alert.alert('No Private Students Matched');});
 
   //console.log(studentUser);
 
@@ -2993,220 +4398,685 @@ export const InstructorPrivateStudentList = ({navigation, route}) => {
 
 };
 
-//In Progress Edit Profile Screens
 
-export const EditAdminProfile = ({navigation,route}) => {
+
+export const InstructorAppointment = ({navigation, route}) => {
   const stateContext = React.useContext(StateContext);
   const [userProfile, setUserProfile] = stateContext;
 
   return (
     <ScreenContainer>
-      <Text>Details For Administrator</Text>
-      {route.params.name && <Text>{route.params.name}</Text>}
+      <Button
+        title="Confirmed Appointment"
+        onPress={() => navigation.push('Confirmed Appointment')}
+      />
+      <Button
+        title="Pending Appointment"
+        onPress={() => navigation.push('Pending Appointment')}
+      />
+      <Button
+        title="Appointment Creator"
+        onPress={() => navigation.push('Appointment Creator')}
+      />    
+      <Button
+        title="View Open Appointments"
+        onPress={() => navigation.push('View Open Appointments')}
+      />    
+      <Button
+        title="Cancellation Requests"
+        onPress={() => navigation.push('Cancellation Requests')}
+      />
+    </ScreenContainer>
+  );
+};
+/*
+  <Button
+        title="Create Appointment"
+        onPress={() => navigation.push('Create Appointment')}
+      />
+      <Button
+        title="Delete Appointment"
+        onPress={() => navigation.push('Delete Appointment')}
+      />
+      <Button
+        title="Cancellation Request"
+        onPress={() => navigation.push('Cancellation Request')}
+      />
+
+*/
+
+
+
+
+export const InstructorConfirmedAppointmentList = ({navigation, route}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+
+  const [appt, setAppt] = React.useState([]);
+  //console.log(userProfile.feeder_school);
+  //console.log(userProfile.instrument);
+  //console.log(userProfile.instrument_2);
+  //console.log(userProfile.instrument_3);
+
+  InstructorAllAppt.getAllAppt(userProfile.id)
+    .then(data2 => data2.json())
+    .then(data2 => {
+      if (data2.length > 0) {
+        setAppt(data2);
+      } else {
+        Alert.alert('No Appointments');
+      }
+    })
+    .catch((err)=>{ Alert.alert('No Confirmed Appointments');});
+
+  return (
+      <ScreenContainer>
+        <View style={userListStyles.MainContainer}>
+              <FlatList
+                data={appt}
+                ItemSeparatorComponent={FlatListItemSeparator}
+                renderItem={({item}) => (
+                  <TouchableHighlight
+                  onPress={() =>
+                    navigation.push('Confirmed Appointment Info', {student_id: item.student_id, appointment_id: item.id})
+                  }
+                  underlayColor={'#FF5722'}>
+                      <View style={{flex: 1, flexDirection: 'row'}}>
+                        <Image
+                          source={{uri: 'http://musicdoors.org/Assets/generalAppointment.png'}}
+                          style={userListStyles.imageView}
+                        />
+                        <Text style={userListStyles.textView}>
+                          {item.date}
+                          {'\n\n'}
+                          {item.start}
+                          {'-'}
+                          {item.end}
+                          {'\n\n'}
+                        </Text>   
+                      </View>
+                  </TouchableHighlight>
+                )}
+                keyExtractor={(item, index) => index.toString()}
+              />
+        </View>
+      </ScreenContainer>
+    );
+};
+
+export const InstructorConfirmedAppointmentInfo = ({navigation, route}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+  const [apptInfo, setAI] = React.useState([]);
+
+  //console.log(userProfile.feeder_school);
+  //console.log(userProfile.instrument);
+  //console.log(userProfile.instrument_2);
+  //console.log(userProfile.instrument_3);
+  const [check, setCheck] = React.useState(0);
+  StudentData.getApptInfo(route.params.student_id)
+    .then(data => data.json())
+    .then(data =>{
+      //console.log(data);
+      if (data === false) {
+        Alert.alert('Error, Try Again Later');
+      } else {
+        setAI(data[0]);
+        setCheck(1);
+      }
+    }); 
+
+  //console.log(check);
+  if(check > 0){
+    return (
+      <ScreenContainer>
+        <ScrollView>
+          <View style={profilePage.container}>
+            <View style={[profilePage.card, profilePage.profileCard]}> 
+              <Image style={profilePage.avatar} source={{uri: apptInfo.avatar}} />
+              <Text style={profilePage.name}>
+                {apptInfo.first_name} {apptInfo.last_name}
+              </Text>
+            </View> 
+            <View style={profilePage.card}>
+              <Text style={profilePage.cardTittle}>Contact Info</Text>
+              <Text> -  {apptInfo.email}</Text>
+            </View>
+            <View style={profilePage.card}>
+              <Text style={profilePage.cardTittle}>About</Text>
+              <Text> -  Instrument: {apptInfo.instrument}</Text>
+              <Text> -  Description:  {apptInfo.description}</Text>
+            </View>
+          </View>
+        </ScrollView>
+      </ScreenContainer>
+    );
+  } else {
+    return (
+      <ScreenContainer>
+        <ActivityIndicator size="large" color="#c70046" />
+      </ScreenContainer>
+    );
+  }
+};
+
+
+export const InstructorPendingAppointmentList = ({navigation}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+
+  const [appt, setAppt] = React.useState([]);
+  //console.log(userProfile.feeder_school);
+  //console.log(userProfile.instrument);
+  //console.log(userProfile.instrument_2);
+  //console.log(userProfile.instrument_3);
+
+  InstructorAllPendingAppt.getAllPendingAppt(userProfile.id)
+    .then(data2 => data2.json())
+    .then(data2 => {
+      
+      if (data2.length > 0) {
+        setAppt(data2);
+      } else {
+        Alert.alert('No Pending Appointments');
+      }
+    })
+    .catch((err)=>{ Alert.alert('No Pending Appointments');});
+
+  //console.log(user);
+
+  return (
+    <ScreenContainer>
+      <View style={userListStyles.MainContainer}>
+        <FlatList
+          data={appt}
+          ItemSeparatorComponent={FlatListItemSeparator}
+          renderItem={({item}) => (
+            <TouchableHighlight
+                  onPress={() =>
+                    navigation.push('Pending Appointment Info', {student_id: item.student_id, appointment_id: item.id})
+                  }
+                  underlayColor={'#FF5722'}>
+                      <View style={{flex: 1, flexDirection: 'row'}}>
+                        <Image
+                          source={{uri: 'http://musicdoors.org/Assets/generalAppointment.png'}}
+                          style={userListStyles.imageView}
+                        />
+                        <Text style={userListStyles.textView}>
+                          {item.date}
+                          {'\n\n'}
+                          {item.start}
+                          {'-'}
+                          {item.end}
+                          {'\n\n'}
+                          {'Appointment Status: Pending'}
+                        </Text>                                    
+                      </View>
+                       
+            </TouchableHighlight>              
+          )}
+          keyExtractor={(item, index) => index.toString()}
+        />
+      </View>
     </ScreenContainer>
   );
 };
 
-export const EditDirectorProfile = ({navigation,route}) => {
-  const stateContext = React.useContext(StateContext);
 
+
+export const InstructorPendingAppointmentInfo = ({navigation,route}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+  const [apptInfo, setAI] = React.useState([]);
+
+  //console.log(userProfile.feeder_school);
+  //console.log(userProfile.instrument);
+  //console.log(userProfile.instrument_2);
+  //console.log(userProfile.instrument_3);
+  const [check, setCheck] = React.useState(0);
+  StudentData.getApptInfo(route.params.student_id)
+    .then(data => data.json())
+    .then(data =>{
+      //console.log(data);
+      if (data === false) {
+        Alert.alert('No Pending Appointments');
+      } else {
+        setAI(data[0]);
+        setCheck(1);
+      }
+    })
+
+  //console.log(check);
+  if(check > 0){
+    return (
+      <ScreenContainer>
+        <ScrollView>
+          <View style={profilePage.container}>
+            <View style={[profilePage.card, profilePage.profileCard]}> 
+              <Image style={profilePage.avatar} source={{uri: apptInfo.avatar}} />
+              <Text style={profilePage.name}>
+                {apptInfo.first_name} {apptInfo.last_name}
+              </Text>
+            </View> 
+            <View style={profilePage.card}>
+              <Text style={profilePage.cardTittle}>Contact Info</Text>
+              <Text> -  {apptInfo.email}></Text>
+            </View>
+            <View style={profilePage.card}>
+              <Text style={profilePage.cardTittle}>About</Text>
+              <Text> -  Instrument: {apptInfo.instrument}</Text>
+              <Text> -  Description:  {apptInfo.description}</Text>
+            </View>
+          </View>
+          <Button color="#ff5c5c"  title="Confirm" onPress={()=>{
+          ConfirmPendingRequest.confirmPending(route.params.appointment_id)
+            .then(cancelData=>cancelData.json())
+            .then(cancelData=>{
+              if(cancelData===false){
+                Alert.alert("Error, Try Again Later");
+              }else{
+                Alert.alert("Confirmed Succesfully");
+              }
+            });
+          }}/>
+        </ScrollView>
+      </ScreenContainer>
+    );
+  }else{
+    return(
+      <ScreenContainer>
+        <ActivityIndicator size="large" color="#c70046" />
+      </ScreenContainer>
+    );
+  }
+};
+
+export const InstructorAppointmentCreator = ({route, navigation}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+  const [choice, setChoice] = React.useState(null);
+  const [customDatesStyles, setSC] = React.useState([]);
+
+  return (
+    <ScreenContainer>
+    <View style={styles.container}>
+        <CalendarPicker   
+          todayBackgroundColor = "#00BCD4"
+          selectedDayColor="#FF5722"
+          onDateChange= {(val)=>{ 
+          navigation.push("Create Session", {date:val.format('l')});}}
+          customDatesStyles= {customDatesStyles}
+          minDate={moment()}
+        />
+      </View>
+    </ScreenContainer>
+  );
+};
+
+export const InstructorCreateSession = ({navigation,route}) => {
+  const stateContext = React.useContext(StateContext);
   const [userProfile, setUserProfile] = stateContext;
 
+  const [endTime, setEndTime] = React.useState('');
+  const [startTime, setStartTime] = React.useState('');
 
-  const [email, setEmail] = React.useState(userProfile.email);
-  const [password, setPass] = React.useState(userProfile.password);
-  const [first_name, setFName] = React.useState(userProfile.first_name);
-  const [last_name, setLName] = React.useState(userProfile.last_name);
-  const [city, setCity] = React.useState(userProfile.city);
-  const [st, setS] = React.useState(userProfile.state);
-  const [zip_code, setZC] = React.useState(userProfile.zip_code);
-  const [current_school, setCS] = React.useState(userProfile.current_school);
-  const [feeder_school, setFS] = React.useState(userProfile.feeder_school);
-  const [instrument, setInstrument] = React.useState(userProfile.instrument);
-  const [instrument_2, setInstrument2] = React.useState(userProfile.instrument_2);
-  const [instrument_3, setInstrument3] = React.useState(userProfile.instrument_3);
-  const [phone_number, setPhoneNumber] = React.useState(userProfile.phone_number);
-
-
-  const street_address = false;
-
-  return(
-  <ScreenContainer>
-  <ScrollView keyboardShouldPersistTaps="always">
-  <View style={profilePage.container}>
-      <View style={[profilePage.card, profilePage.profileCard]}> 
-        <Image style={profilePage.avatar} source={{uri: userProfile.avatar}} />
-        <Text style={profilePage.name}>
-          {userProfile.first_name} {userProfile.last_name}
-        </Text>
-      </View> 
-      <Button title="Upload Avatar" onPress={ () => {
-        chooseImage()
-          .then(originalResponse => {
-            console.log(originalResponse.cancelled);
-            if (!originalResponse.cancelled) {
-              console.log(originalResponse.uri);
-              
-              ImageResizer.createResizedImage(originalResponse.uri, 400, 300,"PNG",80).then(response=>{
-                      var data = new FormData(); 
-                      data.append('avatar', {
-                        uri: response,
-                        name: 'avatar.jpg',
-                        type: originalResponse.uri.type,
-                      });
-                      
-                       data.append('email', userProfile.email)
-                      fetch('http://musicdoors.org/Assets/UploadImage.php', 
-                      {
-                        method:"POST",
-                        body:data,
-                        headers: {
-                          'Accept': 'application/json',
-                        },
-                      })
-                      .then(data=>data.json())
-                      .then(data=>{
-                        console.log(data);
-                        if(data.status===true){
-                          //Alert.alert("Notify: Image Uploaded Succesfully");
-                          setUserProfile({...userProfile, avatar: data.avatar})
-                        }
-                        else{
-                          Alert.alert("Notify: Error Uploading Image");
-                        }
-                      })
-                      .catch(err => {
-                        console.error('upload error: ' + err);
-                        alert('An error occurred while uploading avatar.');
-                      });
-
-              }).catch((err)=>{console.log("Error")});
-
-            }
-          })
-          .catch(err => {
-            console.error('ImagePicker error: ' + err);
-            alert('An error occurred while selecting the avatar.');
-          });
-        }}/>
-      <TextInput
-        placeholder= {userProfile.email}
+  return (
+    <ScreenContainer>
+      <SearchableDropdown
+        onTextChange={text => console.log(text)}
+        //On text change listner on the searchable input
+        onItemSelect={item => setStartTime(item.name)}
+        //onItemSelect called after the selection from the dropdown
+        containerStyle={styles.ddContainerStyle}
+        //suggestion container style
+        textInputStyle={styles.ddInputStyle}
+        itemStyle={styles.ddItemStyle}
+        itemTextStyle={styles.ddItemTextStyle}
+        itemsContainerStyle={styles.ddItemsContainerStyle}
+        items={fixedTimes}
+        //mapping of item array
+        //defaultIndex={2}
+        //default selected item index
+        placeholder="Select Start Time"
+        //place holder for the search input
+        resetValue={false}
+        //reset textInput Value with true and false state
         underlineColorAndroid="transparent"
-        style={styles2.TextInputStyleClass}
-        onChangeText={val => setEmail(val)}
-        autoCapitalize="none"
+        //To remove the underline from the android input
       />
-      <TextInput
-        placeholder= {userProfile.password}
+      <SearchableDropdown
+        onTextChange={text => console.log(text)}
+        //On text change listner on the searchable input
+        onItemSelect={item => setEndTime(item.name)}
+        //onItemSelect called after the selection from the dropdown
+        containerStyle={styles.ddContainerStyle}
+        //suggestion container style
+        textInputStyle={styles.ddInputStyle}
+        itemStyle={styles.ddItemStyle}
+        itemTextStyle={styles.ddItemTextStyle}
+        itemsContainerStyle={styles.ddItemsContainerStyle}
+        items={fixedTimes}
+        //mapping of item array
+        //defaultIndex={2}
+        //default selected item index
+        placeholder="Select End Time"
+        //place holder for the search input
+        resetValue={false}
+        //reset textInput Value with true and false state
         underlineColorAndroid="transparent"
-        style={styles2.TextInputStyleClass}
-        onChangeText={val => setPass(val)}
-        autoCapitalize="none"
-      />
-      <TextInput
-        placeholder= {userProfile.first_name}
-        underlineColorAndroid="transparent"
-        style={styles2.TextInputStyleClass}
-        onChangeText={val => setFName(val)}
-      />
-      <TextInput
-        placeholder= {userProfile.last_name}
-        underlineColorAndroid="transparent"
-        style={styles2.TextInputStyleClass}
-        onChangeText={val => setLName(val)}
-      />
-      <TextInput
-        placeholder= {userProfile.phone_number}
-        underlineColorAndroid="transparent"
-        style={styles2.TextInputStyleClass}
-        onChangeText={val => setPhoneNumber(val)}
-      />
-      <TextInput
-        placeholder= {userProfile.city}
-        underlineColorAndroid="transparent"
-        style={styles2.TextInputStyleClass}
-        onChangeText={val => setCity(val)}
-      />
-
-      <TextInput
-        placeholder= {userProfile.state}
-        underlineColorAndroid="transparent"
-        style={styles2.TextInputStyleClass}
-        onChangeText={val => setS(val)}
-      />
-
-      <TextInput
-        placeholder= {userProfile.zip_code}
-        underlineColorAndroid="transparent"
-        style={styles2.TextInputStyleClass}
-        onChangeText={val => setZC(val)}
-      />
-
-      <TextInput
-        placeholder= {userProfile.current_school}
-        underlineColorAndroid="transparent"
-        style={styles2.TextInputStyleClass}
-        onChangeText={val => setCS(val)}
+        //To remove the underline from the android input
       />
       <TouchableOpacity
         activeOpacity={0.4}
-        style={styles2.TouchableOpacityStyle}
+        style={styles.TouchableOpacityStyle}
         onPress={() => {
-            console.log(instrument_2);
-            if(instrument =='None'){
-              setInstrument(null);
-            }
-            if(instrument_2=='None'){
-              setInstrument2(null);
-            }
-            console.log(instrument_2);
-            if(instrument_3=='None'){
-              setInstrument3(null);
-            }
-            UpdateStudent.update(userProfile.id,email,password,first_name,last_name,phone_number, street_address, city,st,zip_code,feeder_school,current_school,instrument,instrument_2,instrument_3)
-              .then(data=>data.json())
-              .then(data=>{
-                if(data===false){
-                  Alert.alert("Error, try again later ");               
-                }else{
-                  Alert.alert("Profile updated successfully");
+          if(startTime === endTime){
+            Alert.alert("Conflicting Start Time and End Time,\n Try Again");
+          }else{
+            CreateAppointment.createAppt(
+              userProfile.id,
+              startTime,
+              endTime,
+              route.params.date,
+            )
+              .then(data => data.json)
+              .then(data => {
+                if (data === false) {
+                  Alert.alert('Error Adding Appointment, Try Again Later');
+                } else {
+                  Alert.alert(`Successfully Added Appointment on ${route.params.date}\nStart Time: ${startTime}\nEnd Time: ${endTime}`);
                 }
               });
           }
-        }
-      >
-        <Text style={styles2.TextStyle}> Update Account </Text>
+        
+        }}>
+        <Text style={styles.TextStyle}> Create New Session </Text>
       </TouchableOpacity>
-  </View>
-  </ScrollView>
-  </ScreenContainer>
+    </ScreenContainer>
+  );
+};
+
+export const InstructorViewAppointments = ({route, navigation}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+  const [customDatesStyles, setSC] = React.useState([]);
+  //const [customDatesStyles, setSC] = React.useState(null);
+
+  //console.log(route.params.parent.id);
+
+  let today = moment();
+  let day = today.clone().startOf('month');
+
+  //console.log(day.clone());
   
-  );
-};
-
-
-export const EditPrivateStudentProfile = ({navigation,route}) => {
-  const stateContext = React.useContext(StateContext);
-  const [userProfile, setUserProfile] = stateContext;
-
-  return(
+  InstructorAllOpenAppt.getAllAppt(userProfile.id)
+    .then(data => data.json())
+    .then(data => {
+      //console.log(data2)
+      if (data.length > 0) {
+        //console.log(data);
+        var data2 = data.map(function(item) {
+          let date = moment(item.date, 'MM/DD/YYYY');
+          return {
+            "date": date.clone(),
+            "style": {backgroundColor: '#00FF7F'},
+            "textStyle": {color: 'black'},
+            "containerStyle": [],
+          };
+        });
+        //console.log([data2])
+        setSC(data2);
+      } 
+      if (data === false){
+        Alert.alert('No Appointments Available');
+      }
+    })
+  /*
+    onDateChange={val => {
+      setChoice(val.format('l'));
+      navigation.push('Appointment Request', {
+        date: choice,
+        id: route.params.parent.id,
+      });
+    }}
+*/
+  //console.log(customDatesStyles);
+  //console.log(user);
+  return (
     <ScreenContainer>
-      <Text>Details For Private Student</Text>
-      {route.params.name && <Text>{route.params.name}</Text>}
+      <View style={styles.container}>
+        <CalendarPicker   
+          todayBackgroundColor = "#00BCD4"
+          selectedDayColor="#FF5722"
+          onDateChange= {(val)=>{ 
+          navigation.push("View Sessions", {date:val.format('l')});}}
+          customDatesStyles= {customDatesStyles}
+          disabledDates = {(val)=>
+          {
+            if((customDatesStyles.some(item => val.format('l') === item.date.format('l')))===false){
+              return true;
+            } else {
+              return false;
+            }
+          }}
+          minDate={moment()}
+        />
+      </View>
     </ScreenContainer>
   );
 };
-export const EditInstructorProfile = ({navigation,route}) => {
+
+export const InstructorViewSessions = ({navigation, route}) => {
   const stateContext = React.useContext(StateContext);
   const [userProfile, setUserProfile] = stateContext;
 
-  return(
+  const [apptList, setAL] = React.useState(null);
+
+  //TODO 
+  DayApptList.getAllAppt(userProfile.id, route.params.date)
+    .then(data2 => data2.json())
+    .then(data2 => {
+      if (data2.length > 0) {
+        setAL(data2);
+      }
+      if (data2 === false) {
+        Alert.alert('No Access Codes Available');
+      }
+    });
+
+  return (
     <ScreenContainer>
-      <Text>Details For Instructor</Text>
-      {route.params.name && <Text>{route.params.name}</Text>}
+      <View style={userListStyles.MainContainer}>
+        <FlatList
+          data={apptList}
+          ItemSeparatorComponent={FlatListItemSeparator}
+          renderItem={({item}) => (
+            <View style={{flex: 1, flexDirection: 'row'}}>
+               <Image
+                  source={{uri: 'http://musicdoors.org/Assets/generalAppointment.png'}}
+                  style={userListStyles.imageView}
+                />
+              <Text
+                style={userListStyles.textView}
+                onPress={() => {
+                    Alert.alert(
+                      'Delete Appointment on\n',
+                      item.date,
+                      [
+                        {
+                          text: 'Cancel',
+                          onPress: () => console.log('Cancel Pressed'),
+                          style: 'cancel',
+                        },
+                        {
+                          text: 'Yes', 
+                          onPress: () =>{
+                            DeleteAppointment.deleteAppt(item.id)
+                            .then(data => data.json())
+                            .then(data => {
+                              if (data === false) {
+                                Alert.alert(`Deleted Appointment`);
+                              } else {
+                                Alert.alert('Not Deleted, Try Again Later');
+                              }
+                            }); 
+                          }
+                        },
+                      ],
+                      {cancelable: false},
+                    );
+                  }
+                }>
+                {item.date}
+                {'\n\n'}
+                {item.start}
+                {'-'}
+                {item.end}
+                {'\n\n'}
+                {'Appointment Status: Available'}                    
+                </Text>
+            </View>
+          )}
+          keyExtractor={(item, index) => index.toString()}
+        />
+      </View>
     </ScreenContainer>
   );
 };
+
+
+export const InstructorCancelAppointmentList = ({navigation}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+
+  const [appt, setAppt] = React.useState([]);
+  //console.log(userProfile.feeder_school);
+  //console.log(userProfile.instrument);
+  //console.log(userProfile.instrument_2);
+  //console.log(userProfile.instrument_3);
+
+  InstructorAllCancelAppt.getAllCancelAppt(userProfile.id)
+    .then(data2 => data2.json())
+    .then(data2 => {
+      console.log(data2);
+      console.log(typeof(data2));
+      if (data2.length > 0) {
+        setAppt(data2);
+      }
+      if (data2 === false) {
+        Alert.alert('No Cancellation Requests');
+      }
+    })
+
+  //console.log(user);
+
+  return (
+    <ScreenContainer>
+      <View style={userListStyles.MainContainer}>
+        <FlatList
+          data={appt}
+          ItemSeparatorComponent={FlatListItemSeparator}
+          renderItem={({item}) => (
+            <TouchableHighlight
+                  onPress={() =>
+                    navigation.push('Cancel Pending Info', {student_id: item.student_id, appointment_id: item.id})
+                  }
+                  underlayColor={'#FF5722'}>
+                      <View style={{flex: 1, flexDirection: 'row'}}>
+                        <Image
+                          source={{uri: 'http://musicdoors.org/Assets/generalAppointment.png'}}
+                          style={userListStyles.imageView}
+                        />
+                        <Text style={userListStyles.textView}>
+                          {item.date}
+                          {'\n\n'}
+                          {item.start}
+                          {'-'}
+                          {item.end}
+                          {'\n\n'}
+                          {'Appointment Status: Cancellation Requested'}
+                        </Text>                                    
+                      </View>
+                       
+            </TouchableHighlight>              
+          )}
+          keyExtractor={(item, index) => index.toString()}
+        />
+      </View>
+    </ScreenContainer>
+  );
+};
+
+
+
+export const InstructorCancelPendingInfo = ({navigation,route}) => {
+  const stateContext = React.useContext(StateContext);
+  const [userProfile, setUserProfile] = stateContext;
+  const [apptInfo, setAI] = React.useState([]);
+
+  //console.log(userProfile.feeder_school);
+  //console.log(userProfile.instrument);
+  //console.log(userProfile.instrument_2);
+  //console.log(userProfile.instrument_3);
+  const [check, setCheck] = React.useState(0);
+  StudentData.getApptInfo(route.params.student_id)
+    .then(data => data.json())
+    .then(data =>{
+      //console.log(data);
+      if (data === false) {
+        Alert.alert('Error, Try Again Later');
+      } else {
+        setAI(data[0]);
+        setCheck(1);
+      }
+    }); 
+
+  //console.log(check);
+  if(check > 0){
+    return (
+      <ScreenContainer>
+        <ScrollView>
+          <View style={profilePage.container}>
+            <View style={[profilePage.card, profilePage.profileCard]}> 
+              <Image style={profilePage.avatar} source={{uri: apptInfo.avatar}} />
+              <Text style={profilePage.name}>
+                {apptInfo.first_name} {apptInfo.last_name}
+              </Text>
+            </View> 
+            <View style={profilePage.card}>
+              <Text style={profilePage.cardTittle}>Contact Info</Text>
+              <Text> -  {apptInfo.email}></Text>
+            </View>
+            <View style={profilePage.card}>
+              <Text style={profilePage.cardTittle}>About</Text>
+              <Text> -  Instrument: {apptInfo.instrument}</Text>
+              <Text> -  Description:  {apptInfo.description}</Text>
+            </View>
+          </View>
+          <Button color="#ff5c5c"  title="Confirm Cancellation Request" onPress={()=>{
+           InstructorCancelPendingRequest.cancel(route.params.appointment_id)
+            .then(cancelData=>cancelData.json())
+            .then(cancelData=>{
+              if(cancelData===false){
+                Alert.alert("Canceled Successfully");
+              }else{
+                Alert.alert("Error, Try Again Later");                
+              }
+            });
+          }}/>
+        </ScrollView>
+      </ScreenContainer>
+    );
+  }else{
+    return(
+      <ScreenContainer>
+        <ActivityIndicator size="large" color="#c70046" />
+      </ScreenContainer>
+    );
+  }
+};
+
+//In Progress Edit Profile Screens
 
 export const Gallery = ({navigation,route}) => {
   const galleryContext = React.useContext(GalleryContext);

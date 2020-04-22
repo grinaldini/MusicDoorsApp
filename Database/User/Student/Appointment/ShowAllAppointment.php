@@ -38,7 +38,7 @@ $student_id = $obj['student_id'];
 
 
 // Creating SQL command to fetch all records from Table.
-$query = "SELECT * FROM lessonAppointments WHERE student_id = '$student_id' AND available = 'No' ";
+$query = "SELECT * FROM lessonAppointments WHERE student_id = '$student_id' AND available = 'No' ORDER BY date ASC";
 
 $result = mysqli_query($conn, $query);
 

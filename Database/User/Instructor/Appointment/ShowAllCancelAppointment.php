@@ -18,11 +18,27 @@ if ($conn->connect_error) {
  die("Connection failed: " . $conn->connect_error);
 }
 
-$id = $obj['id'];
-$current_school = $obj['current_school'];
+// Getting the received JSON into $json variable.
+
+
+
+$json = file_get_contents('php://input');
+ 
+
+
+ // decoding the received JSON and store into $obj variable.
+
+
+
+$obj = json_decode($json,true);
+
+$instructor_id = $obj['instructor_id'];
+
+
+
 
 // Creating SQL command to fetch all records from Table.
-$query = "SELECT * FROM lessonAppointments WHERE available = 'No' ORDER BY date ASC";
+$query = "SELECT * FROM lessonAppointments WHERE instructor_id = '$instructor_id' AND canceled = 'Pending' ORDER BY date ASC";
 
 $result = mysqli_query($conn, $query);
 
@@ -39,11 +55,10 @@ if ($result->num_rows >0) {
  echo $json;
 
 } else {
-
- echo false;
+ $invalidMsg = false;
+ $invalidJson = json_encode($invalidMsg);
+ echo $invalidJson;
 }
-
-
 
 mysqli_close($conn);
 

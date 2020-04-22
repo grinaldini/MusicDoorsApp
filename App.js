@@ -68,10 +68,7 @@ import {
   DirectorParticipantsInfo,
   EditDirectorProfile,
   StudentCreateAccount,StudentProfile,StudentHome,EditStudentProfile,StudentInstructorList,StudentBookingCalendar,StudentAppointmentRequest,StudentAppointmentList,StudentPendingAppointmentList,StudentCancelAppointmentList,StudentAppointmentInfo,StudentPendingAppointmentInfo,StudentAppointment,
-  PrivateStudentCreateAccount,
-  PrivateStudentProfile,
-  PrivateStudentHome,
-  EditPrivateStudentProfile,
+  PrivateStudentCreateAccount,PrivateStudentProfile,PrivateStudentHome,EditPrivateStudentProfile,PrivateStudentInstructorList,PrivateStudentBookingCalendar,PrivateStudentAppointmentRequest,PrivateStudentAppointmentList,PrivateStudentPendingAppointmentList,PrivateStudentCancelAppointmentList,PrivateStudentAppointmentInfo,PrivateStudentPendingAppointmentInfo,PrivateStudentAppointment,
   InstructorCreateAccount,
   InstructorProfile,
   InstructorHome,
@@ -79,6 +76,17 @@ import {
   InstructorDirectorList,
   InstructorDirectorInfo,
   InstructorPrivateStudentList,
+  InstructorAppointment,
+  InstructorConfirmedAppointmentList,
+  InstructorConfirmedAppointmentInfo,
+  InstructorPendingAppointmentList,
+  InstructorPendingAppointmentInfo,
+  InstructorAppointmentCreator,
+  InstructorCreateSession,
+  InstructorViewAppointments,
+  InstructorViewSessions,
+  InstructorCancelAppointmentList,
+  InstructorCancelPendingInfo,
   EditInstructorProfile,
   Gallery,
   Search,
@@ -253,7 +261,7 @@ const AdminCGStackScreen = () => (
       component={AdminCreateAccessCode}
     />
     <SearchStack.Screen
-      name="Delete Access Code"
+      name="View Access Codes"
       component={AdminDeleteAccessCode}
     />
     <SearchStack.Screen name="Search2" component={Search2} />
@@ -423,33 +431,72 @@ const DrawerScreen3 = () => (
 //Private Student
 // + Bottom Tabs
 // + Drawer
-
 const PrivateStudentTabsScreen = () => (
   <Tabs.Navigator>
     <Tabs.Screen name="Home" component={PrivateStudentHomeStackScreen} />
-    <Tabs.Screen name="Appointment" component={StudentAppointmentStackScreen} />
+    <Tabs.Screen name="Appointment" component={PrivateStudentAppointmentStackScreen} />
   </Tabs.Navigator>
 );
 
 const PrivateStudentHomeStackScreen = () => (
   <HomeStack.Navigator>
-    <HomeStack.Screen name="Home" component={PrivateStudentHome} />
+    <HomeStack.Screen name="Home" component={StudentHome} />
     <HomeStack.Screen
-      name="Details"
-      component={Details}
+      name="Instructor List"
+      component={PrivateStudentInstructorList}
+    />
+    <HomeStack.Screen
+      name="Booking Calendar"
+      component={PrivateStudentBookingCalendar}
       options={({route}) => ({
-        title: route.params.name,
+        parent: route.params.parent,
+      })}
+    />
+    <HomeStack.Screen
+      name="Appointment Request"
+      component={PrivateStudentAppointmentRequest}
+      options={({route}) => ({
+        parent: route.params.parent,
+        id: route.params.instructor_id,
       })}
     />
   </HomeStack.Navigator>
 );
 
+const PrivateStudentAppointmentStackScreen = () => (
+  <SearchStack.Navigator>
+    <SearchStack.Screen
+      name="Appointment Menu"
+      component={PrivateStudentAppointment}
+    />
+    <SearchStack.Screen name="Appointment" component={PrivateStudentAppointmentList} />
+    <SearchStack.Screen
+      name="Appointment Info"
+      component={PrivateStudentAppointmentInfo}
+      options={({route}) => ({
+        instructor_id: route.params.instructor_id,
+        appointment_id: route.params.appointment_id,
+      })}
+    />
+    <SearchStack.Screen
+      name="Pending Appointment Info"
+      component={PrivateStudentPendingAppointmentInfo}
+      options={({route}) => ({
+        instructor_id: route.params.instructor_id,
+        appointment_id: route.params.appointment_id,
+
+      })}
+    />
+    <SearchStack.Screen
+      name="Pending Appointment"
+      component={PrivateStudentPendingAppointmentList}
+    />
+  </SearchStack.Navigator>
+);
+
 const PrivateStudentProfileStackScreen = () => (
   <ProfileStack.Navigator>
-    <ProfileStack.Screen
-      name="Private Student Profile"
-      component={PrivateStudentProfile}
-    />
+    <ProfileStack.Screen name="Student Profile" component={PrivateStudentProfile} />
     <HomeStack.Screen
       name="Edit Profile"
       component={EditPrivateStudentProfile}
@@ -514,14 +561,14 @@ const InstructorAppointmentStackScreen = () => (
       component={InstructorAppointment}
     />
     <SearchStack.Screen
-      name="Appointment"
-      component={InstructorAppointmentList}
+      name="Confirmed Appointment"
+      component={InstructorConfirmedAppointmentList}
     />
     <SearchStack.Screen
-      name="Appointment Info"
-      component={InstructorAppointmentInfo}
+      name="Confirmed Appointment Info"
+      component={InstructorConfirmedAppointmentInfo}
       options={({route}) => ({
-        instructor_id: route.params.instructor_id,
+        student_id: route.params.student_id,
         appointment_id: route.params.appointment_id,
       })}
     />
@@ -533,37 +580,62 @@ const InstructorAppointmentStackScreen = () => (
       name="Pending Appointment Info"
       component={InstructorPendingAppointmentInfo}
       options={({route}) => ({
-        instructor_id: route.params.instructor_id,
+        student_id: route.params.student_id,
         appointment_id: route.params.appointment_id,
       })}
     />
     <SearchStack.Screen
-      name="Edit Schedule"
-      //component={InstructorEditSchedule}
+      name="Appointment Creator"
+      component={InstructorAppointmentCreator}
+    />
+    <SearchStack.Screen
+      name="Create Session"
+      component={InstructorCreateSession}
       options={({route}) => ({
-        instructor_id: route.params.instructor_id,
-        appointment_id: route.params.appointment_id,
+        date: route.params.date,
       })}
     />
     <SearchStack.Screen
-      name="Create Appointment"
-      //component={InstructorCreateAppointment}
+      name="View Open Appointments"
+      component={InstructorViewAppointments}
+    />
+    <SearchStack.Screen
+      name="View Sessions"
+      component={InstructorViewSessions}
       options={({route}) => ({
-        instructor_id: route.params.instructor_id,
-        appointment_id: route.params.appointment_id,
+        date: route.params.date,
       })}
     />
     <SearchStack.Screen
-      name="Delete Appointment"
-      //component={InstructorDeleteAppointment}
+      name="Cancellation Requests"
+      component={InstructorCancelAppointmentList}
+    />
+    <SearchStack.Screen
+      name="Cancel Pending Info"
+      component={InstructorCancelPendingInfo}
       options={({route}) => ({
-        instructor_id: route.params.instructor_id,
+        student_id: route.params.student_id,
         appointment_id: route.params.appointment_id,
       })}
     />
   </SearchStack.Navigator>
 );
 
+/*
+      <SearchStack.Screen
+      name="Create Appointment"
+      //component={InstructorCreateAppointment}
+    />
+    <SearchStack.Screen
+      name="Delete Appointment"
+      //component={InstructorDeleteAppointment}
+    />
+    <SearchStack.Screen
+      name="Cancellation Requests"
+      //component={InstructorCancelAppointmentList}
+    />
+
+*/
 const InstructorProfileStackScreen = () => (
   <ProfileStack.Navigator>
     <ProfileStack.Screen

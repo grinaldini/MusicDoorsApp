@@ -27,7 +27,7 @@ $obj = json_decode($json,true);
 $student_id=$obj['student_id'];
 
 // Creating SQL command to fetch all records from Table.
-$query = "SELECT * FROM lessonAppointments WHERE available = 'No' AND student_id = '$student_id' ";
+$query = "SELECT * FROM lessonAppointments WHERE available = 'No' AND student_id = '$student_id' ORDER BY date ASC";
 
 $result = mysqli_query($conn, $query);
 
