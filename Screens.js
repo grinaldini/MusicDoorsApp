@@ -16,7 +16,7 @@ import {
   FlatList,
   TouchableHighlight,
   SafeAreaView,
-  ImagePickerIOS,
+  ImagePickerIOS,    
 } from 'react-native';
 import ImagePicker from 'react-native-image-picker';
 
@@ -88,7 +88,8 @@ import CalendarPicker from 'react-native-calendar-picker';
 import ImageResizer from 'react-native-image-resizer';
 
 import RNFetchBlob from 'rn-fetch-blob';
-
+const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
 const userTypes = [
   {
     id: 2,
@@ -276,6 +277,9 @@ const fixedTimes = [
 const ScreenContainer = ({children}) => (
   <View style={styles.container}>{children}</View>
 );
+const ScrollScreenContainer = ({children}) => (
+  <ScrollView style={styles.container}>{children}</ScrollView>
+);
 
 export const Welcome = ({navigation}) => {
   const {signIn} = React.useContext(AuthContext);
@@ -283,6 +287,7 @@ export const Welcome = ({navigation}) => {
   return (
     <ScreenContainer>
       <Image
+      resizeMode="contain"
         source={{uri: 'http://musicdoors.org/Assets/HeaderImages/logo.png'}}
         style={styles.logo}
       />
@@ -1755,9 +1760,11 @@ export const StudentCreateAccount = () => {
     },
   ];
   */
-
+ 
   return (
     <ScreenContainer>
+
+    <ScrollView style={{width: '90%', }} contentContainerStyle={{ paddingLeft: 35, flexGrow: 1, justifyContent: 'center'}}>
       <TextInput
         placeholder="Enter Email"
         underlineColorAndroid="transparent"
@@ -1951,6 +1958,7 @@ export const StudentCreateAccount = () => {
         }>
         <Text style={styles.TextStyle}> Create Account </Text>
       </TouchableOpacity>
+      </ScrollView>
     </ScreenContainer>
   );
 };
@@ -2913,6 +2921,7 @@ export const PrivateStudentCreateAccount = () => {
   */
   return (
     <ScreenContainer>
+      <ScrollView keyboardShouldPersistTaps="always">
       <TextInput
         placeholder="Enter Email"
         underlineColorAndroid="transparent"
@@ -3055,6 +3064,7 @@ export const PrivateStudentCreateAccount = () => {
         }>
         <Text style={styles.TextStyle}> Create Account </Text>
       </TouchableOpacity>
+      </ScrollView>
     </ScreenContainer>
   );
 };
@@ -4766,29 +4776,38 @@ export const InstructorPrivateStudentList = ({navigation, route}) => {
   );
 };
 
+const CustomButton = ({title, onPress}) => {
+  return (
+    <TouchableOpacity onPress={onPress}> 
+      <Text  style={{textAlign: 'center', marginVertical: 10, color: '#2096F4', fontSize: 18 }}>
+      {title}
+      </Text>
+    </TouchableOpacity>
+  )
+}
 export const InstructorAppointment = ({navigation, route}) => {
   const stateContext = React.useContext(StateContext);
   const [userProfile, setUserProfile] = stateContext;
 
   return (
     <ScreenContainer>
-      <Button
+      <CustomButton
         title="Confirmed Appointment"
-        onPress={() => navigation.push('Confirmed Appointment')}
+        onPress={() => navigation.push('Confirmed Appointment')}       
       />
-      <Button
+      <CustomButton
         title="Pending Appointment"
         onPress={() => navigation.push('Pending Appointment')}
       />
-      <Button
+      <CustomButton
         title="Appointment Creator"
         onPress={() => navigation.push('Appointment Creator')}
       />
-      <Button
+      <CustomButton
         title="View Open Appointments"
         onPress={() => navigation.push('View Open Appointments')}
       />
-      <Button
+      <CustomButton
         title="Cancellation Requests"
         onPress={() => navigation.push('Cancellation Requests')}
       />
@@ -5769,7 +5788,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: 280,
-    height: 500,
+    height: screenHeight / 2.4,
   },
   ddInputStyle: {
     padding: 12,
@@ -6076,6 +6095,12 @@ const PickerStyles2 = StyleSheet.create({
   },
 });
 
+const androidStyles = StyleSheet.create({
+  button: {
+    backgroundColor: 'transparent',
+    color: '#00f',
+  },
+});
 const userListStyles = StyleSheet.create({
   MainContainer: {
     justifyContent: 'center',
