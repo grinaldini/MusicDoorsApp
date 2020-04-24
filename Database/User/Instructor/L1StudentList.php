@@ -78,11 +78,13 @@ if ($result->num_rows >0) {
  }
  $json = json_encode($rows);
 
-} else {
- echo false;
-}
+ echo $json;
 
-echo $json;
+} else {
+    $invalidMsg = false;
+    $invalidJson = json_encode($invalidMsg);
+    echo $invalidJson;
+}
 
 mysqli_close($conn);
 

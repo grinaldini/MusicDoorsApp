@@ -67,8 +67,32 @@ import {
   DirectorAppointmentList,
   DirectorParticipantsInfo,
   EditDirectorProfile,
-  StudentCreateAccount,StudentProfile,StudentHome,EditStudentProfile,StudentInstructorList,StudentBookingCalendar,StudentAppointmentRequest,StudentAppointmentList,StudentPendingAppointmentList,StudentCancelAppointmentList,StudentAppointmentInfo,StudentPendingAppointmentInfo,StudentAppointment,
-  PrivateStudentCreateAccount,PrivateStudentProfile,PrivateStudentHome,EditPrivateStudentProfile,PrivateStudentInstructorList,PrivateStudentBookingCalendar,PrivateStudentAppointmentRequest,PrivateStudentAppointmentList,PrivateStudentPendingAppointmentList,PrivateStudentCancelAppointmentList,PrivateStudentAppointmentInfo,PrivateStudentPendingAppointmentInfo,PrivateStudentAppointment,
+  StudentCreateAccount,
+  StudentProfile,
+  StudentHome,
+  EditStudentProfile,
+  StudentInstructorList,
+  StudentBookingCalendar,
+  StudentAppointmentRequest,
+  StudentAppointmentList,
+  StudentPendingAppointmentList,
+  StudentCancelAppointmentList,
+  StudentAppointmentInfo,
+  StudentPendingAppointmentInfo,
+  StudentAppointment,
+  PrivateStudentCreateAccount,
+  PrivateStudentProfile,
+  PrivateStudentHome,
+  EditPrivateStudentProfile,
+  PrivateStudentInstructorList,
+  PrivateStudentBookingCalendar,
+  PrivateStudentAppointmentRequest,
+  PrivateStudentAppointmentList,
+  PrivateStudentPendingAppointmentList,
+  PrivateStudentCancelAppointmentList,
+  PrivateStudentAppointmentInfo,
+  PrivateStudentPendingAppointmentInfo,
+  PrivateStudentAppointment,
   InstructorCreateAccount,
   InstructorProfile,
   InstructorHome,
@@ -397,7 +421,6 @@ const StudentAppointmentStackScreen = () => (
       options={({route}) => ({
         instructor_id: route.params.instructor_id,
         appointment_id: route.params.appointment_id,
-
       })}
     />
     <SearchStack.Screen
@@ -434,7 +457,10 @@ const DrawerScreen3 = () => (
 const PrivateStudentTabsScreen = () => (
   <Tabs.Navigator>
     <Tabs.Screen name="Home" component={PrivateStudentHomeStackScreen} />
-    <Tabs.Screen name="Appointment" component={PrivateStudentAppointmentStackScreen} />
+    <Tabs.Screen
+      name="Appointment"
+      component={PrivateStudentAppointmentStackScreen}
+    />
   </Tabs.Navigator>
 );
 
@@ -469,7 +495,10 @@ const PrivateStudentAppointmentStackScreen = () => (
       name="Appointment Menu"
       component={PrivateStudentAppointment}
     />
-    <SearchStack.Screen name="Appointment" component={PrivateStudentAppointmentList} />
+    <SearchStack.Screen
+      name="Appointment"
+      component={PrivateStudentAppointmentList}
+    />
     <SearchStack.Screen
       name="Appointment Info"
       component={PrivateStudentAppointmentInfo}
@@ -484,7 +513,6 @@ const PrivateStudentAppointmentStackScreen = () => (
       options={({route}) => ({
         instructor_id: route.params.instructor_id,
         appointment_id: route.params.appointment_id,
-
       })}
     />
     <SearchStack.Screen
@@ -496,7 +524,10 @@ const PrivateStudentAppointmentStackScreen = () => (
 
 const PrivateStudentProfileStackScreen = () => (
   <ProfileStack.Navigator>
-    <ProfileStack.Screen name="Student Profile" component={PrivateStudentProfile} />
+    <ProfileStack.Screen
+      name="Student Profile"
+      component={PrivateStudentProfile}
+    />
     <HomeStack.Screen
       name="Edit Profile"
       component={EditPrivateStudentProfile}
@@ -525,7 +556,10 @@ const DrawerScreen4 = () => (
 const InstructorTabsScreen = () => (
   <Tabs.Navigator>
     <Tabs.Screen name="Home" component={InstructorHomeStackScreen} />
-    <Tabs.Screen name="Appointment" component={InstructorAppointmentStackScreen} />
+    <Tabs.Screen
+      name="Appointment"
+      component={InstructorAppointmentStackScreen}
+    />
   </Tabs.Navigator>
 );
 
@@ -756,8 +790,6 @@ const RootStackScreen = ({userToken, userId}) => (
   </RootStack.Navigator>
 );
 
-
-
 //State Context => Render from Root Stack onwards
 export default () => {
   const [isLoading, setIsLoading] = React.useState(true);
@@ -776,12 +808,12 @@ export default () => {
         //here is where we need to send the email
         //for now, just print the code to the screen
         var part1 = moment().format('l');
-        part1 = part1.replace('/','');
-        part1 = part1.replace('/','');
+        part1 = part1.replace('/', '');
+        part1 = part1.replace('/', '');
         var part2 = moment().format('LTS');
         part2 = part2.replace(/:/g, '');
         part2 = part2.replace(/PM/g, '');
-        part2 = part2.replace(/AM/g, '');   
+        part2 = part2.replace(/AM/g, '');
         var code = part1 + part2;
         var note = email;
 
@@ -798,21 +830,22 @@ export default () => {
                 .then(data2 => {
                   if (data2 === false) {
                     Alert.alert('Error Adding Access Code, Try Again Later');
-                  } else {
+                  }
+                  /*
+                  else {
                     Alert.alert('Successfully Added Unique Access Code');
                   }
+                  */
                 });
 
-              EmailPassword.tempPass(email, code)
-                .then(data2 => {
-                  //console.log(data);
-                  if (data2 === false) {
-                    Alert.alert('Error');
-                  } else {
-                    Alert.alert('Email Sent');
-                  }
-
-                });
+              EmailPassword.tempPass(email, code).then(data2 => {
+                //console.log(data);
+                if (data2 === false) {
+                  Alert.alert('Error try again later');
+                } else {
+                  Alert.alert('Email Sent');
+                }
+              });
             }
           });
         //var al = "Temp Code:\n" + code + "\nFor:\n" + email;
@@ -826,40 +859,38 @@ export default () => {
         //let user_type_id = 1; //this needs to be addressed. are we asking the user what type they are?
         if (newPassword === confPassword) {
           CheckResetCode.checkValid(resetCode, email)
-            .then(data=>data.json())
-            .then(data=>{
+            .then(data => data.json())
+            .then(data => {
               console.log(resetCode);
               console.log(email);
-              if(data===false){
-                Alert.alert("Invalid Email or Code");
-              }
-              else{
+              if (data === false) {
+                Alert.alert('Invalid Email or Code');
+              } else {
                 UpdateResetPassword.reset(email, newPassword)
-                .then(data2=>data2.json())
-                .then(data2 => {
+                  .then(data2 => data2.json())
+                  .then(data2 => {
                     if (data2 === false) {
                       Alert.alert('Error, try again later');
                     } else {
                       Alert.alert('Updated');
                       DeleteAccessCode.deleteAC(resetCode, 6)
-                      .then(data3 => data3.json())
-                      .then(data3 => {
-                            if (data3 === false) {
-                              console.log('Deleted Successfully');
-                            } else {
-                              console.log('Not Deleted, Try Again Later');
-                            }
-                      });                      
+                        .then(data3 => data3.json())
+                        .then(data3 => {
+                          if (data3 === false) {
+                            console.log('Deleted Successfully');
+                          } else {
+                            console.log('Not Deleted, Try Again Later');
+                          }
+                        });
                     }
                   });
-              } 
+              }
             });
-        }
-        else {
+        } else {
           Alert.alert('Passwords must match');
         }
       },
-    }
+    };
   });
 
   const [galleryImages, setImages] = React.useState(null);
@@ -878,19 +909,13 @@ export default () => {
     .then(data2 => data2.json())
     .then(data2 => {
       if (data2.length > 0) {
-        
-        var jsonData = JSON.stringify(data2, [
-          'id',
-          'name',
-          'isd',
-          'zip_code'
-        ]);
+        var jsonData = JSON.stringify(data2, ['id', 'name', 'isd', 'zip_code']);
         jsonData = JSON.parse(jsonData);
 
         setSchools(jsonData);
       }
     });
-  
+
   //console.log(schools);
 
   //const listContext = React.useMemo
@@ -931,7 +956,6 @@ export default () => {
               console.log(jsonData);
               setUserProfile(jsonData);
 
-              
               GetGallery.loadGallery()
                 .then(data2 => data2.json())
                 .then(data2 => {
@@ -939,7 +963,6 @@ export default () => {
                     setImages(data2);
                   }
                 });
-              
             }
             if (data === false) {
               Alert.alert('Incorrect Login');

@@ -76,12 +76,15 @@ if ($result->num_rows >0) {
     $rows[] = $r;
  }
  $json = json_encode($rows);
+ echo $json;
 
 } else {
- echo false;
+    $invalidMsg = false;
+    $invalidJson = json_encode($invalidMsg);
+    echo $invalidJson;
 }
 
-echo $json;
+
 
 mysqli_close($conn);
 

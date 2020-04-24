@@ -52,6 +52,7 @@ if ($result->num_rows >0) {
     $rows[] = $r;
  }
  $json = json_encode($rows);
+ echo $json;
 
 } else {
     $invalidMsg = false;
@@ -59,7 +60,7 @@ if ($result->num_rows >0) {
     echo $invalidJson;
 }
 
-echo $json;
+
 
 mysqli_close($conn);
 

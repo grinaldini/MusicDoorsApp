@@ -24,7 +24,7 @@ $code = $obj['code'];
 require ('./PHPMailer-master/PHPMailerAutoload.php');
 $mail = new PHPMailer();
 $subject = "Password Reset";
-$content = "<br>Here is your temporary reset code for you to access your account:<b>  $code</b><br><br>Go to: SignIn => Forgot Password => Reset Password<br><br><i>Note: If you did not request this message please contact <b>dallasmusicdoors@gmail.com</b> for assistance.</i></br><br>Best,</br><br>\nMusic Doors</br>";
+$content = "<br>Here is your temporary reset code for you to access your account:<b>  $code</b><br><br>Go to: Sign In => Forgot Password => Reset Password<br><br><i>Note: If you did not request this message please contact <b>dallasmusicdoors@gmail.com</b> for assistance.</i></br><br>Best,</br><br>Music Doors</br>";
 
 $mail->IsSMTP();
 $mail->SMTPDebug = 1;
