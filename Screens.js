@@ -16,7 +16,7 @@ import {
   FlatList,
   TouchableHighlight,
   SafeAreaView,
-  ImagePickerIOS,    
+  ImagePickerIOS,
 } from 'react-native';
 import ImagePicker from 'react-native-image-picker';
 
@@ -287,7 +287,7 @@ export const Welcome = ({navigation}) => {
   return (
     <ScreenContainer>
       <Image
-      resizeMode="contain"
+        resizeMode="contain"
         source={{uri: 'http://musicdoors.org/Assets/HeaderImages/logo.png'}}
         style={styles.logo}
       />
@@ -485,13 +485,13 @@ export const AdminProfile = ({navigation, route}) => {
   const [userProfile, setUserProfile] = stateContext;
   return (
     <ScreenContainer>
-      <Button
+      <CustomButton
         title="Edit Admin Profile"
         onPress={() =>
           navigation.push('Edit Profile', {name: 'Edit Admin Profile '})
         }
       />
-      <Button title="Sign Out" onPress={() => signOut()} />
+      <CustomButton title="Sign Out" onPress={() => signOut()} />
     </ScreenContainer>
   );
 };
@@ -591,19 +591,19 @@ export const AdminHome = ({navigation, route}) => {
   return (
     <ScreenContainer>
       <Text>{userProfile ? userProfile.email : 'abc'}</Text>
-      <Button
+      <CustomButton
         title="Director List"
         onPress={() => navigation.push('Director List')}
       />
-      <Button
+      <CustomButton
         title="Private Student List"
         onPress={() => navigation.push('Private Student List')}
       />
-      <Button
+      <CustomButton
         title="Instructor List"
         onPress={() => navigation.push('Instructor List')}
       />
-      <Button
+      <CustomButton
         title="Appointment List"
         onPress={() => navigation.push('Appointment List')}
       />
@@ -956,11 +956,11 @@ export const AdminCodeGenerator = ({navigation, route}) => {
 
   return (
     <ScreenContainer>
-      <Button
+      <CustomButton
         title="Create Access Code"
         onPress={() => navigation.push('Create Access Code')}
       />
-      <Button
+      <CustomButton
         title="View Access Codes"
         onPress={() => navigation.push('View Access Codes')}
       />
@@ -1155,111 +1155,120 @@ export const DirectorCreateAccount = () => {
 
   return (
     <ScreenContainer>
-      <TextInput
-        placeholder="Enter Email"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setEmail(val)}
-        autoCapitalize="none"
-      />
-      <TextInput
-        placeholder="Enter Password"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setPass(val)}
-        autoCapitalize="none"
-      />
-      <TextInput
-        placeholder="Enter First Name"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setFName(val)}
-      />
-      <TextInput
-        placeholder="Enter Last Name"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setLName(val)}
-      />
-      <SearchableDropdown
-        onTextChange={text => console.log(text)}
-        //On text change listener on the searchable input
-        onItemSelect={item => setCS(item.name)}
-        //onItemSelect called after the selection from the dropdown
-        containerStyle={styles.ddContainerStyle}
-        //suggestion container style
-        textInputStyle={styles.ddInputStyle}
-        itemStyle={styles.ddItemStyle}
-        itemTextStyle={styles.ddItemTextStyle}
-        itemsContainerStyle={styles.ddItemsContainerStyle}
-        items={schools}
-        //mapping of item array
-        //defaultIndex={2}
-        //default selected item index
-        placeholder="Select Current School"
-        //place holder for the search input
-        resetValue={false}
-        //reset textInput Value with true and false state
-        underlineColorAndroid="transparent"
-        //To remove the underline from the android input
-      />
-      <TextInput
-        placeholder="Enter Phone Number"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setPN(val)}
-        autoCapitalize="none"
-      />
-      <TextInput
-        placeholder="Enter City"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setCity(val)}
-      />
-      <TextInput
-        placeholder="Enter State"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setS(val)}
-      />
+      <ScrollView
+        style={{width: '90%'}}
+        contentContainerStyle={{
+          paddingLeft: 35,
+          flexGrow: 1,
+          justifyContent: 'center',
+        }}
+        keyboardShouldPersistTaps="always">
+        <TextInput
+          placeholder="Enter Email"
+          underlineColorAndroid="transparent"
+          style={styles.TextInputStyleClass}
+          onChangeText={val => setEmail(val)}
+          autoCapitalize="none"
+        />
+        <TextInput
+          placeholder="Enter Password"
+          underlineColorAndroid="transparent"
+          style={styles.TextInputStyleClass}
+          onChangeText={val => setPass(val)}
+          autoCapitalize="none"
+        />
+        <TextInput
+          placeholder="Enter First Name"
+          underlineColorAndroid="transparent"
+          style={styles.TextInputStyleClass}
+          onChangeText={val => setFName(val)}
+        />
+        <TextInput
+          placeholder="Enter Last Name"
+          underlineColorAndroid="transparent"
+          style={styles.TextInputStyleClass}
+          onChangeText={val => setLName(val)}
+        />
+        <SearchableDropdown
+          onTextChange={text => console.log(text)}
+          //On text change listener on the searchable input
+          onItemSelect={item => setCS(item.name)}
+          //onItemSelect called after the selection from the dropdown
+          containerStyle={styles.ddContainerStyle}
+          //suggestion container style
+          textInputStyle={styles.ddInputStyle}
+          itemStyle={styles.ddItemStyle}
+          itemTextStyle={styles.ddItemTextStyle}
+          itemsContainerStyle={styles.ddItemsContainerStyle}
+          items={schools}
+          //mapping of item array
+          //defaultIndex={2}
+          //default selected item index
+          placeholder="Select Current School"
+          //place holder for the search input
+          resetValue={false}
+          //reset textInput Value with true and false state
+          underlineColorAndroid="transparent"
+          //To remove the underline from the android input
+        />
+        <TextInput
+          placeholder="Enter Phone Number"
+          underlineColorAndroid="transparent"
+          style={styles.TextInputStyleClass}
+          onChangeText={val => setPN(val)}
+          autoCapitalize="none"
+        />
+        <TextInput
+          placeholder="Enter City"
+          underlineColorAndroid="transparent"
+          style={styles.TextInputStyleClass}
+          onChangeText={val => setCity(val)}
+        />
+        <TextInput
+          placeholder="Enter State"
+          underlineColorAndroid="transparent"
+          style={styles.TextInputStyleClass}
+          onChangeText={val => setS(val)}
+        />
 
-      <TextInput
-        placeholder="Enter Zip Code"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setZC(val)}
-      />
-      <TextInput
-        placeholder="Access Code"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setAccessCode(val)}
-      />
-      <TouchableOpacity
-        activeOpacity={0.4}
-        style={styles.TouchableOpacityStyle}
-        onPress={() =>
-          signUp(
-            user_type_id,
-            email,
-            password,
-            first_name,
-            last_name,
-            phone_number,
-            street_address,
-            city,
-            st,
-            zip_code,
-            feeder_school,
-            current_school,
-            instrument,
-            instrument_2,
-            instrument_3,
-            code,
-          )
-        }>
-        <Text style={styles.TextStyle}> Create Account </Text>
-      </TouchableOpacity>
+        <TextInput
+          placeholder="Enter Zip Code"
+          underlineColorAndroid="transparent"
+          style={styles.TextInputStyleClass}
+          onChangeText={val => setZC(val)}
+        />
+        <TextInput
+          placeholder="Access Code"
+          underlineColorAndroid="transparent"
+          style={styles.TextInputStyleClass}
+          onChangeText={val => setAccessCode(val)}
+        />
+        <TouchableOpacity
+          activeOpacity={0.4}
+          style={styles.TouchableOpacityStyle}
+          onPress={() =>
+            signUp(
+              user_type_id,
+              email,
+              password,
+              first_name,
+              last_name,
+              phone_number,
+              street_address,
+              city,
+              st,
+              zip_code,
+              feeder_school,
+              current_school,
+              instrument,
+              instrument_2,
+              instrument_3,
+              code,
+            )
+          }>
+          <Text style={styles.TextStyle}> Create Account </Text>
+        </TouchableOpacity>
+      </ScrollView>
     </ScreenContainer>
   );
 };
@@ -1304,7 +1313,7 @@ export const EditDirectorProfile = ({navigation, route}) => {
               {userProfile.first_name} {userProfile.last_name}
             </Text>
           </View>
-          <Button
+          <CustomButton
             title="Upload Avatar"
             onPress={() => {
               chooseImage()
@@ -1495,13 +1504,13 @@ export const DirectorProfile = ({navigation, route}) => {
 
   return (
     <ScreenContainer>
-      <Button
+      <CustomButton
         title="Edit Director Profile"
         onPress={() =>
           navigation.push('Edit Profile', {name: 'Edit Director Profile '})
         }
       />
-      <Button title="Sign Out" onPress={() => signOut()} />
+      <CustomButton title="Sign Out" onPress={() => signOut()} />
     </ScreenContainer>
   );
 };
@@ -1512,7 +1521,7 @@ export const DirectorHome = ({navigation, route}) => {
 
   return (
     <ScreenContainer>
-      <Button
+      <CustomButton
         title="Student List"
         onPress={() => navigation.push('Student List')}
       />
@@ -1760,204 +1769,210 @@ export const StudentCreateAccount = () => {
     },
   ];
   */
- 
+
   return (
     <ScreenContainer>
+      <ScrollView
+        style={{width: '90%'}}
+        contentContainerStyle={{
+          paddingLeft: 35,
+          flexGrow: 1,
+          justifyContent: 'center',
+        }}
+        keyboardShouldPersistTaps="always">
+        <TextInput
+          placeholder="Enter Email"
+          underlineColorAndroid="transparent"
+          style={styles.TextInputStyleClass}
+          onChangeText={val => setEmail(val)}
+          autoCapitalize="none"
+        />
+        <TextInput
+          placeholder="Enter Password"
+          underlineColorAndroid="transparent"
+          style={styles.TextInputStyleClass}
+          onChangeText={val => setPass(val)}
+          autoCapitalize="none"
+        />
+        <TextInput
+          placeholder="Enter First Name"
+          underlineColorAndroid="transparent"
+          style={styles.TextInputStyleClass}
+          onChangeText={val => setFName(val)}
+        />
+        <TextInput
+          placeholder="Enter Last Name"
+          underlineColorAndroid="transparent"
+          style={styles.TextInputStyleClass}
+          onChangeText={val => setLName(val)}
+        />
 
-    <ScrollView style={{width: '90%', }} contentContainerStyle={{ paddingLeft: 35, flexGrow: 1, justifyContent: 'center'}}>
-      <TextInput
-        placeholder="Enter Email"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setEmail(val)}
-        autoCapitalize="none"
-      />
-      <TextInput
-        placeholder="Enter Password"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setPass(val)}
-        autoCapitalize="none"
-      />
-      <TextInput
-        placeholder="Enter First Name"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setFName(val)}
-      />
-      <TextInput
-        placeholder="Enter Last Name"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setLName(val)}
-      />
+        <TextInput
+          placeholder="Enter City"
+          underlineColorAndroid="transparent"
+          style={styles.TextInputStyleClass}
+          onChangeText={val => setCity(val)}
+        />
 
-      <TextInput
-        placeholder="Enter City"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setCity(val)}
-      />
+        <TextInput
+          placeholder="Enter State"
+          underlineColorAndroid="transparent"
+          style={styles.TextInputStyleClass}
+          onChangeText={val => setS(val)}
+        />
 
-      <TextInput
-        placeholder="Enter State"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setS(val)}
-      />
+        <TextInput
+          placeholder="Enter Zip Code"
+          underlineColorAndroid="transparent"
+          style={styles.TextInputStyleClass}
+          onChangeText={val => setZC(val)}
+        />
 
-      <TextInput
-        placeholder="Enter Zip Code"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setZC(val)}
-      />
+        <SearchableDropdown
+          onTextChange={text => console.log(text)}
+          //On text change listener on the searchable input
+          onItemSelect={item => setCS(item.name)}
+          //onItemSelect called after the selection from the dropdown
+          containerStyle={styles.ddContainerStyle}
+          //suggestion container style
+          textInputStyle={styles.ddInputStyle}
+          itemStyle={styles.ddItemStyle}
+          itemTextStyle={styles.ddItemTextStyle}
+          itemsContainerStyle={styles.ddItemsContainerStyle}
+          items={schools}
+          //mapping of item array
+          //defaultIndex={2}
+          //default selected item index
+          placeholder="Select Current School"
+          //place holder for the search input
+          resetValue={false}
+          //reset textInput Value with true and false state
+          underlineColorAndroid="transparent"
+          //To remove the underline from the android input
+        />
 
-      <SearchableDropdown
-        onTextChange={text => console.log(text)}
-        //On text change listener on the searchable input
-        onItemSelect={item => setCS(item.name)}
-        //onItemSelect called after the selection from the dropdown
-        containerStyle={styles.ddContainerStyle}
-        //suggestion container style
-        textInputStyle={styles.ddInputStyle}
-        itemStyle={styles.ddItemStyle}
-        itemTextStyle={styles.ddItemTextStyle}
-        itemsContainerStyle={styles.ddItemsContainerStyle}
-        items={schools}
-        //mapping of item array
-        //defaultIndex={2}
-        //default selected item index
-        placeholder="Select Current School"
-        //place holder for the search input
-        resetValue={false}
-        //reset textInput Value with true and false state
-        underlineColorAndroid="transparent"
-        //To remove the underline from the android input
-      />
+        <SearchableDropdown
+          onTextChange={text => console.log(text)}
+          //On text change listner on the searchable input
+          onItemSelect={item => setFS(item.name)}
+          //onItemSelect called after the selection from the dropdown
+          containerStyle={styles.ddContainerStyle}
+          //suggestion container style
+          textInputStyle={styles.ddInputStyle}
+          itemStyle={styles.ddItemStyle}
+          itemTextStyle={styles.ddItemTextStyle}
+          itemsContainerStyle={styles.ddItemsContainerStyle}
+          items={schools}
+          //mapping of item array
+          //defaultIndex={2}
+          //default selected item index
+          placeholder="Select Feeder High School"
+          //place holder for the search input
+          resetValue={false}
+          //reset textInput Value with true and false state
+          underlineColorAndroid="transparent"
+          //To remove the underline from the android input
+        />
 
-      <SearchableDropdown
-        onTextChange={text => console.log(text)}
-        //On text change listner on the searchable input
-        onItemSelect={item => setFS(item.name)}
-        //onItemSelect called after the selection from the dropdown
-        containerStyle={styles.ddContainerStyle}
-        //suggestion container style
-        textInputStyle={styles.ddInputStyle}
-        itemStyle={styles.ddItemStyle}
-        itemTextStyle={styles.ddItemTextStyle}
-        itemsContainerStyle={styles.ddItemsContainerStyle}
-        items={schools}
-        //mapping of item array
-        //defaultIndex={2}
-        //default selected item index
-        placeholder="Select Feeder High School"
-        //place holder for the search input
-        resetValue={false}
-        //reset textInput Value with true and false state
-        underlineColorAndroid="transparent"
-        //To remove the underline from the android input
-      />
+        <SearchableDropdown
+          onTextChange={text => console.log(text)}
+          //On text change listner on the searchable input
+          onItemSelect={item => setInstrument(item.name)}
+          //onItemSelect called after the selection from the dropdown
+          containerStyle={styles.ddContainerStyle}
+          //suggestion container style
+          textInputStyle={styles.ddInputStyle}
+          itemStyle={styles.ddItemStyle}
+          itemTextStyle={styles.ddItemTextStyle}
+          itemsContainerStyle={styles.ddItemsContainerStyle}
+          items={items}
+          //mapping of item array
+          //defaultIndex={2}
+          //default selected item index
+          placeholder="Select Instrument"
+          //place holder for the search input
+          resetValue={false}
+          //reset textInput Value with true and false state
+          underlineColorAndroid="transparent"
+          //To remove the underline from the android input
+        />
+        <SearchableDropdown
+          onTextChange={text => console.log(text)}
+          //On text change listner on the searchable input
+          onItemSelect={item => setInstrument2(item.name)}
+          //onItemSelect called after the selection from the dropdown
+          containerStyle={styles.ddContainerStyle}
+          //suggestion container style
+          textInputStyle={styles.ddInputStyle}
+          itemStyle={styles.ddItemStyle}
+          itemTextStyle={styles.ddItemTextStyle}
+          itemsContainerStyle={styles.ddItemsContainerStyle}
+          items={items}
+          //mapping of item array
+          //defaultIndex={2}
+          //default selected item index
+          placeholder="Optional Second Instrument"
+          //place holder for the search input
+          resetValue={false}
+          //reset textInput Value with true and false state
+          underlineColorAndroid="transparent"
+          //To remove the underline from the android input
+        />
+        <SearchableDropdown
+          onTextChange={text => console.log(text)}
+          //On text change listner on the searchable input
+          onItemSelect={item => setInstrument3(item.name)}
+          //onItemSelect called after the selection from the dropdown
+          containerStyle={styles.ddContainerStyle}
+          //suggestion container style
+          textInputStyle={styles.ddInputStyle}
+          itemStyle={styles.ddItemStyle}
+          itemTextStyle={styles.ddItemTextStyle}
+          itemsContainerStyle={styles.ddItemsContainerStyle}
+          items={items}
+          //mapping of item array
+          //defaultIndex={2}
+          //default selected item index
+          placeholder="Optional Third Instrument"
+          //place holder for the search input
+          resetValue={false}
+          //reset textInput Value with true and false state
+          underlineColorAndroid="transparent"
+          //To remove the underline from the android input
+        />
 
-      <SearchableDropdown
-        onTextChange={text => console.log(text)}
-        //On text change listner on the searchable input
-        onItemSelect={item => setInstrument(item.name)}
-        //onItemSelect called after the selection from the dropdown
-        containerStyle={styles.ddContainerStyle}
-        //suggestion container style
-        textInputStyle={styles.ddInputStyle}
-        itemStyle={styles.ddItemStyle}
-        itemTextStyle={styles.ddItemTextStyle}
-        itemsContainerStyle={styles.ddItemsContainerStyle}
-        items={items}
-        //mapping of item array
-        //defaultIndex={2}
-        //default selected item index
-        placeholder="Select Instrument"
-        //place holder for the search input
-        resetValue={false}
-        //reset textInput Value with true and false state
-        underlineColorAndroid="transparent"
-        //To remove the underline from the android input
-      />
-      <SearchableDropdown
-        onTextChange={text => console.log(text)}
-        //On text change listner on the searchable input
-        onItemSelect={item => setInstrument2(item.name)}
-        //onItemSelect called after the selection from the dropdown
-        containerStyle={styles.ddContainerStyle}
-        //suggestion container style
-        textInputStyle={styles.ddInputStyle}
-        itemStyle={styles.ddItemStyle}
-        itemTextStyle={styles.ddItemTextStyle}
-        itemsContainerStyle={styles.ddItemsContainerStyle}
-        items={items}
-        //mapping of item array
-        //defaultIndex={2}
-        //default selected item index
-        placeholder="Optional Second Instrument"
-        //place holder for the search input
-        resetValue={false}
-        //reset textInput Value with true and false state
-        underlineColorAndroid="transparent"
-        //To remove the underline from the android input
-      />
-      <SearchableDropdown
-        onTextChange={text => console.log(text)}
-        //On text change listner on the searchable input
-        onItemSelect={item => setInstrument3(item.name)}
-        //onItemSelect called after the selection from the dropdown
-        containerStyle={styles.ddContainerStyle}
-        //suggestion container style
-        textInputStyle={styles.ddInputStyle}
-        itemStyle={styles.ddItemStyle}
-        itemTextStyle={styles.ddItemTextStyle}
-        itemsContainerStyle={styles.ddItemsContainerStyle}
-        items={items}
-        //mapping of item array
-        //defaultIndex={2}
-        //default selected item index
-        placeholder="Optional Third Instrument"
-        //place holder for the search input
-        resetValue={false}
-        //reset textInput Value with true and false state
-        underlineColorAndroid="transparent"
-        //To remove the underline from the android input
-      />
+        <TextInput
+          placeholder="Access Code"
+          underlineColorAndroid="transparent"
+          style={styles.TextInputStyleClass}
+          onChangeText={val => setAccessCode(val)}
+        />
 
-      <TextInput
-        placeholder="Access Code"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setAccessCode(val)}
-      />
-
-      <TouchableOpacity
-        activeOpacity={0.4}
-        style={styles.TouchableOpacityStyle}
-        onPress={() =>
-          signUp(
-            user_type_id,
-            email,
-            password,
-            first_name,
-            last_name,
-            phone_number,
-            street_address,
-            city,
-            st,
-            zip_code,
-            feeder_school,
-            current_school,
-            instrument,
-            instrument_2,
-            instrument_3,
-            code,
-          )
-        }>
-        <Text style={styles.TextStyle}> Create Account </Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          activeOpacity={0.4}
+          style={styles.TouchableOpacityStyle}
+          onPress={() =>
+            signUp(
+              user_type_id,
+              email,
+              password,
+              first_name,
+              last_name,
+              phone_number,
+              street_address,
+              city,
+              st,
+              zip_code,
+              feeder_school,
+              current_school,
+              instrument,
+              instrument_2,
+              instrument_3,
+              code,
+            )
+          }>
+          <Text style={styles.TextStyle}> Create Account </Text>
+        </TouchableOpacity>
       </ScrollView>
     </ScreenContainer>
   );
@@ -1968,13 +1983,13 @@ export const StudentProfile = ({navigation, route}) => {
 
   return (
     <ScreenContainer>
-      <Button
+      <CustomButton
         title="Edit Student Profile"
         onPress={() =>
           navigation.push('Edit Profile', {name: 'Edit Student Profile '})
         }
       />
-      <Button title="Sign Out" onPress={() => signOut()} />
+      <CustomButton title="Sign Out" onPress={() => signOut()} />
     </ScreenContainer>
   );
 };
@@ -2017,7 +2032,7 @@ export const EditStudentProfile = ({navigation, route}) => {
               {userProfile.first_name} {userProfile.last_name}
             </Text>
           </View>
-          <Button
+          <CustomButton
             title="Upload Avatar"
             onPress={() => {
               chooseImage()
@@ -2303,7 +2318,7 @@ export const StudentHome = ({navigation, route}) => {
   //TODO: Remove Student Home and userProfile
   return (
     <ScreenContainer>
-      <Button
+      <CustomButton
         title="Instructor List"
         onPress={() => navigation.push('Instructor List')}
       />
@@ -2318,11 +2333,11 @@ export const StudentAppointment = ({navigation, route}) => {
 
   return (
     <ScreenContainer>
-      <Button
+      <CustomButton
         title="Appointment List"
         onPress={() => navigation.push('Appointment')}
       />
-      <Button
+      <CustomButton
         title="Pending Appointment List"
         onPress={() => navigation.push('Pending Appointment')}
       />
@@ -2444,9 +2459,7 @@ export const StudentAppointmentInfo = ({navigation, route}) => {
               <Text> - Description: {apptInfo.description}</Text>
             </View>
           </View>
-          <Button
-            textStyle={{fontSize: 5}}
-            color="#ff5c5c"
+          <CustomCancelButton
             title="Request Cancelation"
             onPress={() => {
               Alert.alert(
@@ -2610,8 +2623,7 @@ export const StudentPendingAppointmentInfo = ({navigation, route}) => {
               <Text> - Description: {apptInfo.description}</Text>
             </View>
           </View>
-          <Button
-            color="#ff5c5c"
+          <CustomCancelButton
             title="Cancel"
             onPress={() => {
               CancelPendingRequest.cancelPending(route.params.appointment_id)
@@ -2921,149 +2933,156 @@ export const PrivateStudentCreateAccount = () => {
   */
   return (
     <ScreenContainer>
-      <ScrollView keyboardShouldPersistTaps="always">
-      <TextInput
-        placeholder="Enter Email"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setEmail(val)}
-        autoCapitalize="none"
-      />
-      <TextInput
-        placeholder="Enter Password"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setPass(val)}
-        autoCapitalize="none"
-      />
-      <TextInput
-        placeholder="Enter First Name"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setFName(val)}
-      />
-      <TextInput
-        placeholder="Enter Last Name"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setLName(val)}
-      />
-      <TextInput
-        placeholder="Enter City"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setCity(val)}
-      />
-      <TextInput
-        placeholder="Enter State"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setS(val)}
-      />
+      <ScrollView
+        style={{width: '90%'}}
+        contentContainerStyle={{
+          paddingLeft: 35,
+          flexGrow: 1,
+          justifyContent: 'center',
+        }}
+        keyboardShouldPersistTaps="always">
+        <TextInput
+          placeholder="Enter Email"
+          underlineColorAndroid="transparent"
+          style={styles.TextInputStyleClass}
+          onChangeText={val => setEmail(val)}
+          autoCapitalize="none"
+        />
+        <TextInput
+          placeholder="Enter Password"
+          underlineColorAndroid="transparent"
+          style={styles.TextInputStyleClass}
+          onChangeText={val => setPass(val)}
+          autoCapitalize="none"
+        />
+        <TextInput
+          placeholder="Enter First Name"
+          underlineColorAndroid="transparent"
+          style={styles.TextInputStyleClass}
+          onChangeText={val => setFName(val)}
+        />
+        <TextInput
+          placeholder="Enter Last Name"
+          underlineColorAndroid="transparent"
+          style={styles.TextInputStyleClass}
+          onChangeText={val => setLName(val)}
+        />
+        <TextInput
+          placeholder="Enter City"
+          underlineColorAndroid="transparent"
+          style={styles.TextInputStyleClass}
+          onChangeText={val => setCity(val)}
+        />
+        <TextInput
+          placeholder="Enter State"
+          underlineColorAndroid="transparent"
+          style={styles.TextInputStyleClass}
+          onChangeText={val => setS(val)}
+        />
 
-      <TextInput
-        placeholder="Enter Zip Code"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setZC(val)}
-      />
-      <SearchableDropdown
-        onTextChange={text => console.log(text)}
-        //On text change listner on the searchable input
-        onItemSelect={item => setInstrument(item.name)}
-        //onItemSelect called after the selection from the dropdown
-        containerStyle={styles.ddContainerStyle}
-        //suggestion container style
-        textInputStyle={styles.ddInputStyle}
-        itemStyle={styles.ddItemStyle}
-        itemTextStyle={styles.ddItemTextStyle}
-        itemsContainerStyle={styles.ddItemsContainerStyle}
-        items={items}
-        //mapping of item array
-        //defaultIndex={2}
-        //default selected item index
-        placeholder="Select Instrument"
-        //place holder for the search input
-        resetValue={false}
-        //reset textInput Value with true and false state
-        underlineColorAndroid="transparent"
-        //To remove the underline from the android input
-      />
-      <SearchableDropdown
-        onTextChange={text => console.log(text)}
-        //On text change listner on the searchable input
-        onItemSelect={item => setInstrument2(item.name)}
-        //onItemSelect called after the selection from the dropdown
-        containerStyle={styles.ddContainerStyle}
-        //suggestion container style
-        textInputStyle={styles.ddInputStyle}
-        itemStyle={styles.ddItemStyle}
-        itemTextStyle={styles.ddItemTextStyle}
-        itemsContainerStyle={styles.ddItemsContainerStyle}
-        items={items}
-        //mapping of item array
-        //defaultIndex={2}
-        //default selected item index
-        placeholder="Optional Second Instrument"
-        //place holder for the search input
-        resetValue={false}
-        //reset textInput Value with true and false state
-        underlineColorAndroid="transparent"
-        //To remove the underline from the android input
-      />
-      <SearchableDropdown
-        onTextChange={text => console.log(text)}
-        //On text change listner on the searchable input
-        onItemSelect={item => setInstrument3(item.name)}
-        //onItemSelect called after the selection from the dropdown
-        containerStyle={styles.ddContainerStyle}
-        //suggestion container style
-        textInputStyle={styles.ddInputStyle}
-        itemStyle={styles.ddItemStyle}
-        itemTextStyle={styles.ddItemTextStyle}
-        itemsContainerStyle={styles.ddItemsContainerStyle}
-        items={items}
-        //mapping of item array
-        //defaultIndex={2}
-        //default selected item index
-        placeholder="Optional Third Instrument"
-        //place holder for the search input
-        resetValue={false}
-        //reset textInput Value with true and false state
-        underlineColorAndroid="transparent"
-        //To remove the underline from the android input
-      />
-      <TextInput
-        placeholder="Access Code"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setAccessCode(val)}
-      />
-      <TouchableOpacity
-        activeOpacity={0.4}
-        style={styles.TouchableOpacityStyle}
-        onPress={() =>
-          signUp(
-            user_type_id,
-            email,
-            password,
-            first_name,
-            last_name,
-            phone_number,
-            street_address,
-            city,
-            st,
-            zip_code,
-            feeder_school,
-            current_school,
-            instrument,
-            instrument_2,
-            instrument_3,
-            code,
-          )
-        }>
-        <Text style={styles.TextStyle}> Create Account </Text>
-      </TouchableOpacity>
+        <TextInput
+          placeholder="Enter Zip Code"
+          underlineColorAndroid="transparent"
+          style={styles.TextInputStyleClass}
+          onChangeText={val => setZC(val)}
+        />
+        <SearchableDropdown
+          onTextChange={text => console.log(text)}
+          //On text change listner on the searchable input
+          onItemSelect={item => setInstrument(item.name)}
+          //onItemSelect called after the selection from the dropdown
+          containerStyle={styles.ddContainerStyle}
+          //suggestion container style
+          textInputStyle={styles.ddInputStyle}
+          itemStyle={styles.ddItemStyle}
+          itemTextStyle={styles.ddItemTextStyle}
+          itemsContainerStyle={styles.ddItemsContainerStyle}
+          items={items}
+          //mapping of item array
+          //defaultIndex={2}
+          //default selected item index
+          placeholder="Select Instrument"
+          //place holder for the search input
+          resetValue={false}
+          //reset textInput Value with true and false state
+          underlineColorAndroid="transparent"
+          //To remove the underline from the android input
+        />
+        <SearchableDropdown
+          onTextChange={text => console.log(text)}
+          //On text change listner on the searchable input
+          onItemSelect={item => setInstrument2(item.name)}
+          //onItemSelect called after the selection from the dropdown
+          containerStyle={styles.ddContainerStyle}
+          //suggestion container style
+          textInputStyle={styles.ddInputStyle}
+          itemStyle={styles.ddItemStyle}
+          itemTextStyle={styles.ddItemTextStyle}
+          itemsContainerStyle={styles.ddItemsContainerStyle}
+          items={items}
+          //mapping of item array
+          //defaultIndex={2}
+          //default selected item index
+          placeholder="Optional Second Instrument"
+          //place holder for the search input
+          resetValue={false}
+          //reset textInput Value with true and false state
+          underlineColorAndroid="transparent"
+          //To remove the underline from the android input
+        />
+        <SearchableDropdown
+          onTextChange={text => console.log(text)}
+          //On text change listner on the searchable input
+          onItemSelect={item => setInstrument3(item.name)}
+          //onItemSelect called after the selection from the dropdown
+          containerStyle={styles.ddContainerStyle}
+          //suggestion container style
+          textInputStyle={styles.ddInputStyle}
+          itemStyle={styles.ddItemStyle}
+          itemTextStyle={styles.ddItemTextStyle}
+          itemsContainerStyle={styles.ddItemsContainerStyle}
+          items={items}
+          //mapping of item array
+          //defaultIndex={2}
+          //default selected item index
+          placeholder="Optional Third Instrument"
+          //place holder for the search input
+          resetValue={false}
+          //reset textInput Value with true and false state
+          underlineColorAndroid="transparent"
+          //To remove the underline from the android input
+        />
+        <TextInput
+          placeholder="Access Code"
+          underlineColorAndroid="transparent"
+          style={styles.TextInputStyleClass}
+          onChangeText={val => setAccessCode(val)}
+        />
+        <TouchableOpacity
+          activeOpacity={0.4}
+          style={styles.TouchableOpacityStyle}
+          onPress={() =>
+            signUp(
+              user_type_id,
+              email,
+              password,
+              first_name,
+              last_name,
+              phone_number,
+              street_address,
+              city,
+              st,
+              zip_code,
+              feeder_school,
+              current_school,
+              instrument,
+              instrument_2,
+              instrument_3,
+              code,
+            )
+          }>
+          <Text style={styles.TextStyle}> Create Account </Text>
+        </TouchableOpacity>
       </ScrollView>
     </ScreenContainer>
   );
@@ -3107,7 +3126,7 @@ export const EditPrivateStudentProfile = ({navigation, route}) => {
               {userProfile.first_name} {userProfile.last_name}
             </Text>
           </View>
-          <Button
+          <CustomButton
             title="Upload Avatar"
             onPress={() => {
               chooseImage()
@@ -3375,7 +3394,7 @@ export const PrivateStudentProfile = ({navigation, route}) => {
 
   return (
     <ScreenContainer>
-      <Button
+      <CustomButton
         title="Edit Private Student Profile"
         onPress={() =>
           navigation.push('Edit Profile', {
@@ -3383,7 +3402,7 @@ export const PrivateStudentProfile = ({navigation, route}) => {
           })
         }
       />
-      <Button title="Sign Out" onPress={() => signOut()} />
+      <CustomButton title="Sign Out" onPress={() => signOut()} />
     </ScreenContainer>
   );
 };
@@ -3398,7 +3417,7 @@ export const PrivateStudentHome = ({navigation, route}) => {
   //TODO: Remove Student Home and userProfile
   return (
     <ScreenContainer>
-      <Button
+      <CustomButton
         title="Instructor List"
         onPress={() => navigation.push('Instructor List')}
       />
@@ -3413,11 +3432,11 @@ export const PrivateStudentAppointment = ({navigation, route}) => {
 
   return (
     <ScreenContainer>
-      <Button
+      <CustomButton
         title="Appointment List"
         onPress={() => navigation.push('Appointment')}
       />
-      <Button
+      <CustomButton
         title="Pending Appointment List"
         onPress={() => navigation.push('Pending Appointment')}
       />
@@ -3539,9 +3558,7 @@ export const PrivateStudentAppointmentInfo = ({navigation, route}) => {
               <Text> - Description: {apptInfo.description}</Text>
             </View>
           </View>
-          <Button
-            textStyle={{fontSize: 5}}
-            color="#ff5c5c"
+          <CustomCancelButton
             title="Request Cancelation"
             onPress={() => {
               Alert.alert(
@@ -3705,8 +3722,7 @@ export const PrivateStudentPendingAppointmentInfo = ({navigation, route}) => {
               <Text> - Description: {apptInfo.description}</Text>
             </View>
           </View>
-          <Button
-            color="#ff5c5c"
+          <CustomCancelButton
             title="Cancel"
             onPress={() => {
               CancelPendingRequest.cancelPending(route.params.appointment_id)
@@ -4020,181 +4036,190 @@ export const InstructorCreateAccount = () => {
 
   return (
     <ScreenContainer>
-      <TextInput
-        placeholder="Enter Email"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setEmail(val)}
-        autoCapitalize="none"
-      />
-      <TextInput
-        placeholder="Enter Password"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setPass(val)}
-        autoCapitalize="none"
-      />
-      <TextInput
-        placeholder="Enter First Name"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setFName(val)}
-      />
-      <TextInput
-        placeholder="Enter Last Name"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setLName(val)}
-      />
-      <TextInput
-        placeholder="Enter Phone Number"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setPN(val)}
-      />
-      <TextInput
-        placeholder="Enter Home Address"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setSA(val)}
-      />
-      <TextInput
-        placeholder="Enter City"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setCity(val)}
-      />
-      <TextInput
-        placeholder="Enter State"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setS(val)}
-      />
-      <TextInput
-        placeholder="Enter Zip Code"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setZC(val)}
-      />
-      <SearchableDropdown
-        onTextChange={text => console.log(text)}
-        //On text change listner on the searchable input
-        onItemSelect={item => setFS(item.name)}
-        //onItemSelect called after the selection from the dropdown
-        containerStyle={styles.ddContainerStyle}
-        //suggestion container style
-        textInputStyle={styles.ddInputStyle}
-        itemStyle={styles.ddItemStyle}
-        itemTextStyle={styles.ddItemTextStyle}
-        itemsContainerStyle={styles.ddItemsContainerStyle}
-        items={schools}
-        //mapping of item array
-        //defaultIndex={2}
-        //default selected item index
-        placeholder="Enter Target High School"
-        //place holder for the search input
-        resetValue={false}
-        //reset textInput Value with true and false state
-        underlineColorAndroid="transparent"
-        //To remove the underline from the android input
-      />
-      <SearchableDropdown
-        onTextChange={text => console.log(text)}
-        //On text change listner on the searchable input
-        onItemSelect={item => setInstrument(item.name)}
-        //onItemSelect called after the selection from the dropdown
-        containerStyle={styles.ddContainerStyle}
-        //suggestion container style
-        textInputStyle={styles.ddInputStyle}
-        itemStyle={styles.ddItemStyle}
-        itemTextStyle={styles.ddItemTextStyle}
-        itemsContainerStyle={styles.ddItemsContainerStyle}
-        items={items}
-        //mapping of item array
-        //defaultIndex={2}
-        //default selected item index
-        placeholder="Select Instrument"
-        //place holder for the search input
-        resetValue={false}
-        //reset textInput Value with true and false state
-        underlineColorAndroid="transparent"
-        //To remove the underline from the android input
-      />
-      <SearchableDropdown
-        onTextChange={text => console.log(text)}
-        //On text change listner on the searchable input
-        onItemSelect={item => setInstrument2(item.name)}
-        //onItemSelect called after the selection from the dropdown
-        containerStyle={styles.ddContainerStyle}
-        //suggestion container style
-        textInputStyle={styles.ddInputStyle}
-        itemStyle={styles.ddItemStyle}
-        itemTextStyle={styles.ddItemTextStyle}
-        itemsContainerStyle={styles.ddItemsContainerStyle}
-        items={items}
-        //mapping of item array
-        //defaultIndex={2}
-        //default selected item index
-        placeholder="Optional Second Instrument"
-        //place holder for the search input
-        resetValue={false}
-        //reset textInput Value with true and false state
-        underlineColorAndroid="transparent"
-        //To remove the underline from the android input
-      />
-      <SearchableDropdown
-        onTextChange={text => console.log(text)}
-        //On text change listner on the searchable input
-        onItemSelect={item => setInstrument3(item.name)}
-        //onItemSelect called after the selection from the dropdown
-        containerStyle={styles.ddContainerStyle}
-        //suggestion container style
-        textInputStyle={styles.ddInputStyle}
-        itemStyle={styles.ddItemStyle}
-        itemTextStyle={styles.ddItemTextStyle}
-        itemsContainerStyle={styles.ddItemsContainerStyle}
-        items={items}
-        //mapping of item array
-        //defaultIndex={2}
-        //default selected item index
-        placeholder="Optional Third Instrument"
-        //place holder for the search input
-        resetValue={false}
-        //reset textInput Value with true and false state
-        underlineColorAndroid="transparent"
-        //To remove the underline from the android input
-      />
-      <TextInput
-        placeholder="Access Code"
-        underlineColorAndroid="transparent"
-        style={styles.TextInputStyleClass}
-        onChangeText={val => setAccessCode(val)}
-      />
-      <TouchableOpacity
-        activeOpacity={0.4}
-        style={styles.TouchableOpacityStyle}
-        onPress={() =>
-          signUp(
-            user_type_id,
-            email,
-            password,
-            first_name,
-            last_name,
-            phone_number,
-            street_address,
-            city,
-            st,
-            zip_code,
-            feeder_school,
-            current_school,
-            instrument,
-            instrument_2,
-            instrument_3,
-            code,
-          )
-        }>
-        <Text style={styles.TextStyle}> Create Account </Text>
-      </TouchableOpacity>
+      <ScrollView
+        style={{width: '90%'}}
+        contentContainerStyle={{
+          paddingLeft: 35,
+          flexGrow: 1,
+          justifyContent: 'center',
+        }}
+        keyboardShouldPersistTaps="always">
+        <TextInput
+          placeholder="Enter Email"
+          underlineColorAndroid="transparent"
+          style={styles.TextInputStyleClass}
+          onChangeText={val => setEmail(val)}
+          autoCapitalize="none"
+        />
+        <TextInput
+          placeholder="Enter Password"
+          underlineColorAndroid="transparent"
+          style={styles.TextInputStyleClass}
+          onChangeText={val => setPass(val)}
+          autoCapitalize="none"
+        />
+        <TextInput
+          placeholder="Enter First Name"
+          underlineColorAndroid="transparent"
+          style={styles.TextInputStyleClass}
+          onChangeText={val => setFName(val)}
+        />
+        <TextInput
+          placeholder="Enter Last Name"
+          underlineColorAndroid="transparent"
+          style={styles.TextInputStyleClass}
+          onChangeText={val => setLName(val)}
+        />
+        <TextInput
+          placeholder="Enter Phone Number"
+          underlineColorAndroid="transparent"
+          style={styles.TextInputStyleClass}
+          onChangeText={val => setPN(val)}
+        />
+        <TextInput
+          placeholder="Enter Home Address"
+          underlineColorAndroid="transparent"
+          style={styles.TextInputStyleClass}
+          onChangeText={val => setSA(val)}
+        />
+        <TextInput
+          placeholder="Enter City"
+          underlineColorAndroid="transparent"
+          style={styles.TextInputStyleClass}
+          onChangeText={val => setCity(val)}
+        />
+        <TextInput
+          placeholder="Enter State"
+          underlineColorAndroid="transparent"
+          style={styles.TextInputStyleClass}
+          onChangeText={val => setS(val)}
+        />
+        <TextInput
+          placeholder="Enter Zip Code"
+          underlineColorAndroid="transparent"
+          style={styles.TextInputStyleClass}
+          onChangeText={val => setZC(val)}
+        />
+        <SearchableDropdown
+          onTextChange={text => console.log(text)}
+          //On text change listner on the searchable input
+          onItemSelect={item => setFS(item.name)}
+          //onItemSelect called after the selection from the dropdown
+          containerStyle={styles.ddContainerStyle}
+          //suggestion container style
+          textInputStyle={styles.ddInputStyle}
+          itemStyle={styles.ddItemStyle}
+          itemTextStyle={styles.ddItemTextStyle}
+          itemsContainerStyle={styles.ddItemsContainerStyle}
+          items={schools}
+          //mapping of item array
+          //defaultIndex={2}
+          //default selected item index
+          placeholder="Enter Target High School"
+          //place holder for the search input
+          resetValue={false}
+          //reset textInput Value with true and false state
+          underlineColorAndroid="transparent"
+          //To remove the underline from the android input
+        />
+        <SearchableDropdown
+          onTextChange={text => console.log(text)}
+          //On text change listner on the searchable input
+          onItemSelect={item => setInstrument(item.name)}
+          //onItemSelect called after the selection from the dropdown
+          containerStyle={styles.ddContainerStyle}
+          //suggestion container style
+          textInputStyle={styles.ddInputStyle}
+          itemStyle={styles.ddItemStyle}
+          itemTextStyle={styles.ddItemTextStyle}
+          itemsContainerStyle={styles.ddItemsContainerStyle}
+          items={items}
+          //mapping of item array
+          //defaultIndex={2}
+          //default selected item index
+          placeholder="Select Instrument"
+          //place holder for the search input
+          resetValue={false}
+          //reset textInput Value with true and false state
+          underlineColorAndroid="transparent"
+          //To remove the underline from the android input
+        />
+        <SearchableDropdown
+          onTextChange={text => console.log(text)}
+          //On text change listner on the searchable input
+          onItemSelect={item => setInstrument2(item.name)}
+          //onItemSelect called after the selection from the dropdown
+          containerStyle={styles.ddContainerStyle}
+          //suggestion container style
+          textInputStyle={styles.ddInputStyle}
+          itemStyle={styles.ddItemStyle}
+          itemTextStyle={styles.ddItemTextStyle}
+          itemsContainerStyle={styles.ddItemsContainerStyle}
+          items={items}
+          //mapping of item array
+          //defaultIndex={2}
+          //default selected item index
+          placeholder="Optional Second Instrument"
+          //place holder for the search input
+          resetValue={false}
+          //reset textInput Value with true and false state
+          underlineColorAndroid="transparent"
+          //To remove the underline from the android input
+        />
+        <SearchableDropdown
+          onTextChange={text => console.log(text)}
+          //On text change listner on the searchable input
+          onItemSelect={item => setInstrument3(item.name)}
+          //onItemSelect called after the selection from the dropdown
+          containerStyle={styles.ddContainerStyle}
+          //suggestion container style
+          textInputStyle={styles.ddInputStyle}
+          itemStyle={styles.ddItemStyle}
+          itemTextStyle={styles.ddItemTextStyle}
+          itemsContainerStyle={styles.ddItemsContainerStyle}
+          items={items}
+          //mapping of item array
+          //defaultIndex={2}
+          //default selected item index
+          placeholder="Optional Third Instrument"
+          //place holder for the search input
+          resetValue={false}
+          //reset textInput Value with true and false state
+          underlineColorAndroid="transparent"
+          //To remove the underline from the android input
+        />
+        <TextInput
+          placeholder="Access Code"
+          underlineColorAndroid="transparent"
+          style={styles.TextInputStyleClass}
+          onChangeText={val => setAccessCode(val)}
+        />
+        <TouchableOpacity
+          activeOpacity={0.4}
+          style={styles.TouchableOpacityStyle}
+          onPress={() =>
+            signUp(
+              user_type_id,
+              email,
+              password,
+              first_name,
+              last_name,
+              phone_number,
+              street_address,
+              city,
+              st,
+              zip_code,
+              feeder_school,
+              current_school,
+              instrument,
+              instrument_2,
+              instrument_3,
+              code,
+            )
+          }>
+          <Text style={styles.TextStyle}> Create Account </Text>
+        </TouchableOpacity>
+      </ScrollView>
     </ScreenContainer>
   );
 };
@@ -4237,7 +4262,7 @@ export const EditInstructorProfile = ({navigation, route}) => {
               {userProfile.first_name} {userProfile.last_name}
             </Text>
           </View>
-          <Button
+          <CustomButton
             title="Upload Avatar"
             onPress={() => {
               chooseImage()
@@ -4518,13 +4543,13 @@ export const InstructorProfile = ({navigation, route}) => {
 
   return (
     <ScreenContainer>
-      <Button
+      <CustomButton
         title="Edit Instructor Profile"
         onPress={() =>
           navigation.push('Edit Profile', {name: 'Edit Instructor Profile'})
         }
       />
-      <Button title="Sign Out" onPress={() => signOut()} />
+      <CustomButton title="Sign Out" onPress={() => signOut()} />
     </ScreenContainer>
   );
 };
@@ -4536,11 +4561,11 @@ export const InstructorHome = ({navigation, route}) => {
   //<Text>{userProfile ? userProfile.email : 'abc'}</Text>
   return (
     <ScreenContainer>
-      <Button
+      <CustomButton
         title="Student List"
         onPress={() => navigation.push('Student List')}
       />
-      <Button
+      <CustomButton
         title="Private Student List"
         onPress={() => navigation.push('Private Student List')}
       />
@@ -4776,15 +4801,6 @@ export const InstructorPrivateStudentList = ({navigation, route}) => {
   );
 };
 
-const CustomButton = ({title, onPress}) => {
-  return (
-    <TouchableOpacity onPress={onPress}> 
-      <Text  style={{textAlign: 'center', marginVertical: 10, color: '#2096F4', fontSize: 18 }}>
-      {title}
-      </Text>
-    </TouchableOpacity>
-  )
-}
 export const InstructorAppointment = ({navigation, route}) => {
   const stateContext = React.useContext(StateContext);
   const [userProfile, setUserProfile] = stateContext;
@@ -4793,7 +4809,7 @@ export const InstructorAppointment = ({navigation, route}) => {
     <ScreenContainer>
       <CustomButton
         title="Confirmed Appointment"
-        onPress={() => navigation.push('Confirmed Appointment')}       
+        onPress={() => navigation.push('Confirmed Appointment')}
       />
       <CustomButton
         title="Pending Appointment"
@@ -5061,8 +5077,7 @@ export const InstructorPendingAppointmentInfo = ({navigation, route}) => {
               <Text> - Description: {apptInfo.description}</Text>
             </View>
           </View>
-          <Button
-            color="#ff5c5c"
+          <CustomCancelButton
             title="Confirm"
             onPress={() => {
               ConfirmPendingRequest.confirmPending(route.params.appointment_id)
@@ -5463,8 +5478,7 @@ export const InstructorCancelPendingInfo = ({navigation, route}) => {
               <Text> - Description: {apptInfo.description}</Text>
             </View>
           </View>
-          <Button
-            color="#ff5c5c"
+          <CustomCancelButton
             title="Confirm Cancellation Request"
             onPress={() => {
               InstructorCancelPendingRequest.cancel(route.params.appointment_id)
@@ -5588,19 +5602,19 @@ export const Home = ({navigation}) => {
     <ScreenContainer>
       <Text>Master List Screen</Text>
       <Text>{userProfile ? userProfile.email : 'abc'}</Text>
-      <Button
+      <CustomButton
         title="React Native by Example"
         onPress={() =>
           navigation.push('Details', {name: 'React Native by Example '})
         }
       />
-      <Button
+      <CustomButton
         title="React Native School"
         onPress={() =>
           navigation.push('Details', {name: 'React Native School'})
         }
       />
-      <Button title="Drawer" onPress={() => navigation.toggleDrawer()} />
+      <CustomButton title="Drawer" onPress={() => navigation.toggleDrawer()} />
     </ScreenContainer>
   );
 };
@@ -5612,8 +5626,11 @@ export const Search = ({navigation}) => {
   return (
     <ScreenContainer>
       <Text>Search Screen</Text>
-      <Button title="Search 2" onPress={() => navigation.push('Search2')} />
-      <Button
+      <CustomButton
+        title="Search 2"
+        onPress={() => navigation.push('Search2')}
+      />
+      <CustomButton
         title="React Native School"
         onPress={() => {
           navigation.navigate('Home', {
@@ -5716,6 +5733,38 @@ export const Details = ({route}) => {
 };
 
 //Style Sheet => IOS and Android
+
+const CustomButton = ({title, onPress}) => {
+  return (
+    <TouchableOpacity onPress={onPress}>
+      <Text
+        style={{
+          textAlign: 'center',
+          marginVertical: 10,
+          color: '#2096F4',
+          fontSize: 18,
+        }}>
+        {title}
+      </Text>
+    </TouchableOpacity>
+  );
+};
+const CustomCancelButton = ({title, onPress}) => {
+  return (
+    <TouchableOpacity onPress={onPress}>
+      <Text
+        style={{
+          textAlign: 'center',
+          marginVertical: 10,
+          color: '#ff5c5c',
+          fontSize: 5,
+        }}>
+        {title}
+      </Text>
+    </TouchableOpacity>
+  );
+};
+
 const styles = StyleSheet.create({
   Orange: {
     color: '#FF5722',
