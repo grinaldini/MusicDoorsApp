@@ -88,8 +88,11 @@ import CalendarPicker from 'react-native-calendar-picker';
 import ImageResizer from 'react-native-image-resizer';
 
 import RNFetchBlob from 'rn-fetch-blob';
+
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
+
+
 const userTypes = [
   {
     id: 2,
@@ -330,8 +333,8 @@ export const Welcome = ({navigation}) => {
 // test 'directorSchool1@gmail.com', 'password_directorSchool1'
 export const SignIn = ({navigation}) => {
   const {signIn} = React.useContext(AuthContext);
-  const [email, setEmail] = useState('instructorViolin2@gmail.com');
-  const [password, setPassword] = useState('password_instructorViolin2');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   return (
     <ScreenContainer>
       <TextInput
@@ -344,6 +347,7 @@ export const SignIn = ({navigation}) => {
       <TextInput
         placeholder="Password"
         underlineColorAndroid="transparent"
+        secureTextEntry
         onChangeText={val => setPassword(val)}
         autoCapitalize="none"
         style={styles.TextInputStyleClass}
@@ -403,8 +407,8 @@ export const ForgotPassword = ({navigation}) => {
         activeOpacity={0.4}
         style={styles.TouchableOpacityStyle}
         onPress={() => {
-          console.log(email);
-          console.log(userTypeId);
+          //console.log(email);
+          //console.log(userTypeId);
           sendResetCode(email, userTypeId);
         }}>
         <Text style={styles.TextStyle}> Send Code </Text>
@@ -445,6 +449,7 @@ export const ResetPassword = ({navigation}) => {
       <TextInput
         placeholder="New Password"
         underlineColorAndroid="transparent"
+        secureTextEntry
         onChangeText={val => setNewPassword(val)}
         autoCapitalize="none"
         style={styles.TextInputStyleClass}
@@ -452,6 +457,7 @@ export const ResetPassword = ({navigation}) => {
       <TextInput
         placeholder="Confirm New Password"
         underlineColorAndroid="transparent"
+        secureTextEntry
         onChangeText={val => setConfPassword(val)}
         autoCapitalize="none"
         style={styles.TextInputStyleClass}
@@ -590,7 +596,6 @@ export const AdminHome = ({navigation, route}) => {
   //TODO: Remove userProfile
   return (
     <ScreenContainer>
-      <Text>{userProfile ? userProfile.email : 'abc'}</Text>
       <CustomButton
         title="Director List"
         onPress={() => navigation.push('Director List')}
@@ -635,20 +640,22 @@ export const AdminDirectorList = ({navigation, route}) => {
   AdminDirectorL1.getDirectorList()
     .then(data => data.json())
     .then(data => {
-      if (data.length() > 0) {
+      if (data.length > 0) {
         setUser(data);
       }
       if (data === false) {
-        Alert.alert('No Directors Available');
+        //Alert.alert('No Directors Available');
       }
     });
 
+  const message = 'No Directors Available';
   return (
     <ScreenContainer>
       <View style={userListStyles.MainContainer}>
         <FlatList
           data={user}
           ItemSeparatorComponent={FlatListItemSeparator}
+          ListEmptyComponent={<ListEmpty title={message}/>}
           renderItem={({item}) => (
             <TouchableHighlight
               onPress={() =>
@@ -692,16 +699,18 @@ export const AdminStudentList = ({navigation, route}) => {
         setStudentUser(data2);
       }
       if (data2 === false) {
-        Alert.alert('No Students Registered Under Director');
+       // Alert.alert('No Students Registered Under Director');
       }
     });
 
+  const message = 'No Students Registered Under Director';
   return (
     <ScreenContainer>
       <View style={userListStyles.MainContainer}>
         <FlatList
           data={studentUser}
           ItemSeparatorComponent={FlatListItemSeparator}
+          ListEmptyComponent={<ListEmpty title={message}/>}
           renderItem={({item}) => (
             <View style={{flex: 1, flexDirection: 'row'}}>
               <Image
@@ -736,16 +745,18 @@ export const AdminPrivateStudentList = ({route}) => {
         setStudentUser(data2);
       }
       if (data2 === false) {
-        Alert.alert('No Private Students Registered');
+        //Alert.alert('No Private Students Registered');
       }
     });
 
+  const message = 'No Private Students Registered';
   return (
     <ScreenContainer>
       <View style={userListStyles.MainContainer}>
         <FlatList
           data={studentUser}
           ItemSeparatorComponent={FlatListItemSeparator}
+          ListEmptyComponent={<ListEmpty title={message}/>}
           renderItem={({item}) => (
             <View style={{flex: 1, flexDirection: 'row'}}>
               <Image
@@ -776,16 +787,18 @@ export const AdminInstructorList = ({route}) => {
         setInstructorUser(data2);
       }
       if (data2 === false) {
-        Alert.alert('No Instructors Registered');
+        //Alert.alert('No Instructors Registered');
       }
     });
 
+  const message = 'No Instructors Registered';
   return (
     <ScreenContainer>
       <View style={userListStyles.MainContainer}>
         <FlatList
           data={instructorUser}
           ItemSeparatorComponent={FlatListItemSeparator}
+          ListEmptyComponent={<ListEmpty title={message}/>}
           renderItem={({item}) => (
             <View style={{flex: 1, flexDirection: 'row'}}>
               <Image
@@ -820,16 +833,18 @@ export const AdminAppointmentList = ({navigation, route}) => {
         setAppointment(data2);
       }
       if (data2 === false) {
-        Alert.alert('No Confirmed Appointments');
+        //Alert.alert('No Confirmed Appointments');
       }
     });
 
+  const message = 'No Confirmed Appointments';
   return (
     <ScreenContainer>
       <View style={userListStyles.MainContainer}>
         <FlatList
           data={appointment}
           ItemSeparatorComponent={FlatListItemSeparator}
+          ListEmptyComponent={<ListEmpty title={message}/>}
           renderItem={({item}) => (
             <TouchableHighlight
               onPress={() =>
@@ -890,8 +905,8 @@ export const AdminParticipantsInfo = ({navigation, route}) => {
       }
     });
 
-  console.log(student);
-  console.log(instructor);
+  //console.log(student);
+  //console.log(instructor);
 
   if (check > 0) {
     return (
@@ -986,7 +1001,7 @@ export const AdminCreateAccessCode = ({navigation, route}) => {
 
   var code = part2 + part1;
   var code = code.replace(/ /, '');
-  console.log(code);
+  //console.log(code);
 
   return (
     <ScreenContainer>
@@ -1058,16 +1073,18 @@ export const AdminDeleteAccessCode = ({navigation, route}) => {
         setAC(data2);
       }
       if (data2 === false) {
-        Alert.alert('No Access Codes Available');
+        //Alert.alert('No Access Codes Available');
       }
     });
 
+  const message = 'No Access Codes Available';
   return (
     <ScreenContainer>
       <View style={userListStyles.MainContainer}>
         <FlatList
           data={acList}
           ItemSeparatorComponent={FlatListItemSeparator}
+          ListEmptyComponent={<ListEmpty title={message}/>}
           renderItem={({item}) => (
             <View style={{flex: 1, flexDirection: 'row'}}>
               <Image
@@ -1137,6 +1154,7 @@ export const DirectorCreateAccount = () => {
 
   const [email, setEmail] = React.useState(null);
   const [password, setPass] = React.useState(null);
+  const [confPassword, setCPass] = React.useState(null);
   const [first_name, setFName] = React.useState(null);
   const [last_name, setLName] = React.useState(null);
   const [phone_number, setPN] = React.useState(null);
@@ -1172,9 +1190,18 @@ export const DirectorCreateAccount = () => {
         />
         <TextInput
           placeholder="Enter Password"
+          secureTextEntry
           underlineColorAndroid="transparent"
           style={styles.TextInputStyleClass}
           onChangeText={val => setPass(val)}
+          autoCapitalize="none"
+        />
+        <TextInput
+          placeholder="Confirm Password"
+          secureTextEntry
+          underlineColorAndroid="transparent"
+          style={styles.TextInputStyleClass}
+          onChangeText={val => setCPass(val)}
           autoCapitalize="none"
         />
         <TextInput
@@ -1246,26 +1273,34 @@ export const DirectorCreateAccount = () => {
         <TouchableOpacity
           activeOpacity={0.4}
           style={styles.TouchableOpacityStyle}
-          onPress={() =>
-            signUp(
-              user_type_id,
-              email,
-              password,
-              first_name,
-              last_name,
-              phone_number,
-              street_address,
-              city,
-              st,
-              zip_code,
-              feeder_school,
-              current_school,
-              instrument,
-              instrument_2,
-              instrument_3,
-              code,
-            )
-          }>
+          onPress={() =>{
+            if (password.length >= 8){
+              if (password === confPassword) {
+                signUp(
+                  user_type_id,
+                  email,
+                  password,
+                  first_name,
+                  last_name,
+                  phone_number,
+                  street_address,
+                  city,
+                  st,
+                  zip_code,
+                  feeder_school,
+                  current_school,
+                  instrument,
+                  instrument_2,
+                  instrument_3,
+                  code,
+                )
+              }else{
+                Alert.alert("Passwords Do Not Match");
+              }
+            }else{
+              Alert.alert("Password Minimum Length: 8");
+            }
+          }}>
           <Text style={styles.TextStyle}> Create Account </Text>
         </TouchableOpacity>
       </ScrollView>
@@ -1318,26 +1353,36 @@ export const EditDirectorProfile = ({navigation, route}) => {
             onPress={() => {
               chooseImage()
                 .then(originalResponse => {
-                  console.log(originalResponse.cancelled);
                   if (!originalResponse.cancelled) {
-                    console.log(originalResponse.uri);
+                    //console.log(originalResponse.uri);
+
+                    //console.log(originalResponse.uri.type);
 
                     ImageResizer.createResizedImage(
                       originalResponse.uri,
-                      400,
-                      300,
-                      'PNG',
-                      80,
+                      600,
+                      600,
+                      'JPEG',
+                      100,
                     )
-                      .then(response => {
+                      .then(resizedImageUri => {
+                        //console.log(resizedImageUri);
+                        var imageName = userProfile.email;
+                        imageName = imageName.replace('@', '');
+                        imageName = imageName.replace('.', '');
+                        imageName = imageName.replace(' ', '');
+                        imageName = userProfile.id + imageName;
+                        var domainName = `http://musicdoors.org/Assets/Avatar/${imageName}.jpeg`;
+
                         var data = new FormData();
                         data.append('avatar', {
-                          uri: response,
+                          uri: resizedImageUri.uri,
                           name: 'avatar.jpg',
                           type: originalResponse.uri.type,
                         });
 
                         data.append('email', userProfile.email);
+                        data.append('imageName', imageName);
                         fetch('http://musicdoors.org/Assets/UploadImage.php', {
                           method: 'POST',
                           body: data,
@@ -1345,18 +1390,26 @@ export const EditDirectorProfile = ({navigation, route}) => {
                             Accept: 'application/json',
                           },
                         })
-                          .then(data => data.json())
-                          .then(data => {
-                            console.log(data);
-                            if (data.status === true) {
-                              //Alert.alert("Notify: Image Uploaded Succesfully");
+                          .then(data2 => data2.json())
+                          .then(data2 => {
+                            //console.log(data2);
+                            if (data2 === false) {
+                              //setUserProfile({...userProfile, avatar: data.avatar});
+                              alert(
+                                'An error occurred while uploading avatar.',
+                              );
+                            } else {
+                              //console.log(userProfile);
                               setUserProfile({
                                 ...userProfile,
-                                avatar: data.avatar,
+                                avatar: data2.avatar,
                               });
-                            } else {
-                              Alert.alert('Notify: Error Uploading Image');
+                              //setTimeout(() => console.log(userProfile), 1000);
+                              //console.log('here');
                             }
+                          })
+                          .then(data2 => {
+                            //console.log(domainName);
                           })
                           .catch(err => {
                             console.error('upload error: ' + err);
@@ -1364,7 +1417,8 @@ export const EditDirectorProfile = ({navigation, route}) => {
                           });
                       })
                       .catch(err => {
-                        console.log('Error');
+                        // Oops, something went wrong. Check that the filename is correct and
+                        // inspect err to get more details.
                       });
                   }
                 })
@@ -1437,7 +1491,7 @@ export const EditDirectorProfile = ({navigation, route}) => {
             activeOpacity={0.4}
             style={styles2.TouchableOpacityStyle}
             onPress={() => {
-              console.log(instrument_2);
+              //console.log(instrument_2);
               if (instrument == 'None') {
                 setInstrument(null);
               }
@@ -1542,16 +1596,18 @@ export const DirectorStudentList = ({navigation, route}) => {
         setStudentUser(data2);
       }
       if (data2 === false) {
-        Alert.alert('No Students Registered Under Director');
+        //Alert.alert('No Students Registered Under Director');
       }
     });
 
+  const message = 'No Students Registered Under Director';
   return (
     <ScreenContainer>
       <View style={userListStyles.MainContainer}>
         <FlatList
           data={studentUser}
           ItemSeparatorComponent={FlatListItemSeparator}
+          ListEmptyComponent={<ListEmpty title={message}/>}
           renderItem={({item}) => (
             <TouchableHighlight
               onPress={() =>
@@ -1584,7 +1640,7 @@ export const DirectorStudentList = ({navigation, route}) => {
 
 export const DirectorAppointmentList = ({navigation, route}) => {
   const [appointment, setAppointment] = React.useState(null);
-  console.log(route.params.student_id);
+  //console.log(route.params.student_id);
   DirectorAppointmentL2.getAppt(route.params.student_id)
     .then(data2 => data2.json())
     .then(data2 => {
@@ -1592,16 +1648,18 @@ export const DirectorAppointmentList = ({navigation, route}) => {
         setAppointment(data2);
       }
       if (data2 === false) {
-        Alert.alert('No Confirmed Appointments Available');
+        //Alert.alert('No Confirmed Appointments Available');
       }
     });
 
+  const message = 'No Confirmed Appointments Available';
   return (
     <ScreenContainer>
       <View style={userListStyles.MainContainer}>
         <FlatList
           data={appointment}
           ItemSeparatorComponent={FlatListItemSeparator}
+          ListEmptyComponent={<ListEmpty title={message}/>}
           renderItem={({item}) => (
             <TouchableHighlight
               onPress={() =>
@@ -1662,8 +1720,8 @@ export const DirectorParticipantsInfo = ({navigation, route}) => {
       }
     });
 
-  console.log(student);
-  console.log(instructor);
+  //console.log(student);
+  //console.log(instructor);
 
   if (check > 0) {
     return (
@@ -1735,8 +1793,10 @@ export const StudentCreateAccount = () => {
 
   const user_type_id = 3;
 
+
   const [email, setEmail] = React.useState(false);
   const [password, setPass] = React.useState(false);
+  const [confPassword, setCPass] = React.useState(false);
   const [first_name, setFName] = React.useState(false);
   const [last_name, setLName] = React.useState(false);
   const [instrument, setInstrument] = React.useState(false);
@@ -1786,12 +1846,21 @@ export const StudentCreateAccount = () => {
           style={styles.TextInputStyleClass}
           onChangeText={val => setEmail(val)}
           autoCapitalize="none"
-        />
+        />   
         <TextInput
           placeholder="Enter Password"
           underlineColorAndroid="transparent"
+          secureTextEntry
           style={styles.TextInputStyleClass}
           onChangeText={val => setPass(val)}
+          autoCapitalize="none"
+        />
+        <TextInput
+          placeholder="Confirm Password"
+          underlineColorAndroid="transparent"
+          secureTextEntry
+          style={styles.TextInputStyleClass}
+          onChangeText={val => setCPass(val)}
           autoCapitalize="none"
         />
         <TextInput
@@ -1951,26 +2020,34 @@ export const StudentCreateAccount = () => {
         <TouchableOpacity
           activeOpacity={0.4}
           style={styles.TouchableOpacityStyle}
-          onPress={() =>
-            signUp(
-              user_type_id,
-              email,
-              password,
-              first_name,
-              last_name,
-              phone_number,
-              street_address,
-              city,
-              st,
-              zip_code,
-              feeder_school,
-              current_school,
-              instrument,
-              instrument_2,
-              instrument_3,
-              code,
-            )
-          }>
+          onPress={() =>{
+            if (password.length >= 8){
+              if (password === confPassword) {
+                signUp(
+                  user_type_id,
+                  email,
+                  password,
+                  first_name,
+                  last_name,
+                  phone_number,
+                  street_address,
+                  city,
+                  st,
+                  zip_code,
+                  feeder_school,
+                  current_school,
+                  instrument,
+                  instrument_2,
+                  instrument_3,
+                  code,
+                )
+              }else{
+                Alert.alert("Passwords Do Not Match");
+              }
+            }else{
+              Alert.alert("Password Minimum Length: 8");
+            }
+          }}>
           <Text style={styles.TextStyle}> Create Account </Text>
         </TouchableOpacity>
       </ScrollView>
@@ -2034,7 +2111,8 @@ export const EditStudentProfile = ({navigation, route}) => {
           </View>
           <CustomButton
             title="Upload Avatar"
-            onPress={() => {
+            onPress={() => {            
+              
               chooseImage()
                 .then(originalResponse => {
                   if (!originalResponse.cancelled) {
@@ -2051,14 +2129,11 @@ export const EditStudentProfile = ({navigation, route}) => {
                     )
                       .then(resizedImageUri => {
                         //console.log(resizedImageUri);
-
-                        var imageName = moment().format('LTS');
-                        imageName = imageName.replace(/:/g, '');
-                        imageName = imageName.replace(/PM/g, '');
-                        imageName = imageName.replace(/AM/g, '');
+                        var imageName = userProfile.email;
+                        imageName = imageName.replace('@', '');
+                        imageName = imageName.replace('.', '');
                         imageName = imageName.replace(' ', '');
-                        var imageName =
-                          userProfile.id + userProfile.first_name + imageName;
+                        imageName = userProfile.id + imageName;
                         var domainName = `http://musicdoors.org/Assets/Avatar/${imageName}.jpeg`;
 
                         var data = new FormData();
@@ -2079,20 +2154,20 @@ export const EditStudentProfile = ({navigation, route}) => {
                         })
                           .then(data2 => data2.json())
                           .then(data2 => {
-                            console.log(data2);
+                            //console.log(data2);
                             if (data2 === false) {
                               //setUserProfile({...userProfile, avatar: data.avatar});
                               alert(
                                 'An error occurred while uploading avatar.',
                               );
                             } else {
-                              console.log(userProfile);
+                              //console.log(userProfile);
                               setUserProfile({
                                 ...userProfile,
                                 avatar: data2.avatar,
                               });
-                              setTimeout(() => console.log(userProfile), 1000);
-                              console.log('here');
+                              //setTimeout(() => console.log(userProfile), 1000);
+                              //console.log('here');
                             }
                           })
                           .then(data2 => {
@@ -2246,14 +2321,13 @@ export const EditStudentProfile = ({navigation, route}) => {
             activeOpacity={0.4}
             style={styles2.TouchableOpacityStyle}
             onPress={() => {
-              console.log(instrument_2);
+              
               if (instrument == 'None') {
                 setInstrument(null);
               }
               if (instrument_2 == 'None') {
                 setInstrument2(null);
               }
-              console.log(instrument_2);
               if (instrument_3 == 'None') {
                 setInstrument3(null);
               }
@@ -2362,17 +2436,19 @@ export const StudentAppointmentList = ({navigation, route}) => {
         setAppt(data2);
       }
       if (data2 === false) {
-        Alert.alert('No Appointments Confirmed');
+        //Alert.alert('No Appointments Confirmed');
       }
     });
 
   //InstructorData.getInfo()
+  const message = 'No Appointments Confirmed';
   return (
     <ScreenContainer>
       <View style={userListStyles.MainContainer}>
         <FlatList
           data={appt}
           ItemSeparatorComponent={FlatListItemSeparator}
+          ListEmptyComponent={<ListEmpty title={message}/>}
           renderItem={({item}) => (
             <TouchableHighlight
               onPress={() =>
@@ -2474,7 +2550,7 @@ export const StudentAppointmentInfo = ({navigation, route}) => {
                   {
                     text: 'Confirm',
                     onPress: () => {
-                      console.log(route.params.appointment_id);
+                      //console.log(route.params.appointment_id);
                       CancelConfirmedAppt.requestCancel(
                         route.params.appointment_id,
                       )
@@ -2524,17 +2600,18 @@ export const StudentPendingAppointmentList = ({navigation}) => {
         setAppt(data2);
       }
       if (data2 === false) {
-        Alert.alert('No Pending Appointments');
+        //Alert.alert('No Pending Appointments');
       }
     });
 
   //console.log(user);
-
+  const message = "No Pending Appointment";
   return (
     <ScreenContainer>
       <View style={userListStyles.MainContainer}>
         <FlatList
           data={appt}
+          ListEmptyComponent={<ListEmpty title={message}/>}
           ItemSeparatorComponent={FlatListItemSeparator}
           renderItem={({item}) => (
             <TouchableHighlight
@@ -2671,18 +2748,20 @@ export const StudentInstructorList = ({navigation, route}) => {
         setUser(data2);
       }
       if (data2 === false) {
-        Alert.alert('No instructor with same instrument in your area');
+        //Alert.alert('No instructor with same instrument in your area');
       }
     });
 
   //console.log(user);
 
+  const message = 'No Instructor Available';
   return (
     <ScreenContainer>
       <View style={userListStyles.MainContainer}>
         <FlatList
           data={user}
           ItemSeparatorComponent={FlatListItemSeparator}
+          ListEmptyComponent={<ListEmpty title={message}/>}
           renderItem={({item}) => (
             <TouchableHighlight
               onPress={() =>
@@ -2807,14 +2886,16 @@ export const StudentAppointmentRequest = ({navigation, route}) => {
         setAppt(data2);
       }
       if (data2 === false) {
-        Alert.alert('No Appointments Available');
+        //Alert.alert('No Appointments Available');
       }
     });
 
+  const message = 'No Appointments Available';
   return (
     <ScreenContainer>
       <FlatList
         data={appt}
+        ListEmptyComponent={<ListEmpty title={message}/>}
         ItemSeparatorComponent={FlatListItemSeparator}
         renderItem={({item}) => (
           <View style={{flex: 1, flexDirection: 'row'}}>
@@ -2829,11 +2910,11 @@ export const StudentAppointmentRequest = ({navigation, route}) => {
               onPress={() => {
                 //const textString = 'Requesting Appointment on: ' + toString(item.date) + '\nFrom: ' + toString(item.start) + '\nTo: ' + toString(item.end);
                 // textString = toString(textString)
-                console.log(typeof userProfile.id);
-                console.log(typeof item.instructor_id);
-                console.log(typeof item.date);
-                console.log(typeof item.start);
-                console.log(typeof item.end);
+                //console.log(typeof userProfile.id);
+               // console.log(typeof item.instructor_id);
+               // console.log(typeof item.date);
+               // console.log(typeof item.start);
+               // console.log(typeof item.end);
                 Alert.alert(
                   'Requesting Appointment',
                   `Date: ${item.date} \nFrom: ${item.start} \nTo: ${
@@ -2855,9 +2936,9 @@ export const StudentAppointmentRequest = ({navigation, route}) => {
                           item.start,
                           item.end,
                         )
-                          .then(data3 => data3.json())
-                          .then(data3 => {
-                            //console.log(data3);
+                        .then(data3 => data3.json())
+                        .then(data3 => {
+                            console.log(data3);
                             if (data3 === false) {
                               Alert.alert('Did Not Book, Try Again Later');
                             }
@@ -2899,6 +2980,7 @@ export const PrivateStudentCreateAccount = () => {
 
   const [email, setEmail] = React.useState('');
   const [password, setPass] = React.useState('');
+  const [confPassword, setCPass] = React.useState('');
   const [first_name, setFName] = React.useState('');
   const [last_name, setLName] = React.useState('');
   const [instrument, setInstrument] = React.useState('');
@@ -2950,9 +3032,18 @@ export const PrivateStudentCreateAccount = () => {
         />
         <TextInput
           placeholder="Enter Password"
+          secureTextEntry
           underlineColorAndroid="transparent"
           style={styles.TextInputStyleClass}
           onChangeText={val => setPass(val)}
+          autoCapitalize="none"
+        />
+        <TextInput
+          placeholder="Confirm Password"
+          secureTextEntry
+          underlineColorAndroid="transparent"
+          style={styles.TextInputStyleClass}
+          onChangeText={val => setCPass(val)}
           autoCapitalize="none"
         />
         <TextInput
@@ -3061,26 +3152,34 @@ export const PrivateStudentCreateAccount = () => {
         <TouchableOpacity
           activeOpacity={0.4}
           style={styles.TouchableOpacityStyle}
-          onPress={() =>
-            signUp(
-              user_type_id,
-              email,
-              password,
-              first_name,
-              last_name,
-              phone_number,
-              street_address,
-              city,
-              st,
-              zip_code,
-              feeder_school,
-              current_school,
-              instrument,
-              instrument_2,
-              instrument_3,
-              code,
-            )
-          }>
+          onPress={() =>{
+            if (password.length >= 8){
+              if (password === confPassword) {
+                signUp(
+                  user_type_id,
+                  email,
+                  password,
+                  first_name,
+                  last_name,
+                  phone_number,
+                  street_address,
+                  city,
+                  st,
+                  zip_code,
+                  feeder_school,
+                  current_school,
+                  instrument,
+                  instrument_2,
+                  instrument_3,
+                  code,
+                )
+              }else{
+                Alert.alert("Passwords Do Not Match");
+              }
+            }else{
+              Alert.alert("Password Minimum Length: 8");
+            }
+          }}>
           <Text style={styles.TextStyle}> Create Account </Text>
         </TouchableOpacity>
       </ScrollView>
@@ -3145,14 +3244,12 @@ export const EditPrivateStudentProfile = ({navigation, route}) => {
                     )
                       .then(resizedImageUri => {
                         //console.log(resizedImageUri);
-
-                        var imageName = moment().format('LTS');
-                        imageName = imageName.replace(/:/g, '');
-                        imageName = imageName.replace(/PM/g, '');
-                        imageName = imageName.replace(/AM/g, '');
+                        
+                        var imageName = userProfile.email;
+                        imageName = imageName.replace('@', '');
+                        imageName = imageName.replace('.', '');
                         imageName = imageName.replace(' ', '');
-                        var imageName =
-                          userProfile.id + userProfile.first_name + imageName;
+                        imageName = userProfile.id + imageName;
                         var domainName = `http://musicdoors.org/Assets/Avatar/${imageName}.jpeg`;
 
                         var data = new FormData();
@@ -3173,20 +3270,20 @@ export const EditPrivateStudentProfile = ({navigation, route}) => {
                         })
                           .then(data2 => data2.json())
                           .then(data2 => {
-                            console.log(data2);
+                            //console.log(data2);
                             if (data2 === false) {
                               //setUserProfile({...userProfile, avatar: data.avatar});
                               alert(
                                 'An error occurred while uploading avatar.',
                               );
                             } else {
-                              console.log(userProfile);
+                              //console.log(userProfile);
                               setUserProfile({
                                 ...userProfile,
                                 avatar: data2.avatar,
                               });
-                              setTimeout(() => console.log(userProfile), 1000);
-                              console.log('here');
+                              //setTimeout(() => console.log(userProfile), 1000);
+                              //console.log('here');
                             }
                           })
                           .then(data2 => {
@@ -3327,14 +3424,14 @@ export const EditPrivateStudentProfile = ({navigation, route}) => {
             activeOpacity={0.4}
             style={styles2.TouchableOpacityStyle}
             onPress={() => {
-              console.log(instrument_2);
+              //console.log(instrument_2);
               if (instrument == 'None') {
                 setInstrument(null);
               }
               if (instrument_2 == 'None') {
                 setInstrument2(null);
               }
-              console.log(instrument_2);
+              //console.log(instrument_2);
               if (instrument_3 == 'None') {
                 setInstrument3(null);
               }
@@ -3461,17 +3558,19 @@ export const PrivateStudentAppointmentList = ({navigation, route}) => {
         setAppt(data2);
       }
       if (data2 === false) {
-        Alert.alert('No Appointments Confirmed');
+        //Alert.alert('No Appointments Confirmed');
       }
     });
 
   //InstructorData.getInfo()
+  const message = 'No Appointments Confirmed';
   return (
     <ScreenContainer>
       <View style={userListStyles.MainContainer}>
         <FlatList
           data={appt}
           ItemSeparatorComponent={FlatListItemSeparator}
+          ListEmptyComponent={<ListEmpty title={message}/>}
           renderItem={({item}) => (
             <TouchableHighlight
               onPress={() =>
@@ -3573,7 +3672,7 @@ export const PrivateStudentAppointmentInfo = ({navigation, route}) => {
                   {
                     text: 'Confirm',
                     onPress: () => {
-                      console.log(route.params.appointment_id);
+                      //console.log(route.params.appointment_id);
                       CancelConfirmedAppt.requestCancel(
                         route.params.appointment_id,
                       )
@@ -3623,18 +3722,19 @@ export const PrivateStudentPendingAppointmentList = ({navigation}) => {
         setAppt(data2);
       }
       if (data2 === false) {
-        Alert.alert('No Pending Appointments');
+        //Alert.alert('No Pending Appointments');
       }
     });
 
   //console.log(user);
-
+  const message = 'No Pending Appointments';
   return (
     <ScreenContainer>
       <View style={userListStyles.MainContainer}>
         <FlatList
           data={appt}
           ItemSeparatorComponent={FlatListItemSeparator}
+          ListEmptyComponent={<ListEmpty title={message}/>}
           renderItem={({item}) => (
             <TouchableHighlight
               onPress={() =>
@@ -3769,18 +3869,20 @@ export const PrivateStudentInstructorList = ({navigation, route}) => {
         setUser(data2);
       }
       if (data2 === false) {
-        Alert.alert('No instructor with same instrument in your area');
+        //Alert.alert('No instructor with same instrument in your area');
       }
     });
 
   //console.log(user);
 
+  const message = 'No Instructor Available';
   return (
     <ScreenContainer>
       <View style={userListStyles.MainContainer}>
         <FlatList
           data={user}
           ItemSeparatorComponent={FlatListItemSeparator}
+          ListEmptyComponent={<ListEmpty title={message}/>}
           renderItem={({item}) => (
             <TouchableHighlight
               onPress={() =>
@@ -3905,15 +4007,17 @@ export const PrivateStudentAppointmentRequest = ({navigation, route}) => {
         setAppt(data2);
       }
       if (data2 === false) {
-        Alert.alert('No Appointments Available');
+        //Alert.alert('No Appointments Available');
       }
     });
 
+  const message = 'No Appointments Available';
   return (
     <ScreenContainer>
       <FlatList
         data={appt}
         ItemSeparatorComponent={FlatListItemSeparator}
+        ListEmptyComponent={<ListEmpty title={message}/>}
         renderItem={({item}) => (
           <View style={{flex: 1, flexDirection: 'row'}}>
             <Image
@@ -3927,11 +4031,11 @@ export const PrivateStudentAppointmentRequest = ({navigation, route}) => {
               onPress={() => {
                 //const textString = 'Requesting Appointment on: ' + toString(item.date) + '\nFrom: ' + toString(item.start) + '\nTo: ' + toString(item.end);
                 // textString = toString(textString)
-                console.log(typeof userProfile.id);
-                console.log(typeof item.instructor_id);
-                console.log(typeof item.date);
-                console.log(typeof item.start);
-                console.log(typeof item.end);
+                //console.log(typeof userProfile.id);
+                //console.log(typeof item.instructor_id);
+                //console.log(typeof item.date);
+                //console.log(typeof item.start);
+                //console.log(typeof item.end);
                 Alert.alert(
                   'Requesting Appointment',
                   `Date: ${item.date} \nFrom: ${item.start} \nTo: ${
@@ -3955,7 +4059,7 @@ export const PrivateStudentAppointmentRequest = ({navigation, route}) => {
                         )
                           .then(data3 => data3.json())
                           .then(data3 => {
-                            //console.log(data3);
+                            console.log(data3);
                             if (data3 === false) {
                               Alert.alert('Did Not Book, Try Again Later');
                             }
@@ -4001,6 +4105,7 @@ export const InstructorCreateAccount = () => {
 
   const [email, setEmail] = React.useState('');
   const [password, setPass] = React.useState('');
+  const [confPassword, setCPass] = React.useState('');
   const [first_name, setFName] = React.useState('');
   const [last_name, setLName] = React.useState('');
   const [street_address, setSA] = React.useState('');
@@ -4053,9 +4158,18 @@ export const InstructorCreateAccount = () => {
         />
         <TextInput
           placeholder="Enter Password"
+          secureTextEntry
           underlineColorAndroid="transparent"
           style={styles.TextInputStyleClass}
           onChangeText={val => setPass(val)}
+          autoCapitalize="none"
+        />
+        <TextInput
+          placeholder="Confirm Password"
+          secureTextEntry
+          underlineColorAndroid="transparent"
+          style={styles.TextInputStyleClass}
+          onChangeText={val => setCPass(val)}
           autoCapitalize="none"
         />
         <TextInput
@@ -4197,26 +4311,34 @@ export const InstructorCreateAccount = () => {
         <TouchableOpacity
           activeOpacity={0.4}
           style={styles.TouchableOpacityStyle}
-          onPress={() =>
-            signUp(
-              user_type_id,
-              email,
-              password,
-              first_name,
-              last_name,
-              phone_number,
-              street_address,
-              city,
-              st,
-              zip_code,
-              feeder_school,
-              current_school,
-              instrument,
-              instrument_2,
-              instrument_3,
-              code,
-            )
-          }>
+          onPress={() =>{
+            if (password.length >= 8){
+              if (password === confPassword) {
+                signUp(
+                  user_type_id,
+                  email,
+                  password,
+                  first_name,
+                  last_name,
+                  phone_number,
+                  street_address,
+                  city,
+                  st,
+                  zip_code,
+                  feeder_school,
+                  current_school,
+                  instrument,
+                  instrument_2,
+                  instrument_3,
+                  code,
+                )
+              }else{
+                Alert.alert("Passwords Do Not Match");
+              }
+            }else{
+              Alert.alert("Password Minimum Length: 8");
+            }
+          }}>
           <Text style={styles.TextStyle}> Create Account </Text>
         </TouchableOpacity>
       </ScrollView>
@@ -4282,13 +4404,12 @@ export const EditInstructorProfile = ({navigation, route}) => {
                       .then(resizedImageUri => {
                         //console.log(resizedImageUri);
 
-                        var imageName = moment().format('LTS');
-                        imageName = imageName.replace(/:/g, '');
-                        imageName = imageName.replace(/PM/g, '');
-                        imageName = imageName.replace(/AM/g, '');
+                        
+                        var imageName = userProfile.email;
+                        imageName = imageName.replace('@', '');
+                        imageName = imageName.replace('.', '');
                         imageName = imageName.replace(' ', '');
-                        var imageName =
-                          userProfile.id + userProfile.first_name + imageName;
+                        imageName = userProfile.id + imageName;
                         var domainName = `http://musicdoors.org/Assets/Avatar/${imageName}.jpeg`;
 
                         var data = new FormData();
@@ -4309,24 +4430,21 @@ export const EditInstructorProfile = ({navigation, route}) => {
                         })
                           .then(data2 => data2.json())
                           .then(data2 => {
-                            console.log(data2);
+                            //console.log(data2);
                             if (data2 === false) {
                               //setUserProfile({...userProfile, avatar: data.avatar});
                               alert(
                                 'An error occurred while uploading avatar.',
                               );
                             } else {
-                              console.log(userProfile);
+                              //console.log(userProfile);
                               setUserProfile({
                                 ...userProfile,
                                 avatar: data2.avatar,
                               });
-                              setTimeout(() => console.log(userProfile), 1000);
-                              console.log('here');
+                              //setTimeout(() => console.log(userProfile), 1000);
+                              //console.log('here');
                             }
-                          })
-                          .then(data2 => {
-                            //console.log(domainName);
                           })
                           .catch(err => {
                             console.error('upload error: ' + err);
@@ -4483,7 +4601,7 @@ export const EditInstructorProfile = ({navigation, route}) => {
               if (instrument_2 == 'None') {
                 setInstrument2(null);
               }
-              console.log(instrument_2);
+              //console.log(instrument_2);
               if (instrument_3 == 'None') {
                 setInstrument3(null);
               }
@@ -4591,18 +4709,19 @@ export const InstructorStudentList = ({navigation, route}) => {
         setStudentUser(data2);
       }
       if (data2 === false) {
-        Alert.alert('No Students Booked Under Instructor');
+        //Alert.alert('No Students Booked Under Instructor');
       }
     });
 
   //console.log(studentUser);
-
+  const message = 'No Students Booked Under Instructor';
   return (
     <ScreenContainer>
       <View style={userListStyles.MainContainer}>
         <FlatList
           data={studentUser}
           ItemSeparatorComponent={FlatListItemSeparator}
+          ListEmptyComponent={<ListEmpty title={message}/>}
           renderItem={({item}) => (
             <TouchableHighlight
               onPress={() => navigation.push('Director List', {parent: item})}
@@ -4644,18 +4763,19 @@ export const InstructorDirectorList = ({navigation, route}) => {
         setDirectorUser(data2);
       }
       if (data2 === false) {
-        Alert.alert('No Director');
+        //Alert.alert('No Director');
       }
     });
 
   //console.log(studentUser);
-
+  const message = 'No Directors Available';
   return (
     <ScreenContainer>
       <View style={userListStyles.MainContainer}>
         <FlatList
           data={directorUsers}
           ItemSeparatorComponent={FlatListItemSeparator}
+          ListEmptyComponent={<ListEmpty title={message}/>}
           renderItem={({item}) => (
             <TouchableHighlight
               onPress={() => navigation.push('Director Info', {parent: item})}
@@ -4692,11 +4812,11 @@ export const InstructorDirectorInfo = ({navigation, route}) => {
   //console.log(userProfile.instrument_2);
   //console.log(userProfile.instrument_3);
   const [check, setCheck] = React.useState(0);
-  console.log(route.params.parent.id);
+  //console.log(route.params.parent.id);
   DirectorData.getInfo(route.params.parent.id)
     .then(data => data.json())
     .then(data => {
-      console.log(data);
+      //console.log(data);
       if (data.length > 0) {
         setDirector(data[0]);
         setCheck(1);
@@ -4765,18 +4885,20 @@ export const InstructorPrivateStudentList = ({navigation, route}) => {
         setStudentUser(data2);
       }
       if (data2 === false) {
-        Alert.alert('No Private Students Matched');
+        //Alert.alert('No Private Students Matched');
       }
     });
 
   //console.log(studentUser);
 
+  const message = 'No Private Students Available';
   return (
     <ScreenContainer>
       <View style={userListStyles.MainContainer}>
         <FlatList
           data={studentUser}
           ItemSeparatorComponent={FlatListItemSeparator}
+          ListEmptyComponent={<ListEmpty title={message}/>}
           renderItem={({item}) => (
             <View style={{flex: 1, flexDirection: 'row'}}>
               <Image
@@ -4863,16 +4985,18 @@ export const InstructorConfirmedAppointmentList = ({navigation, route}) => {
         setAppt(data2);
       }
       if (data2 === false) {
-        Alert.alert('No Appointments');
+        //Alert.alert('No Appointments');
       }
     });
 
+  const message = 'No Appointments Available';
   return (
     <ScreenContainer>
       <View style={userListStyles.MainContainer}>
         <FlatList
           data={appt}
           ItemSeparatorComponent={FlatListItemSeparator}
+          ListEmptyComponent={<ListEmpty title={message}/>}
           renderItem={({item}) => (
             <TouchableHighlight
               onPress={() =>
@@ -4983,18 +5107,20 @@ export const InstructorPendingAppointmentList = ({navigation}) => {
         setAppt(data2);
       }
       if (data2 === false) {
-        Alert.alert('No Pending Appointments');
+        //Alert.alert('No Pending Appointments');
       }
     });
 
   //console.log(user);
 
+  const message = 'No Pending Appointments';
   return (
     <ScreenContainer>
       <View style={userListStyles.MainContainer}>
         <FlatList
           data={appt}
           ItemSeparatorComponent={FlatListItemSeparator}
+          ListEmptyComponent={<ListEmpty title={message}/>}
           renderItem={({item}) => (
             <TouchableHighlight
               onPress={() =>
@@ -5300,16 +5426,18 @@ export const InstructorViewSessions = ({navigation, route}) => {
         setAL(data2);
       }
       if (data2 === false) {
-        Alert.alert('No Access Codes Available');
+        //Alert.alert('No Access Codes Available');
       }
     });
 
+  const message = 'No Access Codes Available';
   return (
     <ScreenContainer>
       <View style={userListStyles.MainContainer}>
         <FlatList
           data={apptList}
           ItemSeparatorComponent={FlatListItemSeparator}
+          ListEmptyComponent={<ListEmpty title={message}/>}
           renderItem={({item}) => (
             <View style={{flex: 1, flexDirection: 'row'}}>
               <Image
@@ -5378,24 +5506,26 @@ export const InstructorCancelAppointmentList = ({navigation}) => {
   InstructorAllCancelAppt.getAllCancelAppt(userProfile.id)
     .then(data2 => data2.json())
     .then(data2 => {
-      console.log(data2);
-      console.log(typeof data2);
+      //console.log(data2);
+      //console.log(typeof data2);
       if (data2.length > 0) {
         setAppt(data2);
       }
       if (data2 === false) {
-        Alert.alert('No Cancellation Requests');
+        //Alert.alert('No Cancellation Requests');
       }
     });
 
   //console.log(user);
 
+  const message = 'No Cancellation Requests';
   return (
     <ScreenContainer>
       <View style={userListStyles.MainContainer}>
         <FlatList
           data={appt}
           ItemSeparatorComponent={FlatListItemSeparator}
+          ListEmptyComponent={<ListEmpty title={message}/>}
           renderItem={({item}) => (
             <TouchableHighlight
               onPress={() =>
@@ -5565,9 +5695,9 @@ function chooseImage() {
         path: 'images',
       },
     };
-
+    //launchImageLibraryAsync(option, repsonse => 
     ImagePicker.showImagePicker(options, response => {
-      console.log(response);
+      //console.log(response);
       if (response.didCancel) {
         resolve({cancelled: true});
       } else if (response.error) {
@@ -5749,19 +5879,31 @@ const CustomButton = ({title, onPress}) => {
     </TouchableOpacity>
   );
 };
+
+//color: '#ff5c5c',
+
 const CustomCancelButton = ({title, onPress}) => {
   return (
     <TouchableOpacity onPress={onPress}>
       <Text
         style={{
           textAlign: 'center',
-          marginVertical: 10,
+          marginVertical: 10, 
           color: '#ff5c5c',
-          fontSize: 5,
+          fontSize: 18,
         }}>
         {title}
       </Text>
     </TouchableOpacity>
+  );
+};
+
+const ListEmpty = ({title}) => {
+  return (
+    //View to show when list is empty
+    <View style={styles.container}>
+      <Text style={{ textAlign: 'center', color:'#FF5722',fontSize:17,marginVertical: 10,}}>{title}</Text>
+    </View>
   );
 };
 
@@ -6201,18 +6343,20 @@ const profilePage = StyleSheet.create({
     height: 100,
     width: 300,
     marginTop: 10,
+    marginBottom:10,
   },
   profileCard: {
     height: 200,
     alignItems: 'center',
     marginTop: 20,
+    marginBottom:10,
   },
   descr: {
     fontSize: 15,
   },
   name: {
     marginTop: 10,
-    fontSize: 23,
+    fontSize: 24,
   },
   photosContainer: {
     flexDirection: 'row',
@@ -6230,56 +6374,19 @@ const profilePage = StyleSheet.create({
   },
 });
 
-const iconStyles = StyleSheet.create({
-  image: {
-    width: 100,
-    height: 100,
-  },
-  box: {
-    padding: 20,
-    marginTop: 5,
-    marginBottom: 5,
-    backgroundColor: 'white',
-    flexDirection: 'row',
-  },
-  boxContent: {
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    marginLeft: 10,
-  },
-  title: {
-    fontSize: 18,
-    color: '#151515',
-  },
-  description: {
-    fontSize: 15,
-    color: '#646464',
-  },
-  buttons: {
-    flexDirection: 'row',
-  },
-  button: {
-    height: 35,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 10,
-    width: 50,
-    marginRight: 5,
-    marginTop: 5,
-  },
-  icon: {
-    width: 20,
-    height: 20,
-  },
-  view: {
-    backgroundColor: '#FF1493',
-  },
-  profile: {
-    backgroundColor: '#1E90FF',
-  },
-  message: {
-    backgroundColor: '#228B22',
-  },
-});
+
+
+const stylesPM= {
+  container: { flex: 1, justifyContent: "center" },
+  input: {
+    margin: 5,
+    padding: 6,
+    borderRadius: 8,
+    marginBottom: 8,
+    paddingHorizontal: 10,
+    backgroundColor: "#eceff1"
+  }
+};
+
+
+
