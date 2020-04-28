@@ -2824,7 +2824,7 @@ export const StudentBookingCalendar = ({route, navigation}) => {
         setSC(data2);
       }
       if (data === false) {
-        Alert.alert('No Appointment Available');
+        //Alert.alert('No Appointment Available');
       }
     });
   /*
@@ -3945,7 +3945,7 @@ export const PrivateStudentBookingCalendar = ({route, navigation}) => {
         setSC(data2);
       }
       if (data === false) {
-        Alert.alert('No Appointment Available');
+        //Alert.alert('No Appointment Available');
       }
     });
   /*
@@ -5695,7 +5695,10 @@ function chooseImage() {
         path: 'images',
       },
     };
-    //launchImageLibraryAsync(option, repsonse => 
+    //REACT NATIVE
+    //.showImagePicker(options, response =>
+    //EXPO
+    //.launchImageLibraryAsync(option, repsonse => 
     ImagePicker.showImagePicker(options, response => {
       //console.log(response);
       if (response.didCancel) {

@@ -14,7 +14,7 @@ class RequestAppointment {
       }),
     };
     return fetch(
-      'http://musicdoors.org/Database/Student/Appointment/RequestAppointment.php',
+      'http://musicdoors.org/Database/User/Student/Appointment/RequestAppointment.php',
       payload,
     );
   }
