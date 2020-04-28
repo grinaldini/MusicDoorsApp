@@ -817,8 +817,8 @@ export default () => {
         var code = part1 + part2;
         var note = email;
 
-        console.log(email);
-        console.log(user_type_id);
+        //console.log(email);
+        //console.log(user_type_id);
         DupRegistration.checkDup(email, user_type_id)
           .then(data => data.json())
           .then(data => {
@@ -861,8 +861,8 @@ export default () => {
           CheckResetCode.checkValid(resetCode, email)
             .then(data => data.json())
             .then(data => {
-              console.log(resetCode);
-              console.log(email);
+              //console.log(resetCode);
+              //console.log(email);
               if (data === false) {
                 Alert.alert('Invalid Email or Code');
               } else {
@@ -877,9 +877,9 @@ export default () => {
                         .then(data3 => data3.json())
                         .then(data3 => {
                           if (data3 === false) {
-                            console.log('Deleted Successfully');
+                            //console.log('Deleted Successfully');
                           } else {
-                            console.log('Not Deleted, Try Again Later');
+                            //console.log('Not Deleted, Try Again Later');
                           }
                         });
                     }
@@ -953,7 +953,7 @@ export default () => {
                 'instrument_3',
               ]);
               jsonData = JSON.parse(jsonData);
-              console.log(jsonData);
+              //console.log(jsonData);
               setUserProfile(jsonData);
 
               GetGallery.loadGallery()
@@ -1054,7 +1054,7 @@ export default () => {
                                 'instrument_3',
                               ]);
                               jsonData = JSON.parse(jsonData);
-                              console.log(jsonData);
+                              //console.log(jsonData);
                               setUserProfile(jsonData);
                               GetGallery.loadGallery()
                                 .then(data2 => data2.json())
@@ -1131,7 +1131,7 @@ export default () => {
                                 'instrument_3',
                               ]);
                               jsonData = JSON.parse(jsonData);
-                              console.log(jsonData);
+                              //console.log(jsonData);
                               setUserProfile(jsonData);
                               GetGallery.loadGallery()
                                 .then(data2 => data2.json())
@@ -1207,7 +1207,7 @@ export default () => {
                                 'instrument_3',
                               ]);
                               jsonData = JSON.parse(jsonData);
-                              console.log(jsonData);
+                              //console.log(jsonData);
                               setUserProfile(jsonData);
                               GetGallery.loadGallery()
                                 .then(data2 => data2.json())
@@ -1262,7 +1262,7 @@ export default () => {
                               Alert.alert('Welcome to Music Doors');
                               setUserToken('asdf');
                               setUserId(parseInt(regData[0].user_type_id));
-                              var jsonData = JSON.stringify(data[0], [
+                              var jsonData = JSON.stringify(regData[0], [
                                 'id',
                                 'user_type_id',
                                 'email',
@@ -1283,7 +1283,7 @@ export default () => {
                                 'instrument_3',
                               ]);
                               jsonData = JSON.parse(jsonData);
-                              console.log(jsonData);
+                              //console.log(jsonData);
                               setUserProfile(jsonData);
                               GetGallery.loadGallery()
                                 .then(data2 => data2.json())
