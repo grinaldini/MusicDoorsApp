@@ -31,7 +31,7 @@ import {
   ResetContext,
 } from './context';
 
-//API's
+//Apis
 import AuthApi from './API/auth';
 import CheckAccessCode from './API/AccessCode/checkAccessCode';
 import CheckResetCode from './API/AccessCode/checkResetCode';

@@ -312,7 +312,7 @@ export const Welcome = ({navigation}) => {
         activeOpacity={0.4}
         style={styles.TouchableOpacityStyle}
         onPress={() => navigation.push('StudentCreateAccount')}>
-        <Text style={styles.TextStyle}> Student Sign Up </Text>
+        <Text style={styles.TextStyle}> Family Sign Up </Text>
       </TouchableOpacity>
 
       <TouchableOpacity
