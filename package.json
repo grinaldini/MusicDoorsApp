@@ -26,7 +26,7 @@
     "react-native-lightbox": "^0.8.1",
     "react-native-passmeter": "0.0.5",
     "react-native-password-strength-checker": "^1.0.13",
-    "react-native-reanimated": "^1.7.0",
+    "react-native-reanimated": "^2.10.0",
     "react-native-safe-area-context": "^0.7.3",
     "react-native-screens": "^2.3.0",
     "react-native-searchable-dropdown": "^1.1.1",
